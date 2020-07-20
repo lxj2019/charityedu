@@ -1,0 +1,17 @@
+{
+  "user": {
+    "userid":1010,
+    "username":"lxj",
+    "sex": "男",
+    "grant": "student",
+    "schoolclass": "3班",
+    "schoolgrade":"三年级",
+    "birthday": "2008.03.12",
+    "region":"广东省惠州市惠城区上马庄",
+    "phonenum":"13576580984",
+    "mail":"10295862@qq.com",
+    "password": 123456
+  },
+  "Token": "hhh"
+}
+
