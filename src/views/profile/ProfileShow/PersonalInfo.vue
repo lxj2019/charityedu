@@ -62,7 +62,7 @@
 <script>
   import {FormItem,Form,Input,Slider,Select,Checkbox,CheckboxGroup,
     Row,DatePicker,TimePicker,RadioGroup,Radio,Button,} from 'view-design'
-  import FilterMenu from "./FilterMenu/FilterMenu";
+  import FilterMenu from "../../../components/common/FilterMenu/FilterMenu";
   export default {
     name:'PersonalInfo',
     components:{

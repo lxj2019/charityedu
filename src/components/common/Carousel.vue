@@ -6,7 +6,7 @@
           <img :src="item.src" alt="">
         </li>
       </ul>
-      <ul class="pointList">
+        <ul class="pointList">
         <li class="point" v-for="(item,index) in list" :class="{active:index==mark}" @click="select(index)"></li>
       </ul>
     </div>
@@ -71,7 +71,6 @@
     width: 100%;
     height: 100%;
     margin: 10px auto;
-
   }
   ul{
     list-style: none;

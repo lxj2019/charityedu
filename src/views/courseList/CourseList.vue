@@ -24,7 +24,7 @@
 <script>
 // import ProfileShow from "../profile/ProfileShow/ProfileShow";
 // import ProfileMenu from "../profile/ProfileMenu";
-import FilterMenu from "../profile/ProfileShow/FilterMenu/FilterMenu";
+import FilterMenu from "../../components/common/FilterMenu/FilterMenu";
 import CourseMenu from "./CourseMenu";
 import PublicWorks from "../../components/common/works/PublicWorks";
   export default {

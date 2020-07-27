@@ -50,7 +50,7 @@
 
 <script>
   import {Input} from 'view-design'
-  import FilterMenu from "../profile/ProfileShow/FilterMenu/FilterMenu";
+  import FilterMenu from "../../components/common/FilterMenu/FilterMenu";
   import CommentBox from "./CommentBox";
   import VideoShow from "./VideoShow";
   import MyComment from "./MyComment";

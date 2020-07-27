@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state:{
     userInfo: localStorage.getItem('UserInfo')!='undefine' ? JSON.parse(localStorage.getItem('UserInfo')||'{}'):{},
-    Token:''||localStorage.getItem('Token')
+    Token:"1",//暂时先将Token置为1，以便调开发
+    // Token:''||localStorage.getItem('Token')
   },
   mutations:{
     getLogin(state,preload){

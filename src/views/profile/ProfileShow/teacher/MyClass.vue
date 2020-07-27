@@ -17,7 +17,7 @@
 
 <script>
   import TeacherWorks from "../../../../components/common/works/TeacherWorks";
-  import FilterMenu from "../FilterMenu/FilterMenu";
+  import FilterMenu from "../../../../components/common/FilterMenu/FilterMenu";
 
   export default {
     name: "MyClass",

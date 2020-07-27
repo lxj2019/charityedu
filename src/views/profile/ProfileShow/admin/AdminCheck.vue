@@ -15,7 +15,7 @@
 
 <script>
   import CheckWorks from "../../../../components/common/works/CheckWorks";
-  import FilterMenu from "../FilterMenu/FilterMenu";
+  import FilterMenu from "../../../../components/common/FilterMenu/FilterMenu";
 
   export default {
     name: "MyClass",

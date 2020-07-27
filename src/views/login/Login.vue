@@ -152,10 +152,12 @@
   }
   .box button{
     width: 250px;
+    height: 25px;
     vertical-align: bottom;
-    background-color: #00C758 !important;
+    background-color: #00C758;
     border:none;
     color: #fff;
+
   }
   .box a{
     margin-left: 10px;

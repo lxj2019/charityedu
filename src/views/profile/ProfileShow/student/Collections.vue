@@ -31,7 +31,7 @@
   import {DropdownItem} from 'view-design'
   import {request} from "../../../../network/request";
   import StuCollection from "../../../../components/common/works/StuCollection";
-  import FilterMenu from "../FilterMenu/FilterMenu";
+  import FilterMenu from "../../../../components/common/FilterMenu/FilterMenu";
   export default {
     name:'Collections',
     components:{

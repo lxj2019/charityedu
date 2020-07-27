@@ -52,7 +52,7 @@
 <script>
   import {Upload,Icon,FormItem,Input,Button} from 'view-design'
   import DropdownShow from '@/components/common/header/DropdownShow'
-  import FilterMenu from "../FilterMenu/FilterMenu";
+  import FilterMenu from "../../../../components/common/FilterMenu/FilterMenu";
   import UploadFile from "../../../../components/common/upload/UploadFile";
   import UploadImage from "../../../../components/common/upload/UploadImage";
   export default {

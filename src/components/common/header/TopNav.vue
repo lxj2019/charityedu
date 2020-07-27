@@ -3,27 +3,17 @@
     <div class="w">
     <div class="logo"><h1>惠师惠学</h1></div>
       <router-link to="/home">首页</router-link>
-<!--      <div class="search">-->
-<!--        <Input search placeholder="搜索知识点" />-->
-<!--&lt;!&ndash;        <Input search enter-button placeholder="Enter something..." />&ndash;&gt;-->
-<!--&lt;!&ndash;        <Input search enter-button="Search" placeholder="Enter something..." />&ndash;&gt;-->
-<!--      </div>-->
+
       <auto-search class="search"></auto-search>
+<!--      判断是否是登陆状态，已登陆则显示头像和名称，点击名称即可进入个人信息界面-->
       <span v-if="isLogin" class="profile">
         <img src="@/assets/img/pic.jpg" alt="个人头像">
         <router-link to="/Profile" title="个人信息">{{$store.state.userInfo.userName}}</router-link>
-<!--        <Dropdown>-->
-<!--        <a href="">{{$store.state.userInfo.username}}-->
-<!--            <Icon type="arrow-down-b"></Icon>-->
-<!--        </a>-->
-<!--        <Dropdown-menu slot="list">-->
-<!--            <Dropdown-item>个人信息</Dropdown-item>-->
-<!--            <Dropdown-item>退出登陆</Dropdown-item>-->
-<!--        </Dropdown-menu>-->
-<!--        </Dropdown>-->
+<!--        已登陆状态才会显示退出登陆和注销两个选项-->
         <a href="" @click="outLogin">退出登陆</a>
         <a href="" @click.prevent="logout">注销</a>
       </span>
+<!--      未登陆就显示 未登陆和注册选项-->
       <span v-else class="profile">
           <router-link  to="/Login">您还未登陆，请先登陆</router-link>
           <router-link  to="/register" >注册</router-link>

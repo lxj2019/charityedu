@@ -1,4 +1,5 @@
 <template>
+<!--  筛选菜单封装-->
   <div>
     <a class="item" v-for="(item,index) in list"
        :class="{isActive: currentIndex===index}"
