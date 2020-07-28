@@ -7,15 +7,17 @@
       </div>
       <div class="course-list">
 <!--        应用封装好的”筛选菜单“组件-->
-        <filter-menu>
+        <filter-menu class="course-filter">
           <span slot="first">全部</span>
           <span slot="second"@click="sort('applaudnum')">最多点赞</span>
           <span slot="third" @click="sort('worksClickNum')">最多播放</span>
           <span slot="forth" @click="sort('publishtime')">最近发布</span>
         </filter-menu>
+        <div>
+          <public-works class="course-list-works"
+                        :works="item" v-for="item in booksList"></public-works>
+        </div>
 
-        <public-works class="course-list-works"
-          :works="item" v-for="item in booksList"></public-works>
       </div>
     </div>
 
@@ -477,7 +479,7 @@ import PublicWorks from "../../components/common/works/PublicWorks";
   .course-box{
     position: relative;
     margin:50px auto;
-    padding: 0;
+    height: 500px;
     border-bottom: none;
     /*box-shadow:0px 0px 2px 1px rgba(0,0,0,.1);*/
     /*width: 900px;*/
@@ -485,24 +487,22 @@ import PublicWorks from "../../components/common/works/PublicWorks";
   .course-menu{
     float: left;
     height: 500px;
-    display: inline-block;
-
-    /*margin-right: -1px;*/
     /*display: inline-block;*/
+  margin-right: 1px;
     box-shadow:0px 0px 2px 1px rgba(0,0,0,.1);
   }
+
   .course-list{
-    float: left;
     display: inline-block;
     position: absolute;
+    top:0;
+    height: 500px;
     padding: 10px;
     box-shadow:0px 0px 2px 1px rgba(0,0,0,.1);
     margin-bottom: 100px;
+
   }
-  /*.show{*/
-  /*width: 100%;*/
-  /*  height: 100%;*/
-  /*}*/
+
   .course-list-works{
     position: relative;
     float: left;

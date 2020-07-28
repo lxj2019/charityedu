@@ -84,12 +84,12 @@
     padding:0 20px;
   }
   .menu-bar ul li a:hover{
-    background-color: rgba(0,0,255,.05);
+    background-color: rgba(0,50,255,.05);
   }
 
-  .active{
+  .menu-bar ul li .active{
     background-color: rgb(0, 161, 215);
-    color: white !important;
+    color: white ;
   }
 
 </style>

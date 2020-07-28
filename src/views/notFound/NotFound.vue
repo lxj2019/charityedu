@@ -6,7 +6,7 @@
         <p>对不起，您请求的页面不存在、或已被删除、或暂时不可用</p>
         <p class="paddingbox">请点击以下链接继续浏览网页</p>
         <p>》<a style="cursor:pointer" onclick="history.back()">返回上一页面</a></p>
-        <p>》<a href="https://www.daixiaorui.com">返回网站首页</a></p>
+        <p>》<router-link to="/home">返回网站首页</router-link></p>
       </div>
     </div>
   </div>

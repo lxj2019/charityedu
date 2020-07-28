@@ -6,7 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state:{
     userInfo: localStorage.getItem('UserInfo')!='undefine' ? JSON.parse(localStorage.getItem('UserInfo')||'{}'):{},
-    Token:"1",//暂时先将Token置为1，以便调开发
+    // Token:"1",//暂时先将Token置为1，以便调开发
     // Token:''||localStorage.getItem('Token')
   },
   mutations:{
@@ -14,12 +14,9 @@ const store = new Vuex.Store({
       console.log(preload.data);
       state.userInfo=preload.data;
       // state.Token=preload.Token;.
-      const Token='1'
+      const Token='1'   //模拟服务器发来的token
       localStorage.setItem('UserInfo',JSON.stringify(preload.data))//将用户信息保存到本地
-      localStorage.setItem('Token',Token) //将Token保存到本地
-      console.log(localStorage);
-      console.log(state);
-      console.log(state.userInfo);
+      localStorage.setItem('Token',Token)  //将Token保存到本地
     }
   },
   getters:{
@@ -31,7 +28,7 @@ const store = new Vuex.Store({
        return {
             userid: "",
             password: "",
-            username: "",
+            username: "lxj",
             sex: "",
             grant: "",
             schoolclass: "",
