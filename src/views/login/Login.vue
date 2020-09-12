@@ -5,18 +5,18 @@
     <FormItem prop="phoneNum">
       <Input type="text" v-model="loginInfo.phoneNum" placeholder="请输入手机号">
         <Icon type="ios-person-outline" slot="prepend"></Icon>
-      </Input>
+     </Input>
     </FormItem>
     <FormItem prop="password">
 <!--      <Input v-model="loginInfo.password" type="password" password placeholder="请输入密码...">-->
       <Input  password type="password" v-model="loginInfo.password" placeholder="请输入密码">
-<!--        <Icon type="ios-lock-outline" slot="prepend"></Icon>-->
-      </Input>
+       <!-- <Icon type="ios-lock-outline" slot="prepend"></Icon> -->
+    </Input>
     </FormItem>
     <FormItem>
       <Checkbox class="rememberPasswd" v-model="rememberPwd"> 记住密码</Checkbox>
       <Checkbox class="rememberMe" v-model="rememberMe"> 记住我</Checkbox>
-      <button   type="submit" @click.prevent="loginSubmit('loginInfo')" >登陆</button>
+      <Button   type="button" @click="loginSubmit('loginInfo')" >登陆</Button>
       <p>
         <router-link to="/forgetpasswd">找不到密码？忘记密码？</router-link>
         <router-link to="/register">注册</router-link>
@@ -29,8 +29,7 @@
 
 <script>
   import {Input,Icon,Form,FormItem,Checkbox} from 'view-design'
-  import {request} from '@/network/request'
-
+  import {login} from '@/api/user.js'
 
   export default {
     name: "Login",
@@ -63,40 +62,38 @@
       Checkbox
     },
     methods: {
-        loginSubmit(name){
+        loginSubmit(name){ 
           this.$refs[name].validate((valid) => {
             if (valid) {
-              request({
-                method:"post",
-                url:'charityedu/login/submit',
-                data:{
+              login({
                   password:this.loginInfo.password,
                   phoneNum:this.loginInfo.phoneNum,
                   rememberMe:this.rememberMe
-                }
-            }).then(res=>{
+                })
+            .then(res=>{
                 console.log(res);
-                if(res.data.code==200){
+                if(res.data.code===200){  
                   this.$Message.success('登陆成功')
                   this.$store.commit('getLogin',res.data)//将用户信息保存
-                          //跳转到首页
-                  this.$router.replace({path: '/home',})      //路由跳转到首页
+                  //跳转到首页
+                  this.$router.replace({path: '/home'})      //路由跳转到首页
 
-
-                  if(this.rememberPwd==true){       //检查是否勾选记住密码
+                  if(this.rememberPwd===true){       //检查是否勾选记住密码
                     this.setCookie(this.loginInfo.phoneNum,this.loginInfo.password,5)    //传入账号名，密码，和保存天数3个参数
                   }
                   else{
                     this.clearCookie();       //清空Cookie
                   }
                 }
-                else this.$Message.error(res.data.message)
-              }).catch(err=>this.$Message.error('登陆失败'+err))
+                else{
+                  this.$Message.error(res.data.message)
+                }
+              })
             }else{
             this.$Message.error('提交登陆失败,请准确填写信息')
             }
           })
-            },
+        },
       setCookie(phoneNum, password, exdays) {
         const exdate = new Date(); //获取时间
         exdate.setTime(exdate.getTime() + 24 * 60 * 60 * 1000 * exdays); //保存的天数

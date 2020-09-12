@@ -4,7 +4,6 @@
     <filter-menu>
       <span slot="first">上传视频</span>
     </filter-menu>
-
     <div class="upload-box">
     <h2>文件上传</h2>
 <!--      引用iview拖曳上传组件-->
@@ -17,35 +16,34 @@
 <!--        <p>Click or drag files here to upload</p>-->
 <!--      </div>-->
 <!--    </Upload>-->
-      <upload-file></upload-file>
+      <upload-file @updateServerId="updateServerId"></upload-file>
     <div class="inline"></div>
 
     <h2 >基本信息</h2>
 <!--    作品封面设置模块-->
     <div>
       <h3>作品封面设置  <span>  （格式jpeg、png，文件大小≤5MB，建议尺寸≥1146*717，最低尺寸≥960*600）</span></h3>
-      <div class="face-box">
+      <!-- <div class="face-box"> -->
 <!--        shadow类标签鼠标移到封面盒子后展示-->
-        <div class="shadow"></div>
+        <!-- <div class="shadow"></div> -->
         <!--        <span class="cancel_btn" @click="delFun()"></span>-->
-        <input id="face-input" @change="uploadFile" ref="files1" type="file" accept="image/jpeg, image/jpg, image/png">
-        <img id="showIdFaceSrc" :src="works.img" alt="点击上传封面">
-      </div>
-<!--      <upload-image></upload-image>-->
+        <!-- <input id="face-input" @change="uploadFile" ref="files1" type="file" accept="image/jpeg, image/jpg, image/png"> -->
+        <!-- <img id="showIdFaceSrc" :src="works.img" alt="点击上传封面"> -->
+      <!-- </div> -->
+     <upload-image @updateImg="updateImg"></upload-image>
     </div>
 
-
     <h3>类型</h3>
-    <DropdownShow></DropdownShow>
+    <DropdownShow ></DropdownShow>
     <div></div>
 
     <h3>作品标题</h3>
 
-      <Input v-model="works.title" style="width: 250px" min="5" max="20" placeholder="请输入标题"></Input>
+      <Input v-model="workTitle" style="width: 250px" min="5" max="20" placeholder="请输入标题"></Input>
 
     <h3>作品简介</h3>
-    <Input v-model="works.textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..."></Input>
-    <Button class="save">保存并发布</Button>
+    <Input v-model="introduction" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..."></Input>
+    <Button class="save" @click="up()">提交审核</Button>
   </div>
   </div>
 </template>
@@ -55,6 +53,7 @@
   import FilterMenu from "../../../../components/common/FilterMenu/FilterMenu";
   import UploadFile from "../../../../components/common/upload/UploadFile";
   import UploadImage from "../../../../components/common/upload/UploadImage";
+  import {uploadWork} from "@/api/upload"
   export default {
     name: 'UploadWorks',
     components: {
@@ -62,13 +61,11 @@
     },
     data() {
       return {
-        works: {
-          img: 'http://img.zcool.cn/community/0385362581077efa84a0d304ffc21b2.jpg',
-          title:'',
-          summary:'',
-
-        },
-
+          worksImg: {},
+          serverId:'',
+          workTitle:'',
+          introduction:'',
+          knowledgeId:'2',
       }
     },
     methods: {
@@ -83,6 +80,32 @@
           console.log(_this.works.img)
         }
       },
+      updateServerId(value){
+        console.log(value)
+        this.serverId = value
+        console.log(this.serverId)
+      },
+      updateImg(value){
+        // console.log(value);
+        this.worksImg = value
+      },
+      up(){
+         if (this.worksImg != null && this.serverId != '' && this.knowledgeId != '' && this.workTitle != '' && this.introduction != '') {
+           uploadWork({
+            worksImg:this.worksImg,
+            serverId:this.serverId,
+            title:this.workTitle,
+            knowledgeId:this.knowledgeId,
+            introduction:this.introduction
+           }).then(res=>{
+             console.log(res)
+           }).catch(err=>{
+             console.log(err)
+           })
+         }else{
+           this.$Message.error('请将上传信息填写完整')
+         }
+      }
       // delFun() {
       //   if (this.src1) {
       //     this.src1 = "";
@@ -90,6 +113,7 @@
       //   }
       // }
     },
+
 
   }
 </script>

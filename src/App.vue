@@ -12,7 +12,7 @@
 <script>
 
 import TopNav from "./components/common/header/TopNav";
-import 'view-design/dist/styles/iview.css'
+import 'view-design/dist/styles/iview.css';
 
 export default {
   name: 'App',
@@ -22,7 +22,7 @@ export default {
 
   data: () => ({
     //
-  }),
+  })
 };
 </script>
 <style scoped>

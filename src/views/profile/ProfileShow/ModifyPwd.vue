@@ -34,8 +34,7 @@
 
 <script>
   import {Input,Icon,Form,FormItem,Button} from 'view-design'
-  import {request} from "../../../network/request";
-
+  import {repwd} from "@/api/user.js";
   export default {
     name: "ModifyPwd",
     data() {
@@ -76,14 +75,10 @@
         {
           this.$refs[name].validate((valid) => {
             if (valid) {
-              request({
-                url:'/charityedu/modifypwd',
-                method:"post",
-                data:{
+              repwd({
                   newPassword:this.newPassword,
                   oldPassword:this.oldPassword
-                }
-              }).then(res=>{
+                }).then(res=>{
                 console.log(res);
                 if (res.data.code=='200')
                 this.$Message.success(res.data.message)

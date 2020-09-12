@@ -9,9 +9,9 @@
       <span v-if="isLogin" class="profile">
         <img src="@/assets/img/pic.jpg" alt="个人头像">
         <router-link to="/Profile" title="个人信息">{{$store.state.userInfo.userName}}</router-link>
-<!--        已登陆状态才会显示退出登陆和注销两个选项-->
-        <a href="" @click="outLogin">退出登陆</a>
-        <a href="" @click.prevent="logout">注销</a>
+<!--       已登陆状态才会显示退出登陆和注销两个选项-->
+        <a @click="outLogin()">退出登陆</a>
+        <a @click="logout()">注销</a>
       </span>
 <!--      未登陆就显示 未登陆和注册选项-->
       <span v-else class="profile">
@@ -32,6 +32,7 @@
   import {Input} from 'view-design'
   import DropdownShow from "./DropdownShow";
   import {request} from "../../../network/request"
+  import {logout} from "@/api/user"
   import AutoSearch from "./AutoSearch";
 
   export default {
@@ -55,24 +56,25 @@
     },
     methods: {
       outLogin() {
-        localStorage.removeItem('Token')
+        logout().then(res=>{
+          localStorage.removeItem('Token')
         this.$Message.success('账号已退出登陆！');
         this.$router.go(0);
+        }).catch(err=>{
+        this.$Message.error(err.message);
+        })
       },
       logout() {
         let comfile = confirm('注销后该账号将不能使用，请再次确认是否注销？')
         if(comfile){
-          request({
-            method: 'get',
-            url: '/charityedu/logout',
+          logout({
           }).then(res => {
-            console.log(res.data.code);
+            console.log(res.data);
             if(res.data.code==200){
               this.$Message.success('注销成功');
               localStorage.removeItem('Token')
               this.$router.replace('/home')
             }
-
            else this.$Message.error('注销失败')
           }).catch(err=>{
             console.log(err);

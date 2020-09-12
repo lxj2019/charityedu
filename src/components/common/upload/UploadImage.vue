@@ -42,11 +42,9 @@
 
       allowImageCrop=true,
       imageCropAspectRatio='16:10'
-
-
       v-bind:files="myFiles"
-      v-on:init="handleFilePondInit"/>
-
+      v-on:init="handleFilePondInit"
+      v-on:addfile="addfile"/>
   </div>
 </template>
 
@@ -67,13 +65,21 @@
   export default {
     name: "UploadImage",
     data: function() {
-      return { myFiles: [] };
+      return {
+        myFiles:[],
+        worksImg: {}, 
+         };
     },
     methods: {
       handleFilePondInit: function() {
         console.log('FilePond has initialized');
         // example of instance method call on pond reference
         this.$refs.pond.getFiles();
+      },
+      addfile(){
+        // console.log( this.$refs.pond.getFile().file)
+        this.worksImg= this.$refs.pond.getFile().file
+        this.$emit('updateImg', this.worksImg)
       }
     },
     components: {
@@ -83,5 +89,10 @@
 </script>
 
 <style scoped>
-
+ .file-pond{
+    width: 500px;
+    opacity: 1;
+    background-color: #ff8198;
+    box-shadow: 1px 1px 5px 1px rgba(0,0,0,.1);
+  }
 </style>

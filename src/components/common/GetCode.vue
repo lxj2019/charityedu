@@ -11,7 +11,8 @@
 
 <script>
   import {FormItem,Input} from 'view-design'
-  import {request} from "../../network/request";
+  import {getcode} from "@/api/user.js";
+  import {request} from "@/network/request.js"
 
   export default {
     name: "GetCode",
@@ -43,20 +44,16 @@
               this.timer = null;
             }
           }, 1000)
-
-          request({
-            url:'/charityedu/register/getcode',
-            method:"get",
-            params:{
+          getcode({
               phoneNum:this.phoneNum,
-            }
-          }).then(res=>{
+            }).then(res=>{
             console.log(res);
             if (res.data.code==200)
             this.$Message.success(res.data.message);
-            else  this.$Message.error('hhh')
+            else  this.$Message.error(res.data.message)
           }).catch(err=>{
-            this.$Message.error(err.data.message)
+            console.log(err)
+            this.$Message.error("请求失败")
           })
         }
         else this.$Message.error('请填写正确的手机号码')

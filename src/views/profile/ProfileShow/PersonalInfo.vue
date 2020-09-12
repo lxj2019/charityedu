@@ -5,7 +5,7 @@
     </filter-menu>
     <Form  class="form-box" :model="userInfo" :label-width="85" :rules="ruleValidate" inline>
       <FormItem label="姓名：" class="Form-item" prop="userName">
-        <Input v-model="userInfo.userName" ></Input>
+        <Input v-model="userInfo.userName"></Input>
       </FormItem>
       <FormItem label="性别"  class="Form-item" >
         <RadioGroup v-model="userInfo.sex">
@@ -61,7 +61,7 @@
 </template>
 <script>
   import {FormItem,Form,Input,Slider,Select,Checkbox,CheckboxGroup,
-    Row,DatePicker,TimePicker,RadioGroup,Radio,Button,} from 'view-design'
+    Row,DatePicker,TimePicker,RadioGroup,Radio,Button} from 'view-design'
   import FilterMenu from "../../../components/common/FilterMenu/FilterMenu";
   export default {
     name:'PersonalInfo',

@@ -22,7 +22,7 @@
 
       <get-code :phone-num="registerInfo.phoneNum">
         <FormItem  slot="inputCode" prop="code" >
-          <Input  placeholder="请输入验证码"v-model="registerInfo.code"  >
+          <Input  placeholder="请输入验证码" v-model="registerInfo.code"  >
           </Input>
         </FormItem>
       </get-code>
@@ -36,7 +36,7 @@
   </div>
 
 </template>
-
+import { register } from "@/api/user.js"
 <script>
   import {Input,Icon,Form,FormItem,Checkbox,Select,Option,Button} from 'view-design'
   import {request} from "../../network/request";
@@ -87,17 +87,14 @@
         console.log('妈的');
         this.$refs[name].validate((valid) => {
           if (valid) {
-            request({
-              method:"post",
-              url:'charityedu/register/adduser',
-              data:{
+            reegister({
                 code:this.registerInfo.code,
                 userName: this.registerInfo.userName,
                 phoneNum:this.registerInfo.phoneNum,
                 password:this.registerInfo.password,
                 grant:this.registerInfo.grant,
-              }
-            }).then(res=>{
+              })
+              .then(res=>{
               console.log(res.data);
               if(res.data.code==200)
               this.$Message.success(res.data.message)

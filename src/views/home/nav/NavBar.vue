@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-  import { Menu,MenuItem,Submenu,Icon,} from 'view-design'
+  import { Menu,MenuItem,Submenu,Icon} from 'view-design'
 
   export default {
     name: "NavBar",

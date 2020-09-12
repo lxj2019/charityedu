@@ -14,8 +14,10 @@
           <span slot="forth" @click="sort('publishtime')">最近发布</span>
         </filter-menu>
         <div>
-          <public-works class="course-list-works"
-                        :works="item" v-for="item in booksList"></public-works>
+          <public-works 
+          class="course-list-works" 
+          :works="item" 
+          v-for="item in booksList"></public-works>
         </div>
 
       </div>

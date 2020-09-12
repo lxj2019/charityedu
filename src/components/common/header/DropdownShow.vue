@@ -38,11 +38,11 @@
         list:[
           {
             name:'小学',
-            sort:['一年级','二年级','三年级','四年级','五年级','六年级'],
+            sort:['一年级','二年级','三年级','四年级','五年级','六年级']
           },
           {
             name:'初中',
-            sort:['初一','初二','初三'],
+            sort:['初一','初二','初三']
           },
           {
             name:'高中',
@@ -54,7 +54,6 @@
       }
     },
     methods:{
-
       select(name){
         console.log(name);
         this.schoolGrade=name;
