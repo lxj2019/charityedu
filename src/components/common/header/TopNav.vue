@@ -6,13 +6,24 @@
 
       <auto-search class="search"></auto-search>
 <!--      判断是否是登陆状态，已登陆则显示头像和名称，点击名称即可进入个人信息界面-->
-      <span v-if="isLogin" class="profile">
+      <!-- <span v-if="isLogin" class="profile">
         <img src="@/assets/img/pic.jpg" alt="个人头像">
-        <router-link to="/Profile" title="个人信息">{{$store.state.userInfo.userName}}</router-link>
+        <router-link to="/Profile" title="个人信息">{{$store.state.userInfo.userName}}</router-link> -->
 <!--       已登陆状态才会显示退出登陆和注销两个选项-->
-        <a @click="outLogin()">退出登陆</a>
-        <a @click="logout()">注销</a>
-      </span>
+    <Dropdown v-if="isLogin"  class="profile">
+        <a href="javascript:void(0)">
+          <img :src="$store.getters.avatar" alt="头像">
+          <span> {{$store.getters.userName}}</span>
+        </a>
+        <DropdownMenu slot="list">
+            <DropdownItem>
+              <router-link to="/Profile" title="个人信息">
+              个人信息
+              </router-link></DropdownItem>
+            <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
+             <DropdownItem> <a @click="logout()">注销</a></DropdownItem>
+        </DropdownMenu>
+    </Dropdown>
 <!--      未登陆就显示 未登陆和注册选项-->
       <span v-else class="profile">
           <router-link  to="/Login">您还未登陆，请先登陆</router-link>
@@ -29,11 +40,12 @@
 
 
 <script>
-  import {Input} from 'view-design'
+  import {Input,DropdownMenu,DropdownItem,Dropdown} from 'view-design'
   import DropdownShow from "./DropdownShow";
   import {request} from "../../../network/request"
-  import {logout} from "@/api/user"
+  import {logout,getUserInfo} from "@/api/user"
   import AutoSearch from "./AutoSearch";
+
 
   export default {
     name: "TopNav",
@@ -46,38 +58,36 @@
       }
     },
     components: {
-      Input, DropdownShow,AutoSearch
+      Input, DropdownShow,AutoSearch,DropdownMenu,DropdownItem,Dropdown
 
+    },
+    created(){
+         this.$store.dispatch('user/getUserImg')           
     },
     computed: {
       isLogin() {
-        return Boolean(this.$store.state.Token)
+        return Boolean(this.$store.getters.token)
       }
     },
     methods: {
-      outLogin() {
-        logout().then(res=>{
-          localStorage.removeItem('Token')
-        this.$Message.success('账号已退出登陆！');
-        this.$router.go(0);
-        }).catch(err=>{
-        this.$Message.error(err.message);
-        })
-      },
+      // outLogin() {
+      //   logout().then(res=>{
+      //     localStorage.removeItem('Token')
+      //   this.$Message.success('账号已退出登陆！');
+      //   this.$router.go(0);
+      //   }).catch(err=>{
+      //   this.$Message.error(err.message);
+      //   })
+      // },
       logout() {
-        let comfile = confirm('注销后该账号将不能使用，请再次确认是否注销？')
+        let comfile = confirm('注销后该账号后将影响使用，请再次确认是否注销？')
         if(comfile){
-          logout({
-          }).then(res => {
-            console.log(res.data);
-            if(res.data.code==200){
+         this.$store.dispatch('user/logout')
+         .then(res => {
+            // console.log(res.data);
               this.$Message.success('注销成功');
-              localStorage.removeItem('Token')
+              // localStorage.removeItem('Token')
               this.$router.replace('/home')
-            }
-           else this.$Message.error('注销失败')
-          }).catch(err=>{
-            console.log(err);
           })
         }
 
@@ -133,7 +143,6 @@
   .profile a{
     padding: 0px 10px;
     font-size: 12px;
-
   }
   dropdown-show{
   float: left;

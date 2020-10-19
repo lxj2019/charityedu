@@ -47,3 +47,30 @@ export function RepwdGetcode(data) {
         data
     })
 }
+
+export function getInfo() {
+    return request({
+        url: '/userInfo/init',
+        method: 'get',
+    })
+}
+
+export function updateInfo(data) {
+    return request({
+        url: '/userInfo/update',
+        method: 'post',
+        data,
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        // }
+    })
+}
+
+
+export function getUserImg() {
+    return request({
+        url: '/filedeal/getUserImg',
+        method: 'post',
+
+    })
+}

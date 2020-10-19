@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="filepond/filepond.js"></script>
+    <script src="filepond/filepond-plugin-file-validate-type.js"></script>
+    <script src="filepond/filepond-plugin-file-validate-size.js"></script>
+    <script src="filepond/filepond-plugin-image-preview.js"></script>
+    <script src="filepond/filepond-plugin-image-resize.js"></script>
+    <script src="filepond/filepond-plugin-image-crop.js"></script>
+    <script src="filepond/filepond-plugin-image-edit.js"></script>
+    <link href="filepond/filepond.css" rel="stylesheet">
+    <link href="filepond/filepond-plugin-image-preview.css" rel="stylesheet">
+    <link href="filepond/filepond-plugin-image-edit.css" rel="stylesheet">
+
+    <style>
+
+    </style>
+
+</head>
+
+<body>
+    <style>
+        #works {
+            margin: 20px auto;
+            width: 300px;
+            height: 100px;
+        }
+    </style>
+    <input type="file" name="file" id="works">
+    <button onclick="getID(this)">获取文件ID</button>
+    <input type="file" name="fileImg" id="img">
+
+    <input type="text" name="knowledgeId" value="2" id="knowledgeId">
+    <input type="text" name="title" value="二元一次方程" id="title">
+    <input type="text" name="introduction" value="这是我的第一个作品" id="introduction">
+
+    <button onclick="submit(this)">提交</button>
+
+
+    <script>
+        //注册文件后缀检查组件
+        FilePond.registerPlugin(FilePondPluginFileValidateType);
+        //注册文件大小检查组件
+        FilePond.registerPlugin(FilePondPluginFileValidateSize);
+        //注册图片预览插件
+        FilePond.registerPlugin(FilePondPluginImagePreview);
+        //用于调整图片大小
+        FilePond.registerPlugin(FilePondPluginImageResize);
+        //裁剪图片
+        FilePond.registerPlugin(FilePondPluginImageCrop);
+
+        //上传视频
+        const inputElement = document.getElementById("works");
+        const pond = FilePond.create(inputElement);
+        pond.setOptions({
+            name: "file", //上传时候的文件名
+            server: {
+                url: 'http://47.115.10.129:8443/charityedu/upload', //上传链接
+                process: '/works/',
+                revert: '/works/',
+                patch: '/works?patch='
+
+            },
+            instantUpload: false, //设置不要将新文件立即上传到服务器
+            chunkUploads: true, //分块上传
+            chunkSize: 1024 * 1024 * 1, //分块大小
+            chunkForce: true, //对于小于chunkSize的也强制使用分片上传
+            chunkRetryDelays: 1000, //重试上传块的时间
+
+            labelIdle: '拖动作品到此处可上传 或<span class="filepond--label-action"> 浏览文件 </span>',
+            labelInvalidField: '您选择的文件是无效文件',
+            labelFileLoading: '加载中',
+            labelFileLoadError: '加载失败',
+            labelFileProcessing: '上传中',
+            labelFileProcessingComplete: '上传成功',
+            labelFileProcessingAborted: '取消上传',
+            labelFileProcessingError: '上传期间出现错误',
+            labelButtonRemoveItem: '移除',
+            labelButtonAbortItemProcessing: '取消',
+            labelTapToUndo: '撤销',
+
+            //文件后缀限制
+            allowFileTypeValidation: true, //开启限制
+            labelFileTypeNotAllowed: '文件类型无效',
+            fileValidateTypeLabelExpectedTypes: '格式要求: {allButLastType} 和 {lastType}',
+            acceptedFileTypes: ['application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'video/mp4'
+            ],
+            fileValidateTypeLabelExpectedTypesMap: {
+                'application/vnd.ms-powerpoint': 'ppt',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+                'video/mp4': 'mp4 AVC(H264)'
+            }, //由于文件后缀名太长，展示的时候需要做一下映射
+
+            //文件大小限制
+            allowFileSizeValidation: true,
+            maxFileSize: 1000 * 1000 * 800,
+            labelMaxFileSizeExceeded: '文件超出范围',
+            labelMaxFileSize: '限制{filesize}以下',
+
+        });
+
+        const pondImg = FilePond.create(document.getElementById("img"));
+        pondImg.setOptions({
+            name: "fileImg",
+            // 去掉server,
+            // 上传按钮失效
+            // server: {
+            //     url: 'http://47.115.10.129:8443/charityedu/upload/up',
+            // },
+
+            labelIdle: '拖动图片到此处可上传 或<span class="filepond--label-action"> 浏览文件 </span>',
+            labelInvalidField: '您选择的文件是无效文件',
+            labelFileLoading: '加载中',
+            labelFileLoadError: '加载失败',
+            labelFileProcessing: '上传中',
+            labelFileProcessingComplete: '上传成功',
+            labelFileProcessingAborted: '取消上传',
+            labelFileProcessingError: '上传期间出现错误',
+            labelButtonRemoveItem: '移除',
+            labelButtonAbortItemProcessing: '取消',
+            labelTapToUndo: '撤销',
+
+            //文件后缀限制
+            allowFileTypeValidation: true, //开启限制
+            labelFileTypeNotAllowed: '文件类型无效',
+            fileValidateTypeLabelExpectedTypes: '格式要求: {allButLastType} 和 {lastType}',
+            acceptedFileTypes: ['image/png', 'image/jpeg'],
+
+            //文件大小限制
+            allowFileSizeValidation: true,
+            maxFileSize: 1000 * 500,
+            labelMaxFileSizeExceeded: '文件超出范围',
+            labelMaxFileSize: '限制{filesize}以下',
+
+            instantUpload: false,
+
+            //图像预览配置
+            allowImagePreview: true,
+            imagePreviewMinHeight: 50,
+            imagePreviewMaxHeight: 100,
+            imagePreviewTransparencyIndicator: 'grid',
+
+
+            //调整图片大小
+            allowImageResize: true,
+            imageResizeTargetWidth: 600,
+            imageResizeTargetHeight: 400,
+            imageResizeMode: 'contain',
+            imageResizeUpscale: false,
+
+            //图片裁剪
+            allowImageCrop: true,
+            imageCropAspectRatio: '16:10',
+
+
+
+        });
+
+        function submit(e) {
+            //获取图片的FIle对象
+            let fileImg = pondImg.getFile().file; //获取图片的文件类
+            let serverId = pond.getFile().serverId; //获取文件的服务器ID，当文件已经上传时
+
+            let knowledgeId = $("#knowledgeId").val();
+            let title = $("#title").val();
+            let introduction = $("#introduction").val();
+
+
+            console.log(serverId + " " + knowledgeId + " " + title + " " + introduction);
+            console.log(fileImg);
+            let form = new FormData();
+            //当为空的时候不上传
+            if (fileImg != null && serverId != null && knowledgeId != null && title != null && introduction != null) {
+                form.append("worksImg", fileImg);
+                form.append("serverId", serverId);
+                form.append("title", title);
+                form.append("knowledgeId", knowledgeId);
+                form.append("introduction", introduction);
+            } else return;
+
+            $.ajax({
+                //请求方式
+                type: "POST",
+                //请求的媒体类型
+                // contentType: "multipart/form-data",
+                contentType: false, //contentType不要自己设置，会导致浏览器识别不到，文件传输错误
+                //请求地址
+                url: "/charityedu/filedeal/new",
+                async: true,
+                cache: false,
+                //数据，json字符串
+                data: form,
+                processData: false,
+                //请求成功
+                success: function(result) {
+                    console.log(result);
+                },
+                //请求失败，包含具体的错误信息
+                error: function(e) {
+                    console.log(e.status);
+                    console.log(e.responseText);
+                }
+
+            })
+
+        }
+
+        function getID(e) {
+            let file = pondImg.getFile();
+            console.log(file)
+                // console.log(file.origin);
+                // console.log("文件源" + file.origin[0]);
+
+            // console.log(file.ID)
+            // console.log(file.serverId)
+            // console.log(file.fileSize)
+            // console.log(file.filename)
+            // console.log(file.file[1])
+            // console.log(file.file)
+
+            // console.log($("#file2")[0].files[0]);
+        }
+    </script>
+
+
+</body>
+
+</html>

@@ -2,11 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from "./router";
 import store from "./store/index";
+import ViewUI from 'view-design';
+import 'view-design/dist/styles/iview.css';
 
-import { Message } from 'view-design'
-Vue.prototype.$Message = Message
+// import { Message } from 'view-design'
+// Vue.prototype.$Message = Message
 Vue.config.productionTip = false
 
+Vue.use(ViewUI);
 
 new Vue({
     router,

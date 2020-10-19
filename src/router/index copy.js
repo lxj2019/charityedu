@@ -36,10 +36,8 @@ const Video = () =>
     import ('@/views/video/Video')
 const AssessCheck = () =>
     import ('@/views/profile/ProfileShow/admin/AssessCheck')
-const LoopManage = () =>
-    import ('@/views/profile/ProfileShow/admin/LoopManage')
-const avatarUpload = () =>
-    import ('@/views/profile/ProfileShow/avatarUpload')
+const LoopManager = () =>
+    import ('@/views/profile/ProfileShow/admin/LoopManager')
 
 Vue.use(VueRouter)
 
@@ -99,14 +97,6 @@ const routes = [{
                     title: "我的收藏"
                 }
             },
-
-            {
-                path: 'avatarUpload',
-                component: avatarUpload,
-                meta: {
-                    title: "我的头像"
-                }
-            },
             {
                 path: 'achievements',
                 component: Achievements,
@@ -136,8 +126,8 @@ const routes = [{
                 }
             },
             {
-                path: 'loopManage',
-                component: LoopManage,
+                path: 'loopManager',
+                component: LoopManager,
                 meta: {
                     title: "轮播图管理"
                 }

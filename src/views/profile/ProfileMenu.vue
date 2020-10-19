@@ -2,7 +2,7 @@
 <div class="box">
   <div class="menu-bar">
     <ul>
-      <li v-for="(item,index) in menu" >
+      <li v-for="(item,index) in menu" :key="index">
         <router-link :to='"/profile/"+item.path' active-class="active">{{item.icon}}
         {{item.text}}</router-link>
       </li>
@@ -21,6 +21,11 @@
               icon:'',
               text:'个人资料',
               path:'personalInfo'
+            },
+            {
+              icon:'',
+              text: '我的头像',
+              path:'avatarUpload'
             },
             {
               icon:'',
@@ -51,6 +56,11 @@
               icon:'',
               text: '作品审核',
               path:'checkWorks'
+            },
+               {
+              icon:'',
+              text: '轮播图管理',
+              path:'loopManage'
             }
           ]
         }

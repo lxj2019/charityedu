@@ -2,20 +2,40 @@
   <div class="my-comment clear-fix">
     <div class="user-face"><img src="@/assets/img/pic.jpg" alt=""></div>
     <div class="text-area">
-      <Input type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请发表友善的评论..."></Input>
+      <Input type="textarea" v-model="content" :autosize="{minRows: 2,maxRows: 5}" placeholder="请发表友善的评论..."/>
     </div>
     <div class="publish">
-      <Button>发表评论</Button>
+      <Button @click="addMessage">发表评论</Button>
     </div>
   </div>
 </template>
 
 <script>
-  import {Input ,Button} from 'view-design'
+  import {addMessage} from "@/api/video"
   export default {
     name: "MyComment",
+    data(){
+      return{
+        content:''
+      }
+    },
     components:{
-      Input ,Button
+
+    },
+    methods:{
+      addMessage(){
+        if(this.content!=''){
+          addMessage({
+          worksid:1,
+          content:this.content
+        }).then(res=>{
+          this.$Message.success(res.data.message)
+        })
+        }else{
+          this.$Message.error("评论不能为空！")
+        }
+       
+      }
     }
   }
 </script>

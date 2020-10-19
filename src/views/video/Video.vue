@@ -37,7 +37,7 @@
       <my-comment></my-comment>
 
 <!--      他人评论区-->
-     <comment-box  v-for="item in video.commentlist" :comment="item"></comment-box>
+     <comment-box  v-for="(item,index) in video.commentlist" :key="index" :comment="item"></comment-box>
     </div>
   </div>
 <!--  右边推荐区-->
@@ -49,7 +49,8 @@
 </template>
 
 <script>
-  import {Input} from 'view-design'
+ 
+  import {getComents} from '@/api/video'
   import FilterMenu from "../../components/common/FilterMenu/FilterMenu";
   import CommentBox from "./CommentBox";
   import VideoShow from "./VideoShow";
@@ -57,7 +58,7 @@
   export default {
     name: "Video",
     components:{
-      FilterMenu,Input,CommentBox,VideoShow,MyComment
+      FilterMenu,CommentBox,VideoShow,MyComment
     },
     data(){
       return{
@@ -72,6 +73,7 @@
           summary:' 附近的浪费了进了房间的积分的奖励费德勒。\n' +
             '      地方的房价立刻搭街坊了解到了警方了解到大幅降低警方了解到解决的方法的垃圾分类',
           src:'https://dss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/cae-legoup-video-target/a3a51fd0-9b04-4ca8-ba79-a70d7a0e371a.mp4',
+          //  src:'http://http//47.115.10.129:8443//charityedu/play/12312312312/1.mp4',
           commentlist:
             [
             {
@@ -115,7 +117,16 @@
         order:true,
       }
     },
+    
       methods: {
+        getComents(){
+          getComents({
+            worksid:1,
+            pagenum:1
+          }).then(res=>{
+            this.video.commentlist = res.data.data.comments
+          })
+        },
         sort(type,isTime){                     // 排序
           this.order = !this.order;		// 更改为 升序或降序
           this.sortType = type;
@@ -143,6 +154,9 @@
           }
         },
       },
+      created(){
+        this.getComents()
+    },
   }
 </script>
 

@@ -54,6 +54,7 @@
   import UploadFile from "../../../../components/common/upload/UploadFile";
   import UploadImage from "../../../../components/common/upload/UploadImage";
   import {uploadWork} from "@/api/upload"
+import { request } from '../../../../network/request';
   export default {
     name: 'UploadWorks',
     components: {
@@ -61,11 +62,11 @@
     },
     data() {
       return {
-          worksImg: {},
+          worksImg: null,
           serverId:'',
           workTitle:'',
           introduction:'',
-          knowledgeId:'2',
+          knowledgeId:151,
       }
     },
     methods: {
@@ -81,23 +82,29 @@
         }
       },
       updateServerId(value){
-        console.log(value)
         this.serverId = value
         console.log(this.serverId)
       },
       updateImg(value){
         // console.log(value);
         this.worksImg = value
+        console.log(this.worksImg)
       },
       up(){
          if (this.worksImg != null && this.serverId != '' && this.knowledgeId != '' && this.workTitle != '' && this.introduction != '') {
-           uploadWork({
-            worksImg:this.worksImg,
-            serverId:this.serverId,
-            title:this.workTitle,
-            knowledgeId:this.knowledgeId,
-            introduction:this.introduction
-           }).then(res=>{
+             let formData = new FormData();
+              formData.append('worksImg', this.worksImg);
+              formData.append('serverId', this.serverId);
+              formData.append('title', this.workTitle);
+              formData.append('knowledgeId', this.knowledgeId);
+              formData.append('introduction', this.introduction);
+              request({
+                 url: "/filedeal/new",
+                 data: formData,
+                 method:'post'
+              })
+          //  uploadWork(formData)
+           .then(res=>{
              console.log(res)
            }).catch(err=>{
              console.log(err)

@@ -3,7 +3,7 @@
   <h2>欢迎您登陆</h2><br>
   <Form ref="loginInfo" :model="loginInfo" :rules="ruleInline" style="width: 250px">
     <FormItem prop="phoneNum">
-      <Input type="text" v-model="loginInfo.phoneNum" placeholder="请输入手机号">
+      <Input  v-model="loginInfo.phoneNum" placeholder="请输入手机号">
         <Icon type="ios-person-outline" slot="prepend"></Icon>
      </Input>
     </FormItem>
@@ -14,9 +14,9 @@
     </Input>
     </FormItem>
     <FormItem>
-      <Checkbox class="rememberPasswd" v-model="rememberPwd"> 记住密码</Checkbox>
-      <Checkbox class="rememberMe" v-model="rememberMe"> 记住我</Checkbox>
-      <Button   type="button" @click="loginSubmit('loginInfo')" >登陆</Button>
+      <Checkbox class="rememberPasswd" v-model="loginInfo.rememberPwd"> 记住密码</Checkbox>
+      <Checkbox class="rememberMe" v-model="loginInfo.rememberMe"> 记住我</Checkbox>
+      <Button   @click="loginSubmit('loginInfo')" >登陆</Button>
       <p>
         <router-link to="/forgetpasswd">找不到密码？忘记密码？</router-link>
         <router-link to="/register">注册</router-link>
@@ -35,10 +35,10 @@
     name: "Login",
     data(){
       return{
-        rememberPwd:true,      //复选框默认不被勾选
-        rememberMe:false,
         loginInfo: {
-          phoneNum: '',
+          rememberPwd:true,      //复选框默认不被勾选
+          rememberMe:true,
+          phoneNum: '', 
           password: '',
         },
         ruleInline: {
@@ -48,7 +48,7 @@
           ],
           password: [
             { required: true, message: '请填写密码.', trigger: 'blur' },
-            { type: 'string', min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+            { type: "string", min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
           ]
         }
       }
@@ -64,35 +64,26 @@
     methods: {
         loginSubmit(name){ 
           this.$refs[name].validate((valid) => {
-            if (valid) {
-              login({
-                  password:this.loginInfo.password,
-                  phoneNum:this.loginInfo.phoneNum,
-                  rememberMe:this.rememberMe
-                })
-            .then(res=>{
-                console.log(res);
-                if(res.data.code===200){  
-                  this.$Message.success('登陆成功')
-                  this.$store.commit('getLogin',res.data)//将用户信息保存
-                  //跳转到首页
-                  this.$router.replace({path: '/home'})      //路由跳转到首页
-
-                  if(this.rememberPwd===true){       //检查是否勾选记住密码
+             if (valid) {
+            this.loading = true
+            this.$store.dispatch('user/login', this.loginInfo)
+                .then(() => {
+                   this.$router.push({ path: '/home' })
+                  this.$store.dispatch('user/getUserImg')
+                  console.log("fd")
+                  // this.$store.dispatch('user/getAllRole')
+                if(this.rememberPwd===true){       //检查是否勾选记住密码
                     this.setCookie(this.loginInfo.phoneNum,this.loginInfo.password,5)    //传入账号名，密码，和保存天数3个参数
+                  }else{
+                    this.clearCookie()
                   }
-                  else{
-                    this.clearCookie();       //清空Cookie
-                  }
-                }
-                else{
-                  this.$Message.error(res.data.message)
-                }
-              })
-            }else{
-            this.$Message.error('提交登陆失败,请准确填写信息')
-            }
-          })
+  
+                })
+            
+          } else {
+            this.$message.error("请正确填写信息")
+          }
+        })
         },
       setCookie(phoneNum, password, exdays) {
         const exdate = new Date(); //获取时间

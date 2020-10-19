@@ -22,7 +22,7 @@
     },
     methods:{
       enter(){
-        // this.$router.push('/video/'+this.works.src)
+        this.$router.push('/video/'+this.works.src)
       }
     }
   }

@@ -3,7 +3,8 @@
     <div class="wrap">
       <ul class="special">
         <li class="image" v-for="(item,index) in list" :class="{active:index==mark}" >
-          <img :src="item.src" alt="">
+          <img :src="item.imgRealName" :alt="item.imgName">
+          <a :href="item.jumpUrl"/>
         </li>
       </ul>
         <ul class="pointList">
@@ -16,6 +17,7 @@
 </template>
 
 <script>
+import {loopList} from '@/api/loop'
   export default {
     name: "Carousel",
     data(){
@@ -41,6 +43,14 @@
       }
     },
     methods:{
+      loopList(){
+        loopList().then(res=>{
+          console.log(res)
+          if(res.data.code==200){
+            this.list = res.data.data
+          }
+        })
+      },
       nextMark(){
         if(this.mark<this.list.length-1) this.mark++;
         else this.mark=0;
@@ -57,6 +67,7 @@
       },
     },
     created() {
+      this.loopList()
       this.autoplay()
     }
   }

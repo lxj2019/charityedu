@@ -26,12 +26,23 @@
       <FormItem label="身份："  class="Form-item">
         <Input v-model="userInfo.grant"  disabled="disabled"></Input>
       </FormItem><br>
-      <FormItem label="班级："  class="Form-item" v-if="userInfo.grant!='teacher'">
+      <!-- <FormItem label="班级："  class="Form-item" v-if="userInfo.grant!='teacher'">
         <Input v-model="userInfo.schoolClass" ></Input>
-      </FormItem>
+      </FormItem> -->
       <FormItem label="地区："  class="Form-item">
-        <Input v-model="userInfo.region" ></Input>
-      </FormItem><br>
+        <Input v-model="userInfo.region"></Input>
+      </FormItem>
+      <FormItem label="学校："  class="Form-item">
+        <Input v-model="userInfo.schoolName"></Input>
+      </FormItem>
+        <FormItem :label="schoolClass" class="Form-item">
+        <Input v-model="userInfo.schoolGrade"></Input>
+      </FormItem>
+      <FormItem label="班级："  
+      class="Form-item">
+        <Input v-model="userInfo.schoolClass"></Input>
+      </FormItem>
+      <br>
 <!--      <FormItem label="身份："  class="Form-item">-->
 <!--        <Select v-model="userInfo.grant">-->
 <!--          <Option value="beijing">New York</Option>-->
@@ -46,16 +57,17 @@
       </FormItem>
       <br>
 
-      <FormItem label="介绍自己：" class="Form-item">
+      <!-- <FormItem label="介绍自己：" class="Form-item">
         <Input v-model="userInfo.textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
       </FormItem>
-      <br>
+      <br> -->
       <FormItem>
-        <Button type="primary">保存</Button>
+        <Button type="primary" @click="updateInfo">保存</Button>
         <Button style="margin-left: 8px">取消</Button>
       </FormItem>
 
     </Form>
+  
   </div>
 
 </template>
@@ -63,28 +75,26 @@
   import {FormItem,Form,Input,Slider,Select,Checkbox,CheckboxGroup,
     Row,DatePicker,TimePicker,RadioGroup,Radio,Button} from 'view-design'
   import FilterMenu from "../../../components/common/FilterMenu/FilterMenu";
+  import {updateInfo,getInfo} from "@/api/user"
+  import {formatDate} from '@/utils/date'
   export default {
     name:'PersonalInfo',
     components:{
       FilterMenu,
       FormItem,Form,Input,Slider,Select,Checkbox,CheckboxGroup,Row,DatePicker,TimePicker,RadioGroup,Radio,Button
     },
+    created(){
+        this.getUser();
+        // this.upload();
+    },
+    computed:{
+      schoolClass(){
+        return this.userInfo.grant=='teacher' ? '专业：' : '年级：'
+      }
+    },
     data () {
       return {
-        userInfo: {
-          userId:'',
-          userName: "",
-          sex: "",
-          grant: "",
-          schoolClass: "",
-          schoolGrade: "",
-          birthday: "",
-          region: "",
-          phoneNum: "",
-          mail: "",
-          password:'',
-          textarea:''
-        },
+        userInfo:this.$store.getters.userInfo,
         ruleValidate: {
           userName: [
             { required: true, message: '名字不能为空', trigger: 'blur' }
@@ -102,9 +112,41 @@
         }
       }
     },
-    mounted() {
-      this.userInfo=this.$store.state.userInfo
+    methods:{
+      getUser(){
+        getInfo().then(res=>{
+          const data = res.data
+          if(data.code==200){
+            this.userInfo = data.data
+          }
+        })
+      },
+      updateInfo(){
+       let {birthday,mail,region,schoolClass,schoolGrade,schoolName,sex,userId,userName} = this.userInfo
+       birthday = formatDate(birthday,'yyyy-MM-dd')
+       console.log(birthday)
+        updateInfo({
+            birthday,
+            mail,
+            region,
+            schoolClass,
+            schoolGrade,
+            schoolName,
+            sex,
+            userId,
+            userName
+        }).then(res=>{
+          console.log(res)
+          if(res.data.code == '200'){
+            this.$Message.success("修改成功")
+            this.$store.dispatch('user/getInfo')
+          }else(
+            this.$Message.error(res.data.message)
+          )
+        })
+      }
     }
+  
   }
 </script>
 <style>

@@ -13,7 +13,7 @@
 </template>
 <script>
   import {AutoComplete} from 'view-design'
-  import {request} from "../../../network/request";
+  import {search} from "@/api/getData.js";
   export default {
     name:"AutoSearch",
     components:{
@@ -22,30 +22,38 @@
     data () {
       return {
         value: '',
-        searchData: ['数据结构 ', '高数', '一元二次方程', '1', '2', '3', '4', '5', '6','7','8','9']
+        searchData: ['数据结构 ', '高数', '一元二次方程', '1', '2', '3', '4', '5', '6','7','8','9'],
+        dd:[
+          {ee:"dd"},
+          {ee:"ff"},
+          {ee:"hh"},
+          {ee:"hh"}
+        ]
       }
     },
     methods: {
-      filterMethod (value, option) {
+        filterMethod (value, option) {
+        console.log(option)
+        if(value!='')
         return option.toUpperCase().indexOf(value.toUpperCase()) !== -1;
       },
       selectChange(value){
-        console.log(typeof value);
-        request({
-          url:'charityedu/search/',
-          method:'post',
-          params:{
+        const hh = this.dd.map(item => item.ee)
+        console.log(hh)
+        search({
             content:value
-          }
-        })
-          .then(res=>{
-            if(res.data.code==200)
-              this.searchData=res.data.data.list
+        }).then(res=>{
+          if(res.data.code==200)
+              this.searchData=res.data.data.list.map( item =>
+                item.knowledgename
+              )
+            //   console.log("data:")
+            // console.log(this.searchData)
         }).catch(err=>{
           console.log("失败");
           console.log(err);
         })
-        console.log(value);
+        // console.log(value);
       },
 
       enter(id){
