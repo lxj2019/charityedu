@@ -1,4 +1,4 @@
-import { request } from '@/network/request.js'
+import request from '@/utils/request.js'
 
 //登陆
 export function login(data) {

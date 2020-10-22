@@ -10,14 +10,7 @@ const state = {
     basedInfo: {},
     userInfo: {},
     permission: {},
-    // menuList: [
-    //     { label: "无", value: 0 },
-    //     { label: "个人信息", value: 1 },
-    //     { label: "菜单管理", value: 5 },
-    //     { label: "用户管理", value: 3 },
-    //     { label: "角色管理", value: 4 },
-    //     { label: "日志管理", value: 9 },
-    // ],
+
     // roleList:[]
 }
 const mutations = {
@@ -64,15 +57,15 @@ const actions = {
             login({ phoneNum: phoneNum.trim(), password: password, rememberMe: String(rememberMe) }).then(response => {
                 if (response.data.code == '200') {
                     Message.success('登陆成功')
-                    console.log(response)
+                        // console.log(response)
                     const data = response.data.data
                     commit('SET_USERINFO', data)
                         // const token = getToken()
                     const token = 2
                     commit('SET_TOKEN', token)
                     setToken(token)
+                    resolve()
                 }
-                resolve()
             }).catch(error => {
                 reject(error)
             })

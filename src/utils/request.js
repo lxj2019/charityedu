@@ -9,13 +9,11 @@ axios.defaults.withCredentials = true
 
 const service = axios.create({
     // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-    baseURL: "http://47.115.10.129:8443/charityedu",
+    baseURL: 'http://47.115.10.129:8443/charityedu',
+    timeout: 5000,
     // baseURL: "/apis",
     // withCredentials: true, // send cookies when cross-domain requests
-    timeout: 5000, // 请求超时时间,
-
-
-    // withCredentials: true,
+    withCredentials: true,
 })
 
 // request interceptor
@@ -45,7 +43,7 @@ service.interceptors.response.use(
     response => {
         const res = response
             // if the custom code is not 20000, it is judged as an error.
-        if (res.data.code !== undefined && (res.data.code < "200" || res.data.code >= "300")) {
+        if (res.data.code < "200" || res.data.code >= "300") {
             Message.error(
                 res.data.message || 'Error',
             )
@@ -61,9 +59,9 @@ service.interceptors.response.use(
                     })
                 })
             }
-
-            return res
-                // return Promise.reject('error')
+            console.log(res)
+                // return res
+            return Promise.reject('error')
         } else {
             return res
         }

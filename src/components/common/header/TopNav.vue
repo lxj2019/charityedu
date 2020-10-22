@@ -3,13 +3,7 @@
     <div class="w">
     <div class="logo"><h1>惠师惠学</h1></div>
       <router-link to="/home">首页</router-link>
-
-      <auto-search class="search"></auto-search>
-<!--      判断是否是登陆状态，已登陆则显示头像和名称，点击名称即可进入个人信息界面-->
-      <!-- <span v-if="isLogin" class="profile">
-        <img src="@/assets/img/pic.jpg" alt="个人头像">
-        <router-link to="/Profile" title="个人信息">{{$store.state.userInfo.userName}}</router-link> -->
-<!--       已登陆状态才会显示退出登陆和注销两个选项-->
+      <!--       已登陆状态才会显示退出登陆和注销两个选项-->
     <Dropdown v-if="isLogin"  class="profile">
         <a href="javascript:void(0)">
           <img :src="$store.getters.avatar" alt="头像">
@@ -26,12 +20,21 @@
     </Dropdown>
 <!--      未登陆就显示 未登陆和注册选项-->
       <span v-else class="profile">
-          <router-link  to="/Login">您还未登陆，请先登陆</router-link>
-          <router-link  to="/register" >注册</router-link>
+          <Button type="primary"
+          size='small'
+           to="/Login">登陆</Button>
+          <!-- <router-link  to="/register" >注册</router-link> -->
       </span>
       <div class="drop">
         <dropdown-show></dropdown-show>
       </div>
+      <auto-search class="search"></auto-search>
+<!--      判断是否是登陆状态，已登陆则显示头像和名称，点击名称即可进入个人信息界面-->
+      <!-- <span v-if="isLogin" class="profile">
+        <img src="@/assets/img/pic.jpg" alt="个人头像">
+        <router-link to="/Profile" title="个人信息">{{$store.state.userInfo.userName}}</router-link> -->
+
+
     </div>
 
   </div>
@@ -62,10 +65,12 @@
 
     },
     created(){
-         this.$store.dispatch('user/getUserImg')           
+         this.$store.dispatch('user/getUserImg')     
+          console.log(this.$store.getters)      
     },
     computed: {
       isLogin() {
+       
         return Boolean(this.$store.getters.token)
       }
     },
@@ -84,7 +89,7 @@
         if(comfile){
          this.$store.dispatch('user/logout')
          .then(res => {
-            // console.log(res.data);
+            // console.log(res.data);   
               this.$Message.success('注销成功');
               // localStorage.removeItem('Token')
               this.$router.replace('/home')
@@ -107,12 +112,7 @@
     color: #666666 ;
     background-color: #fff;
   }
-  .top-nav a{
-    color: #666666;
-  }
-  .top-nav a:hover{
-    color: blue;
-  }
+
   .logo{
     float: left;
     height: 60px;
@@ -121,18 +121,19 @@
   .logo h1{
     margin: 0;
   }
+    .drop{
+    margin-right: 200px;
+    float: right;
+    z-index: 9;
+  }
    .search{
-    position: absolute;
+    float: right;
+    margin-top: 13px;
+  
     display: inline-block;
-    left: 50%;
-     top:50%;
-     margin-top: -15px;
   }
   .profile{
-    position: absolute;
-
-    top: 0;
-    left:68%
+    float: right;
   }
   .profile img{
     width: 32px;
@@ -141,17 +142,10 @@
     cursor: pointer;
   }
   .profile a{
-    padding: 0px 10px;
+    padding:0 10px;
     font-size: 12px;
   }
-  dropdown-show{
-  float: left;
-  }
-  .drop{
 
-    float: right;
-    z-index: 9;
-  }
 
 
 

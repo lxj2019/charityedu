@@ -106,6 +106,9 @@ import { request } from '../../../../network/request';
           //  uploadWork(formData)
            .then(res=>{
              console.log(res)
+            if(res.data.code == '200'){
+              this.$Message.success(res.data.message)
+            }
            }).catch(err=>{
              console.log(err)
            })

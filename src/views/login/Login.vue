@@ -70,7 +70,6 @@
                 .then(() => {
                    this.$router.push({ path: '/home' })
                   this.$store.dispatch('user/getUserImg')
-                  console.log("fd")
                   // this.$store.dispatch('user/getAllRole')
                 if(this.rememberPwd===true){       //检查是否勾选记住密码
                     this.setCookie(this.loginInfo.phoneNum,this.loginInfo.password,5)    //传入账号名，密码，和保存天数3个参数
