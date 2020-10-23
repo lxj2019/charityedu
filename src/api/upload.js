@@ -1,13 +1,13 @@
 import request from '@/utils/request.js'
 
 //登陆
-export function uploadWork(formData) {
+export function uploadWork(data) {
     return request({
         url: '/filedeal/new',
         method: 'post',
-        data: formData,
-        // headers: {
-        //     'Content-Type': 'multipart/form-data'
-        // }
+        data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     })
 }

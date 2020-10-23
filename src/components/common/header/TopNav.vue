@@ -15,7 +15,6 @@
               个人信息
               </router-link></DropdownItem>
             <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
-             <DropdownItem> <a @click="logout()">注销</a></DropdownItem>
         </DropdownMenu>
     </Dropdown>
 <!--      未登陆就显示 未登陆和注册选项-->
@@ -85,11 +84,12 @@
       //   })
       // },
       logout() {
-        let comfile = confirm('注销后该账号后将影响使用，请再次确认是否注销？')
+        let comfile = confirm('退出登陆后将影响使用，请再次确认是否退出？')
         if(comfile){
          this.$store.dispatch('user/logout')
          .then(res => {
-            // console.log(res.data);   
+            console.log(res.data); 
+            if(res.data.code=200)  
               this.$Message.success('注销成功');
               // localStorage.removeItem('Token')
               this.$router.replace('/home')

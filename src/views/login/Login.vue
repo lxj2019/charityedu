@@ -1,47 +1,74 @@
 <template>
-<div class="box">
-  <h2>欢迎您登陆</h2><br>
-  <Form ref="loginInfo" :model="loginInfo" :rules="ruleInline" style="width: 250px">
-    <FormItem prop="phoneNum">
-      <Input  v-model="loginInfo.phoneNum" placeholder="请输入手机号">
-        <Icon type="ios-person-outline" slot="prepend"></Icon>
-     </Input>
-    </FormItem>
-    <FormItem prop="password">
-<!--      <Input v-model="loginInfo.password" type="password" password placeholder="请输入密码...">-->
-      <Input  password type="password" v-model="loginInfo.password" placeholder="请输入密码">
-       <!-- <Icon type="ios-lock-outline" slot="prepend"></Icon> -->
-    </Input>
-    </FormItem>
-    <FormItem>
-      <Checkbox class="rememberPasswd" v-model="loginInfo.rememberPwd"> 记住密码</Checkbox>
-      <Checkbox class="rememberMe" v-model="loginInfo.rememberMe"> 记住我</Checkbox>
-      <Button   @click="loginSubmit('loginInfo')" >登陆</Button>
-      <p>
-        <router-link to="/forgetpasswd">找不到密码？忘记密码？</router-link>
-        <router-link to="/register">注册</router-link>
-      </p>
-    </FormItem>
-  </Form>
-  <!--        <Input search enter-button="Search" placeholder="Enter something..." />-->
-</div>
+  <div>
+    <Card class="login-form-layout">
+      <Form autoComplete="on"
+               :model="loginForm"
+               :rules="loginRules"
+               ref="loginForm"
+               label-position="left">
+        <div style="text-align: center">
+         <Icon type="md-book" class="title-icon" />
+        </div>
+        <h2 class="login-title">惠师惠学</h2>
+        <FormItem prop="phoneNum">
+          <span class="svg-container">
+          <i class="el-icon-lock" />
+        </span>
+          <Input name="phoneNum"
+                    type="text"
+                    v-model="loginForm.phoneNum"
+                    autocomplete="on"
+                    placeholder="请输入用户名">   
+            <Icon slot="prefix" class="icon" type="ios-person" />
+          </Input>
+        </FormItem>
+        <FormItem prop="password">
+          <Input name="password"
+                    @keyup.enter.native="handleLogin"
+                    v-model="loginForm.password"
+                    autocomplete="on"
+                    password
+                    type="password"
+                    placeholder="请输入密码">
+            <Icon slot="prefix" class="icon" type="ios-lock" />
+            <!-- <Icon slot="suffix" type="ios-eye-off" class="color-main"  @click="showPwd"></Icon> -->
+          </Input>
+        </FormItem>
+    
+        <div class="btn-box">
+           <Checkbox class="btn" v-model="loginForm.rememberMe"> 记住用户名</Checkbox>
+           <router-link style="float:right" to="/forgetpasswd"> 忘记密码?</router-link>
+        </div>
+        <FormItem style="margin-bottom: 60px;text-align: center">
+          <Button style="width: 100%;" type="primary"  :loading="loading" @click.native.prevent="handleLogin">
+            登录
+          </Button>
+        </FormItem>
+     
+      </Form>
+      
+    </Card>
+    
+    <img :src="login_center_bg" class="login-center-layout">
+ 
+  </div>
 </template>
 
 <script>
-  import {Input,Icon,Form,FormItem,Checkbox} from 'view-design'
-  import {login} from '@/api/user.js'
+  import {isvalidphoneNum} from '@/utils/validate';
+  import {setCookie,getCookie} from '@/utils/auth';
+  import login_center_bg from '@/assets/img/login_center_bg.png'
 
   export default {
-    name: "Login",
-    data(){
-      return{
-        loginInfo: {
-          rememberPwd:true,      //复选框默认不被勾选
-          rememberMe:true,
-          phoneNum: '', 
+    name: 'login',
+    data() {
+      return {
+        loginForm: {
+          phoneNum: '',
           password: '',
+          rememberMe:false
         },
-        ruleInline: {
+        loginRules: {
           phoneNum: [
             { required: true, message: '请填写手机号', trigger: 'blur' },
             { pattern: /^1[3456789]\d{9}$/, message:'请输入正确的手机号',trigger: 'blur' }
@@ -50,107 +77,106 @@
             { required: true, message: '请填写密码.', trigger: 'blur' },
             { type: "string", min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
           ]
-        }
+        },
+        loading: false,
+        login_center_bg,
       }
-
     },
-    components: {
-      Input,
-      Icon,
-      Form,
-      FormItem,
-      Checkbox
+    created(){
+        this.loginForm.phoneNum = getCookie("phoneNum");
+        this.loginForm.password = getCookie("password");
     },
     methods: {
-        loginSubmit(name){ 
-          this.$refs[name].validate((valid) => {
-             if (valid) {
-            this.loading = true
-            this.$store.dispatch('user/login', this.loginInfo)
-                .then(() => {
-                   this.$router.push({ path: '/home' })
-                  this.$store.dispatch('user/getUserImg')
-                  // this.$store.dispatch('user/getAllRole')
-                if(this.rememberPwd===true){       //检查是否勾选记住密码
-                    this.setCookie(this.loginInfo.phoneNum,this.loginInfo.password,5)    //传入账号名，密码，和保存天数3个参数
+
+      handleLogin() {
+        this.$refs.loginForm.validate(valid => {
+          if (valid) {
+            this.loading = true;
+            this.$store.dispatch('user/login', this.loginForm).then((res) => {
+              this.loading = false;
+                  this.$router.push({path: '/'})
+                  if(this.loginForm.rememberMe==true){
+                  setCookie("phoneNum",this.loginForm.phoneNum,15);
+                   setCookie("password",this.loginForm.password,15);
                   }else{
-                    this.clearCookie()
-                  }
-  
-                })
-            
+                  setCookie("phoneNum",'',15);
+                   setCookie("password",'',15);
+              }
+            }).catch(() => {
+              this.$Message.error("账号或密码错误")
+              this.loading = false
+            })
           } else {
-            this.$message.error("请正确填写信息")
+            console.log('参数验证不合法！');
+            return false
           }
         })
-        },
-      setCookie(phoneNum, password, exdays) {
-        const exdate = new Date(); //获取时间
-        exdate.setTime(exdate.getTime() + 24 * 60 * 60 * 1000 * exdays); //保存的天数
-        //字符串拼接cookie
-        window.document.cookie = "phoneNum" + "=" + phoneNum + ";path=/;expires=" + exdate.toGMTString();
-        window.document.cookie = "userPwd" + "=" + password + ";path=/;expires=" + exdate.toGMTString();
       },
-      getCookie: function() {
-        if (document.cookie.length > 0) {
-          let arr = document.cookie.split('; '); //这里显示的格式需要切割一下自己可输出看下
-          for (let i = 0; i < arr.length; i++) {
-            let arr2 = arr[i].split('='); //再次切割
-            //判断查找相对应的值
-            if (arr2[0] == 'phoneNum') {
-              this.loginInfo.phoneNum = arr2[1]; //保存到保存数据的地方
-            } else if (arr2[0] == 'userPwd') {
-              this.loginInfo.password = arr2[1];
-            }
-          }
-        }
-      },
-      //清除cookie
-      clearCookie: function() {
-        this.setCookie("", "", -1); //修改2值都为空，天数为负1天就好了
-      }
-    },
-    mounted() {
-      this.getCookie();
     }
   }
 </script>
 
 <style scoped>
-  .box{
-    margin: 20px auto;
-    width: 350px;
-    height: 350px;
-    background-color: rgba(255,255,255,.3);
-    border: 1px solid rgba(0,0,0,.2);
-    padding: 50px;
+  .login-form-layout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 360px;
+    margin: 140px auto;
+    border-top: 10px solid #409EFF;
+  }
+  .title-icon{
+    font-size: 50px;
+    color:#409EFF
+  }
+
+  .login-title {
     text-align: center;
+    color:#409EFF
   }
 
-  .rememberPasswd,
-  .rememberMe{
-    font-size: 11px;
+  .login-center-layout {
+    background: #409EFF;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin-top: 200px;
   }
-  .rememberMe{
-    float: right;
-  }
-  .rememberPasswd{
-    float: left;
-  }
-  .box button{
-    width: 250px;
-    height: 25px;
-    vertical-align: bottom;
-    background-color: #00C758;
-    border:none;
-    color: #fff;
+        span:first-of-type {
+          margin-right: 16px;
+        }
+    
+    .svg-container {
+      padding: 6px 5px 6px 15px;
+      /* color: $dark_gray; */
+      font-size: 20px;
+      vertical-align: middle;
+      width: 20px;
+      display: inline-block;
+      
+    }
+    .icon{
+      /* margin-left: 10px; */
+      color:#409EFF
+    }
+    .btn-box{
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    .btn{
+      font-size: 12px;
+    }
+    .box{
+      display: flex;
 
-  }
-  .box a{
-    margin-left: 10px;
-    font-size: 11px;
-  }
-
-
+    }
+    .box Input{
+      width: 75%;
+      display: inline-block
+    }
+   .box button{
+      display: inline-block
+    }
 
 </style>

@@ -9,7 +9,7 @@
             <strong>{{ row.name }}</strong>
         </template>
         <template slot-scope="{ row, index }" slot="action">
-            <Button type="primary" size="small" style="margin-right: 5px" @click="show(index)">预览</Button>
+            <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">预览</Button>
             <Button type="error" size="small" @click="remove(row,index)">删除</Button>
         </template>
     </Table>
@@ -17,7 +17,8 @@
      @click="upload">
       提交修改
     </Button>
-        <Modal
+    <!-- 上传轮播图 -->
+    <Modal
         v-model="imagecropperShow"
         title="请选择轮播图图片和跳转地址"
         @on-ok="uploadLoop"
@@ -25,6 +26,14 @@
         <upload-image @updateImg="updateImg" ></upload-image>
         跳转地址：
         <Input type="text" v-model="jumpUrl" />
+    </Modal>
+    <!-- 预览轮播图 -->
+    <Modal
+        class="previewBox"
+        v-model="previewVisable"
+        title="预览"
+        @on-cancel="cancel">
+    <img class="img" :src="previewImg.url"  :alt="previewImg.alt"/>
     </Modal>
 </div>
 
@@ -43,6 +52,7 @@ export default {
                 jumpUrl:'',
                 imagecropperShow: false,
                 imagecropperKey: 0,
+                previewVisable:false,
                 columns12: [
                        {
                         title: '图片id',
@@ -69,7 +79,11 @@ export default {
                     },
                 ],
                 imgList: [],
-                loopSelection:[]
+                loopSelection:[],
+                previewImg:{
+                    url:'',
+                    alt:''
+                }
             }
         },
         mounted () {
@@ -90,11 +104,11 @@ export default {
             }
                  });
             },
-            show (index) {
-                this.$Modal.info({
-                    title: 'User Info',
-                    content: `<img src="${this.imgList[index].imgRealName}"  alt="${this.imgList[index].imgName}"/>`
-                })
+            show (row) {
+                console.log(row)
+                this.previewImg.url = row.imgRealName
+                this.previewImg.alt = row.imgName
+                this.previewVisable = true
             },
 
             //删除轮播图
@@ -109,10 +123,11 @@ export default {
                           loopDelete({
                             id:row.id
                             }).then(res=>{
-                              if(res.data.code==200){
+                              if(res.data.code=="200"){
                             this.$Message.success(res.data.message)
+                             this.getLoopList()
                       }
-                        this.getLoopList()
+                       
                      })  
                      }
                     },
@@ -149,6 +164,7 @@ export default {
                     }).then(res=>{
                        if(res.data.code==200){
                            this.$Message.success(res.data.message)
+                             this.getLoopList()
                        }
                     })
                 }
@@ -163,6 +179,8 @@ export default {
                  ).then(res=>{
                      if(res.data.code==200){
                         this.$Message.success(res.data.message)
+                        this.getLoopList()
+                      
                      }else{
                          this.$Message.error(res.data.message)
                      }
@@ -185,6 +203,12 @@ export default {
 }
 .table{
     margin:10px 0;
+}
+.previewBox{
+    text-align: center;
+}
+.img{
+    width: 450px;
 }
 
 </style>

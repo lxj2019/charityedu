@@ -39,10 +39,10 @@
 
     <h3>作品标题</h3>
 
-      <Input v-model="workTitle" style="width: 250px" min="5" max="20" placeholder="请输入标题"></Input>
+      <Input v-model="workTitle" style="width: 250px" min="5" max="20" placeholder="请输入标题"/>
 
     <h3>作品简介</h3>
-    <Input v-model="introduction" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..."></Input>
+    <Input v-model="introduction" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..."/>
     <Button class="save" @click="up()">提交审核</Button>
   </div>
   </div>
@@ -66,7 +66,7 @@ import { request } from '../../../../network/request';
           serverId:'',
           workTitle:'',
           introduction:'',
-          knowledgeId:151,
+          knowledgeId:111,
       }
     },
     methods: {
@@ -98,12 +98,12 @@ import { request } from '../../../../network/request';
               formData.append('title', this.workTitle);
               formData.append('knowledgeId', this.knowledgeId);
               formData.append('introduction', this.introduction);
-              request({
-                 url: "/filedeal/new",
-                 data: formData,
-                 method:'post'
-              })
-          //  uploadWork(formData)
+              // request({
+              //    url: "/filedeal/new",
+              //    data: formData,
+              //    method:'post'
+              // })
+              uploadWork(formData)
            .then(res=>{
              console.log(res)
             if(res.data.code == '200'){
@@ -113,7 +113,11 @@ import { request } from '../../../../network/request';
              console.log(err)
            })
          }else{
-           this.$Message.error('请将上传信息填写完整')
+            if(this.serverId == '' ) this.$Message.error('请上传作品！')
+          if(this.worksImg == null ) this.$Message.error('请上传作品图片！')
+          if(this.workTitle == '' ) this.$Message.error('请输入作品标题')
+          if(this.knowledgeId == null ) this.$Message.error('请选择知识点！')
+          //  this.$Message.error('请将上传信息填写完整')
          }
       }
       // delFun() {

@@ -155,12 +155,14 @@ const actions = {
     // // user logout
     logout({ commit }) {
         return new Promise((resolve, reject) => {
-            logout().then(() => {
-                commit('SET_TOKEN', '')
-                sessionStorage.removeItem("store"); //移除sessionStorage
-                commit('SET_USERINFO', '')
-                removeToken()
-                resolve()
+            logout().then((res) => {
+                if (res.data.code == "200") {
+                    Message.success(res.data.message)
+                    commit('SET_TOKEN', '')
+                    sessionStorage.removeItem("store"); //移除sessionStorage
+                    commit('SET_USERINFO', '')
+                    removeToken()
+                }
             }).catch(error => {
                 reject(error)
             })
