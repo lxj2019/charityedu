@@ -25,30 +25,33 @@ import ProfileShow from "./ProfileShow/ProfileShow";
 
 <style scoped>
   .profileBox{
-    position: relative;
-    margin:50px auto;
-    padding: 0;
-    border-bottom: none;
-    /*box-shadow:0px 0px 2px 1px rgba(0,0,0,.1);*/
+    overflow: hidden;
     width: 1020px;
+    height: 100%;
+    border: 1px solid #e1e2e5;
+    box-shadow: 0 2px 4px rgba(0,0,0,.14);
+    margin:50px auto;
+    background: #fafafa;
+    border-radius: 4px;
   }
 .profile-left{
   float: left;
+  width: 150px;
   width: 15%;
-  height: 500px;
-  display: inline-block;
-  margin-right: 5px;
+  height: 100%;
+  /* display: inline-block; */
+  /* margin-right: 5px; */
   /*display: inline-block;*/
-  box-shadow:0px 0px 2px 1px rgba(0,0,0,.1);
+  /* box-shadow:0px 0px 2px 1px rgba(0,0,0,.1); */
 }
   .profile-right{
     float: left;
-    display: inline-block;
-    position: absolute;
-    padding: 10px;
-    box-shadow:0px 0px 2px 1px rgba(0,0,0,.1);
+    /* padding: 10px; */
+    /* width: 829px; */
+    border-left: 1px solid #ddd;
     width: 85%;
-    margin-bottom: 100px;
+    background-color: #fff;
+
   }
   /*.show{*/
   /*width: 100%;*/

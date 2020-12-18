@@ -56,17 +56,19 @@ const actions = {
         return new Promise((resolve, reject) => {
             login({ phoneNum: phoneNum.trim(), password: password, rememberMe: String(rememberMe) }).then(response => {
                 if (response.data.code == '200') {
-                    Message.success('登陆成功')
-                        // console.log(response)
+                    // Message.success('登陆成功')
+                    console.log(response)
                     const data = response.data.data
                     commit('SET_USERINFO', data)
                         // const token = getToken()
                     const token = 2
                     commit('SET_TOKEN', token)
                     setToken(token)
+                    console.log('jfdljfljdlfj')
                     resolve()
                 }
             }).catch(error => {
+                console.log("jfldjl")
                 reject(error)
             })
         })
@@ -89,6 +91,7 @@ const actions = {
     getUserImg({ commit }) {
         return new Promise((resolve) => {
             getUserImg().then(response => {
+                console.log(response)
                 const data = response.data
                 commit('SET_AVATAR', data)
                 resolve(data)
@@ -164,6 +167,12 @@ const actions = {
                     removeToken()
                 }
             }).catch(error => {
+                console.log("fjdljf")
+                commit('SET_TOKEN', '')
+                sessionStorage.removeItem("store"); //移除sessionStorage
+                commit('SET_USERINFO', '')
+                removeToken()
+                this.$router.replace('/login')
                 reject(error)
             })
         })

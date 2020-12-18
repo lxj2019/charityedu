@@ -1,91 +1,136 @@
 <template>
-  <div class="box">
-    <h2>欢迎注册</h2>
-    <Form ref="registerInfo" :model="registerInfo" :rules="registerRule" style="width: 250px">
-      <Select class='grant' v-model="registerInfo.grant" style="width: auto">
-        <Option class="grant-list" v-for="item in grantList" :value="item.value" :key="item.value">{{item.label}}</Option>
-      </Select>
-      <FormItem prop="phoneNum">
-        <Input  v-model="registerInfo.phoneNum" placeholder="请输入手机号">
-          <Icon type="ios-person-outline" slot="prepend"></Icon>
-        </Input>
-      </FormItem>
-      <FormItem prop="userName">
-        <Input type="text" v-model="registerInfo.userName" placeholder="请输入用户名">
-          <Icon type="ios-person-outline" slot="prepend"></Icon>
-        </Input>
-      </FormItem>
-      <FormItem prop="password">
-        <Input  password type="password" v-model="registerInfo.password" placeholder="请输入密码">
-        </Input>
-      </FormItem>
-
-      <get-code :phone-num="registerInfo.phoneNum">
-        <FormItem  slot="inputCode" prop="code" >
-          <Input  placeholder="请输入验证码" v-model="registerInfo.code"  >
+  <div>
+    <Card class="login-form-layout">
+      <Form autoComplete="on"
+               :model="registerForm"
+               :rules="registerRules"
+               ref="registerForm"
+               label-position="left">
+        <div style="text-align: center">
+         <Icon type="md-book" class="title-icon" />
+        </div>
+        <h2 class="login-title">注册</h2>
+        <FormItem prop="phoneNum">
+          <!-- <span class="svg-container">
+          <i class="el-icon-lock" />
+        </span> -->
+          <Input name="phoneNum"
+                    type="text"
+                    v-model="registerForm.phoneNum"
+                    autocomplete="on"
+                    placeholder="请输入手机号">   
+            <Icon slot="prefix" class="icon" type="ios-person" />
           </Input>
         </FormItem>
-      </get-code>
-      <Checkbox class="protocol" v-model="single"> 请阅读<a>《使用协议》</a>并同意</Checkbox>
-        <button prop="single" class="registerBtn" :disabled="!single" type="submit"
-                @click.prevent="registerSubmit('registerInfo')" >注册</button>
-        <p>
-          <router-link to="/login">已经账号？请登录？</router-link>
-        </p>
-    </Form>
+        <FormItem prop="userName">
+          <Input name="userName"
+                    type="text"
+                    v-model="registerForm.userName"
+                    autocomplete="on"
+                    placeholder="请输入用户名">  
+            <!-- <Icon slot="prefix" class="icon" type="ios-person" /> -->
+            <Select v-model="registerForm.grant" slot="prepend" style="width: 80px">
+            <Option value="学生">学生</Option>
+            <Option value="教师">教师</Option>
+            <Option value="管理员">管理员</Option>
+        </Select>
+          </Input>
+        </FormItem>
+        <FormItem prop="password">
+          <Input name="password"
+                    @keyup.enter.native="registerSubmit"
+                    v-model="registerForm.password"
+                    autocomplete="on"
+                    password
+                    type="password"
+                    placeholder="请输入密码">
+            <Icon slot="prefix" class="icon" type="ios-lock" />
+            <!-- <Icon slot="suffix" type="ios-eye-off" class="color-main"  @click="showPwd"></Icon> -->
+          </Input>
+        </FormItem>
+         <FormItem class="mybox" prop="code">
+          <Input 
+          placeholder="请输入验证码"
+          v-model="registerForm.code"
+          style="width:60%;background-color:transparent;border:0;" class="dd">
+        </Input>
+        <Button type="primary" 
+        style="border:none;margin-left:10px"
+         v-show="show" 
+         @click="send('registerForm')"
+         >发送验证码</Button>
+        <Button  type="primary" v-show="!show" disabled 
+        style="border:none;margin-left:10px">重新发送{{count}}s</Button>
+        </FormItem>
+    
+        <div class="btn-box">
+           <Checkbox class="btn" v-model="registerForm.rememberMe"> 记住用户名</Checkbox>
+           <router-link style="float:right" to="/forgetpasswd"> 忘记密码?</router-link>
+        </div>
+        <FormItem style="margin-bottom: 60px;text-align: center">
+          <Button style="width: 100%;" type="primary"  :loading="loading" @click.native.prevent="registerSubmit">
+            注册
+          </Button>
+        </FormItem>
+     
+      </Form>
+      
+    </Card>
+    
+    <img :src="login_center_bg" class="login-center-layout">
+ 
   </div>
-
 </template>
-import { register } from "@/api/user.js"
+
 <script>
-  import {Input,Icon,Form,FormItem,Checkbox,Select,Option,Button} from 'view-design'
-  import {request} from "../../network/request";
-  import GetCode from "../../components/common/GetCode";
+  import {isvalidphoneNum} from '@/utils/validate';
+  import {setCookie,getCookie} from '@/utils/auth';
+  import login_center_bg from '@/assets/img/login_center_bg.png'
+  import {getcode,register} from '@/api/user'
   export default {
-    name: "Register",
-    data(){
-      return{
-        single:false,
-        grantList:[
-          {value:'student',label:'学生'},
-          {value:'teacher',label: '教师'},
-          {value:'administrator',label: '管理员'}
-        ],
-        registerInfo: {
-          userName:'',
+    name: 'Register',
+    data() {
+      return {
+        registerForm: {
           phoneNum: '',
           password: '',
+          userName:'',
           code:'',
-          grant:'student',
-
+          grant:'学生',
+          
         },
-        registerRule: {
+        count: '',
+        show: true,
+        timer: null,
+        registerRules: {
           phoneNum: [
             { required: true, message: '请填写手机号', trigger: 'blur' },
             { pattern: /^1[3456789]\d{9}$/, message:'请输入正确的手机号',trigger: 'blur' }
           ],
-          userName:{
-            required: true, message: '请填写用户名.', trigger: 'blur'
-          },
           password: [
             { required: true, message: '请填写密码.', trigger: 'blur' },
-            { type: 'string', min: 6, message: '密码长度不能少于6位', trigger: 'blur' },
-            // { validator: validatePassCheck, trigger: 'blur' }
+            { type: "string", min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+          ],
+          userName: [
+            { required: true, message: '请填写用户名.', trigger: 'blur' },
+            { max:15, min: 2, message: '长度在 1 到 15 个字符', trigger: 'blur' }
           ],
           code:[
-            { required:true,message:'请填写验证码',trigger:'blur'},
+            { required: true, message: '请填写验证码.', trigger: 'blur' },
           ]
-
-        }
+          
+        },
+        loading: false,
+        login_center_bg,
       }
     },
-    components: {
-      Input, Icon, Form, FormItem, Checkbox, Button, GetCode,Select,Option
+    created(){
+        this.registerForm.phoneNum = getCookie("phoneNum");
+        this.registerForm.password = getCookie("password");
     },
     methods: {
-      registerSubmit(name){
-        console.log('妈的');
-        this.$refs[name].validate((valid) => {
+      registerSubmit(){
+           this.$refs.registerForm.validate(valid => {
           if (valid) {
             reegister({
                 code:this.registerInfo.code,
@@ -107,43 +152,99 @@ import { register } from "@/api/user.js"
           }
         })
       },
-
+      send(name) {
+          this.$refs[name].validateField("phoneNum", (errMsg) => {
+            if (errMsg) {
+              this.$message.error("请输入正确的手机号")
+            }else{
+              this.show = false;
+              const TIME_COUNT = 10;
+              this.count = TIME_COUNT;
+              this.timer = setInterval(() => {
+                if (this.count > 0 && this.count <= TIME_COUNT) {
+                  this.count--;
+                } else {
+                  this.show = true
+                  clearInterval(this.timer);
+                  this.timer = null;
+                }
+              }, 1000)
+              getcode({
+                phoneNum : this.registerForm.phoneNum 
+              }).then(res => {
+                if(res.data.code=='200'){
+                  this.$message.success(res.data.message)
+                }
+              })
+            }
+          })
+        },
     }
   }
 </script>
 
 <style scoped>
-  .box{
-    margin: 30px auto;
-    width: 360px;
-    /*height: 400px;*/
-    background-color: rgba(255,255,255,.3);
-    border: 1px solid rgba(0,0,0,.2);
-    padding: 50px;
-    text-align: center;
+  .login-form-layout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 400px;
+    margin: 140px auto;
+    padding: 0 20px;
+    border-top: 10px solid #409EFF;
+  }
+  .title-icon{
+    font-size: 50px;
+    color:#409EFF
   }
 
-  .protocol{
-    font-size: 11px;
+  .login-title {
+    text-align: center;
+    color:#409EFF
   }
-  .grant{
-    position: relative;
-    left: 50%;
+
+  .login-center-layout {
+    background: #409EFF;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin-top: 200px;
   }
-  .grant-list{
-    padding-left: 0px;
-  }
-  .box button{
-    width: 250px;
-    vertical-align: bottom;
-    background-color: #00C758 !important;
-    border:none;
-    color: #fff;
-    height: 30px;
-  }
-  .box a{
-    margin-left: 10px;
-    font-size: 11px;
-  }
+        span:first-of-type {
+          margin-right: 16px;
+        }
+    
+    .svg-container {
+      padding: 6px 5px 6px 15px;
+      /* color: $dark_gray; */
+      font-size: 20px;
+      vertical-align: middle;
+      width: 20px;
+      display: inline-block;
+      
+    }
+    .icon{
+      /* margin-left: 10px; */
+      color:#409EFF
+    }
+    .btn-box{
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    .btn{
+      font-size: 12px;
+    }
+    .box{
+      display: flex;
+
+    }
+    .box Input{
+      width: 75%;
+      display: inline-block
+    }
+   .box button{
+      display: inline-block
+    }
 
 </style>

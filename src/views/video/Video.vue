@@ -1,28 +1,41 @@
 <template>
 <div class="box">
 <!--  左边视频与评论区-->
-  <div class="video-left">
+  <div class="work-left">
 <!--    视频信息区-->
-    <div class="video-info">
-      <h1>{{video.title}}</h1>
-      <div><span>{{video.type}}</span><span>{{video.publicTime}}</span></div>
-      <div><span>{{video.applaudnum}}播放</span><span>未经作者授权，禁止转载</span></div>
+    <div class="work-info">
+      <h1 class="work-title">{{work.worksTitle}}</h1>
+      <!-- <div><span>{{work.type}}</span><span>{{work.publicTime}}</span></div> -->
+      <p><span>{{worksCount.worksClickNum}}播放</span><span>未经作者授权，禁止转载</span></p>
     </div>
 <!--    视频-->
-    <video-show :src="video.src"></video-show>
 
+    <video-show 
+    v-if="work.type=='video'"
+    :worksLink="work.worksLink" 
+    class="work-show"></video-show>
+    <iframe
+    v-if="work.type=='ppt'"
+    src='https://view.officeapps.live.com/op/view.aspxsrc=http://47.112.148.42:8443/charityedu/image/ppt/dacfce78bf7f3e3ab8a6989374c911f4/5.jpg'
+     width='100%' height='100%' frameborder='1'>
+    </iframe>
 <!--    点赞收藏-->
     <div class="praise-box">
-    <div class="praise">
-      <div><span class="icon"></span>{{video.applaudnum}}</div>
-      <div><span class="icon"></span>{{video.applaudnum}}</div>
-      <div><span class="icon"></span>{{video.applaudnum}}</div>
-    </div>
-      <div class="line"></div>
+      <span class="icon-box">
+        <Icon class="icon" 
+      :class="{active:work.like}" 
+      @click="addLike"
+        type="md-thumbs-up" />
+        <span>{{worksCount.applaudNum}}</span></span>
+      <span class="icon-box"><Icon class="icon" 
+      :class="{active:work.collect}"
+      @click="collect"
+      type="md-heart" />{{worksCount.applaudNum}}</span>
+      <span class="icon-box"><Icon class="icon" type="md-star" />{{worksCount.applaudNum}}</span>
     </div>
 <!--    视频简介-->
     <div class="summary">
-      {{video.summary}}
+      {{work.worksIntroduction}}
     </div>
     <div class="line"></div>
 
@@ -34,10 +47,10 @@
         <span slot="second"  @click="sort('applaudnum',false)">按热度排序</span>
       </filter-menu>
 <!--      我的评论-->
-      <my-comment></my-comment>
+      <my-comment :workId='worksId' @getComments="getComments"></my-comment>
 
 <!--      他人评论区-->
-     <comment-box  v-for="(item,index) in video.commentlist" :key="index" :comment="item"></comment-box>
+     <comment-box  v-for="(item,index) in commentlist" :key="index" :comment="item"></comment-box>
     </div>
   </div>
 <!--  右边推荐区-->
@@ -50,7 +63,7 @@
 
 <script>
  
-  import {getComents} from '@/api/video'
+  import {getComments,addLike,addClick,collect,getWorkInfo,getUnreviewedWorkInfo} from '@/api/video'
   import FilterMenu from "../../components/common/FilterMenu/FilterMenu";
   import CommentBox from "./CommentBox";
   import VideoShow from "./VideoShow";
@@ -62,75 +75,87 @@
     },
     data(){
       return{
-        video:{
-          type:'数学',
-          title:'二元一次方程知识点讲解',
-          publicTime:'2020-1-1 20:12:03',
-          applaudnum:1000,
-          worksClickNum:150,
-          collectionsNum:5,
-          commentnum:20,
-          summary:' 附近的浪费了进了房间的积分的奖励费德勒。\n' +
-            '      地方的房价立刻搭街坊了解到了警方了解到大幅降低警方了解到解决的方法的垃圾分类',
-          src:'https://dss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/cae-legoup-video-target/a3a51fd0-9b04-4ca8-ba79-a70d7a0e371a.mp4',
-          //  src:'http://http//47.115.10.129:8443//charityedu/play/12312312312/1.mp4',
-          commentlist:
-            [
-            {
-              userName:'张三',
-              img:'@/assets/img/pic.jpg',
-              applaudnum:120,
-              content:'老师讲的很好',
-              time:'2020-09-05 23:21'
-            },
-            {
-              userName:'张三',
-              img:'@/assets/img/pic.jpg',
-              applaudnum:7,
-              content:'就这？',
-              time:'2020-11-05 23:21'
-            },
-            {
-              userName:'张三',
-              img:'@/assets/img/pic.jpg',
-              applaudnum:15700,
-              content:'谢谢老师',
-              time:'2020-08-05 23:21'
-            },
-            {
-              userName:'张三',
-              img:'@/assets/img/pic.jpg',
-              applaudnum:1001,
-              content:'讲得很好，点赞了',
-              time:'2020-02-05 23:21'
-            },
-            {
-              userName:'张三',
-              img:'@/assets/img/pic.jpg',
-              applaudnum:1080,
-              content:'老师辛苦了',
-              time:'2020-02-04 23:21'
-            },
-
-          ]
-        },
+        work:{},
+        commentlist:[],
+        worksId:0,
+        worksCount:{},
         order:true,
       }
     },
-    
+    created(){   
+     },
+     mounted(){
+      //  this.addClick()
+      
+     },
+     beforeRouteEnter(to, from, next) {
+      next(vm => {
+      // console.log(vm);//当前组件的实例
+      vm.worksId = Number(to.params.id)
+      vm.getWorkInfo()
+      vm.getComments()
+      vm.addClick()
+      });
+      },
       methods: {
-        getComents(){
-          getComents({
-            worksid:1,
+        getWorkInfo(){
+          getUnreviewedWorkInfo({
+            worksid:this.worksId
+          }).then(res=>{
+            console.log(res)
+            if(res.data.code==200){
+              this.work = res.data.data
+              this.worksCount = res.data.data.worksCount
+            }
+          })
+        },
+        //点赞
+        addLike(){
+          // console.log(this.work.worksId)
+          let data = {
+            "worksId":this.work.worksId
+          }
+          addLike(data).then(res=>{
+            this.getWorkInfo()
+            this.$Message.success(res.data.message)
+          })
+        },
+        //收藏作品
+        collect(){
+          collect({
+            worksId:this.work.worksId
+            }).then(res=>{
+              if(res.data.code == 200){
+                this.getWorkInfo()
+                this.$Message.success(res.data.message)
+              }
+              
+            })
+        },
+        //增加播放量
+        addClick(){
+          setTimeout(()=>{
+            addClick({
+              "worksId":this.work.worksId
+            }).then(res=>{
+              console.log(res)
+            })
+          },10000)
+        },
+
+        getComments(){
+          getComments({
+            worksid :this.worksId,
             pagenum:1
           }).then(res=>{
-            this.video.commentlist = res.data.data.comments
+            // console.log(res)
+            this.commentlist = res.data.data.comments
           })
         },
         sort(type,isTime){                     // 排序
           this.order = !this.order;		// 更改为 升序或降序
           this.sortType = type;
-          this.video.commentlist.sort(this.compare(type,isTime));
+          this.work.commentlist.sort(this.compare(type,isTime));
           // 调用下面 compare 方法 并传值
         },
         compare(attr,isTime){                  // 排序方法
@@ -154,35 +179,36 @@
           }
         },
       },
-      created(){
-        this.getComents()
-    },
+     
   }
 </script>
 
 <style scoped>
   .box{
-    width: 900px;
+    width: 1000px;
     margin:20px auto;
   }
-.video-left{
+.work-left{
   position: relative;
   float: left;
   width: 70%;
   height: 800px;
   /*background-color: pink;*/
 }
-.video-info span{
-  font-size: 11px;
+.work-info span{
+  font-size: 12px;
   color: #999999;
   line-height: 1.15;
   margin: 11px 11px 11px 0;
 }
-.video-left h1{
+.work-left .work-title{
   font-size: 18px;
   font-weight: 500;
   color: #212121;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+}
+.work-show{
+  margin-top: 15px;
 }
 
 .video-right{
@@ -193,21 +219,33 @@
  }
 .praise-box{
   height: 60px;
-  padding: 12px 0;
-  /*font-family: icomoon;*/
-  font-size: 14px;
+  line-height: 60px;
+  border-bottom: 1px solid rgba(0,0,0,.1);;
 }
-  .praise-box div{
-    display: inline-block;
-    margin-right: 50px;;
-  }
-.praise span{
-  font-family: icomoon;
-  font-size: 18px;
+
+.icon-box {
+  display: flex;
+  /* align-items: center; */
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 8px;
+  width: 100px;
+  font-size: 14px;
+  color:#505050;
+  /* height: 30px; */
+}
+.icon {
+  font-size: 30px;
+  margin-right: 5px;
+  cursor: pointer;
 }
 .icon:hover{
-  color: red;
+  color: #00A1d6;
+  
 }
+  .active{
+    color: #00A1d6;
+  }
   .line{
     padding:10px 0 0;
     border-bottom: 1px solid rgba(0,0,0,.1);

@@ -19,7 +19,7 @@
 
 <script>
   import NavBar from "./nav/NavBar";
-  import Carousel from "../../components/common/Carousel";
+  import Carousel from "../../components/common/CarouselShow";
   import Login from "../login/Login";
   import Recommend from "./Recommend";
   export default {
@@ -73,7 +73,7 @@
   .menuRight{
     float: left;
     width: 700px;
-    height: 350px;
+    height: 400px;
     margin-left: 10px;
   }
 

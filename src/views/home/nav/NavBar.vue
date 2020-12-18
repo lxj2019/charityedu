@@ -1,12 +1,13 @@
 <template>
   <div class="box">
-    <Menu :theme="theme2" class="navbar"  accordion style="width: 160px;">
-      <Submenu class="submenu" v-for="sort in list" :name="sort.title" >
+    <Menu :theme="theme2" class="navbar"  accordion style="width: 250px;">
+      <Submenu class="submenu" v-for="(sort,index) in list" :name="sort.title" :key="index" >
         <template slot="title">
           <Icon type="ios-paper" />
           {{sort.title}}
         </template>
-        <MenuItem class="menu-item" :name="item" v-for="item in sort.list" @click.native="push(item)">{{item}}</MenuItem>
+        <MenuItem class="menu-item" :name="item" v-for="(item,index) in sort.list" :key="index" 
+        @click.native="push(item)">{{item}}</MenuItem>
       </Submenu>
     </Menu>
     <br>

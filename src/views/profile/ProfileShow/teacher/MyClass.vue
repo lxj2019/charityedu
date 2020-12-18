@@ -10,7 +10,7 @@
     </filter-menu>
 <!--    引入“教师作品“卡片组件，并根据作品数遍历-->
     <div class="collect" >
-      <teacher-works class="collection-works" :works="item" v-for="item in listShow"></teacher-works>
+      <teacher-works class="collection-works" :works="item" v-for="(item,index) in listShow" :key="index"></teacher-works>
     </div>
   </div>
 </template>

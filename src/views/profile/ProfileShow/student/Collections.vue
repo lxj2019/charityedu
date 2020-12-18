@@ -7,40 +7,28 @@
       <span slot="third" @click="sort('integral')">最多播放</span>
     </FilterMenu>
       <div class="collect">
-      <stu-collection class="collection-works" :works="item" v-for="item in list"></stu-collection>
-<!--        <works-item class="works" v-for="item in list" :work="item" placement="top">-->
-<!--          <Dropdown placement='top' slot="tag" class="more">-->
-<!--            <DropdownItem>-->
-<!--              <span></span>-->
-<!--            </DropdownItem>-->
-<!--            <DropdownMenu slot="list">-->
-<!--              <DropdownItem @click.native="removeColl(item.worksId)">移除收藏</DropdownItem>-->
-<!--              <DropdownItem>详细信息</DropdownItem>-->
-<!--              <DropdownItem>{{item.worksId}}</DropdownItem>-->
-<!--            </DropdownMenu>-->
-<!--          </Dropdown>-->
-<!--          <span class="time" slot="time">收藏于{{item.collecttime}}</span>-->
-<!--        </works-item>-->
+      <stu-collection class="collection-works" 
+      :works="item" v-for="(item,index) in workList" 
+      :key="index" ></stu-collection>
+
       </div>
     </div>
 
 </template>
 
 <script>
-  import WorksItem from "../../../../components/common/works/WorksItem";
-  import {DropdownItem} from 'view-design'
-  import {request} from "../../../../network/request";
+  import {getCollection} from '@/api/getData'
   import StuCollection from "../../../../components/common/works/StuCollection";
-  import FilterMenu from "../../../../components/common/FilterMenu/FilterMenu";
+  import FilterMenu from "@/components/common/FilterMenu/FilterMenu";
   export default {
     name:'Collections',
     components:{
       FilterMenu,
-      WorksItem,DropdownItem,StuCollection,FilterMenu
+      StuCollection,FilterMenu
     },
     data: function(){
       return {
-         list: [{
+         workList: [{
            worksId:101,
           worktitle: '一元二次方程',
           teachername: '汪涵',
@@ -118,6 +106,15 @@
       }
     },
     methods: {
+
+      getCollection(){
+        getCollection().then(res=>{
+          if(res.data.code == 200){
+            // this.workTotals  = res.data.data.total
+            this.workList = res.data.data.managerWorks
+          }
+        })
+      },
       sort(type){                     // 排序
         this.order = !this.order;		// 更改为 升序或降序
         this.sortType = type;

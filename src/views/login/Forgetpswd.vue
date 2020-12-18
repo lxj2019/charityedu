@@ -69,7 +69,7 @@
     },
     methods: {
       pwdSubmit(name){
-
+      this.$refs.pwdInfo.validate(valid => {
           if (valid) {
             request({
               method:"post",

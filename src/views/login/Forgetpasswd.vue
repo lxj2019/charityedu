@@ -1,19 +1,19 @@
 <template>
   <div>
-    <Card class="login-form-layout">
+    <Card class="form">
       <Form autoComplete="on"
-               :model="loginForm"
-               :rules="loginRules"
-               ref="loginForm"
+               :model="resetPwdForm"
+               :rules="formRules"
+               ref="resetPwdForm"
                label-position="left">
         <div style="text-align: center">
-         <Icon type="md-book" class="title-icon" />
+         <Icon   type="ios-key" class="title-icon" />
         </div>
-        <h2 class="login-title">惠师惠学</h2>
+        <h2 class="form-title">重置密码</h2>
         <FormItem prop="phoneNum">
           <Input name="phoneNum"
                     type="text"
-                    v-model="loginForm.phoneNum"
+                    v-model="resetPwdForm.phoneNum"
                     autocomplete="on"
                     placeholder="请输入手机号">
           
@@ -23,8 +23,8 @@
         </FormItem>
         <FormItem prop="password">
           <Input name="password"
-                    @keyup.enter.native="handleLogin"
-                    v-model="loginForm.password"
+                    @keyup.enter.native="handleReset"
+                    v-model="resetPwdForm.password"
                     autocomplete="on"
                     password
                     type="password"
@@ -33,18 +33,22 @@
             <!-- <Icon slot="suffix" type="ios-eye-off" class="color-main"  @click="showPwd"></Icon> -->
           </Input>
         </FormItem>
-        <FormItem class="mybox">
-          <Input style="width:60%;background-color:transparent;border:0;" class="dd">
+        <FormItem class="mybox" prop="code">
+          <Input 
+          placeholder="请输入验证码"
+          v-model="resetPwdForm.code"
+          style="width:60%;background-color:transparent;border:0;" class="dd">
         </Input>
-        <Button class="codeBtn" type="primary" 
+        <Button type="primary" 
         style="border:none;margin-left:10px"
          v-show="show" 
-         @click="send('resetForm')"
+         @click="send('resetPwdForm')"
          >发送验证码</Button>
-        <span class="codeBtn" type="primary" v-show="!show" disabled style="border:none">重新发送{{count}}s</span>
+        <Button  type="primary" v-show="!show" disabled 
+        style="border:none;margin-left:10px">重新发送{{count}}s</Button>
         </FormItem>
         <FormItem style="margin-bottom: 60px;text-align: center">
-          <Button style="width: 100%;" type="primary"  :loading="loading" @click.native.prevent="handleLogin">
+          <Button style="width: 100%;" type="primary"  :loading="loading" @click.native.prevent="handleReset">
             重置密码
           </Button>
         </FormItem>
@@ -55,23 +59,22 @@
 </template>
 
 <script>
-  import {isvalidphoneNum} from '@/utils/validate';
-  import {setCookie,getCookie} from '@/utils/auth';
+  import {RepwdGetcode,resetPwd} from '@/api/user';
   import login_center_bg from '@/assets/img/login_center_bg.png'
 
   export default {
     name: 'login',
     data() {
       return {
-        loginForm: {
+        resetPwdForm: {
           phoneNum: '',
           password: '',
-          rememberMe:false
+          code:''
         },
         count: '',
         show: true,
         timer: null,
-        loginRules: {
+        formRules: {
           phoneNum: [
             { required: true, message: '请填写手机号', trigger: 'blur' },
             { pattern: /^1[3456789]\d{9}$/, message:'请输入正确的手机号',trigger: 'blur' }
@@ -79,6 +82,9 @@
           password: [
             { required: true, message: '请填写新密码.', trigger: 'blur' },
             { type: "string", min: 6, message: '新密码长度不能少于6位', trigger: 'blur' }
+          ],
+          code:[
+            { required: true, message: '请填写验证码.', trigger: 'blur' },
           ]
         },
         loading: false,
@@ -89,27 +95,31 @@
     },
     methods: {
 
-      handleLogin() {
-        this.$refs.loginForm.validate(valid => {
+      handleReset() {
+        this.$refs.resetPwdForm.validate(valid => {
           if (valid) {
             this.loading = true;
-            this.$store.dispatch('user/login', this.loginForm).then((res) => {
+            resetPwd(this.resetPwdForm).then((res) => {
+              console.log(res)
               this.loading = false;
-                  this.$router.push({path: '/'})
-            }).catch(() => {
-              this.$Message.error("账号或新密码错误")
-              this.loading = false
+              if(res.data.code=="200"){
+                  this.$Message.success(res.data.message)
+                  this.$router.replace('/login')
+              }else{
+                this.$Message.error(res.data.message)
+              }
             })
           } else {
-            console.log('参数验证不合法！');
+            console.log('请填写必要信息!');
             return false
           }
         })
       },
         send(name) {
-          this.$refs[name].validateField("email", (errMsg) => {
+          
+          this.$refs[name].validateField("phoneNum", (errMsg) => {
             if (errMsg) {
-              this.$message.error("请输入正确格式的邮箱")
+              this.$message.error("请输入正确的手机号")
             }else{
               this.show = false;
               const TIME_COUNT = 10;
@@ -123,11 +133,11 @@
                   this.timer = null;
                 }
               }, 1000)
-              sendCode({
-                email: this.resetForm.email
+              RepwdGetcode({
+                phoneNum : this.resetPwdForm.phoneNum 
               }).then(res => {
                 if(res.data.code=='200'){
-                  this.$message.success(res.data.message)
+                  this.$Message.success(res.data.message)
                 }
               })
             }
@@ -138,7 +148,7 @@
 </script>
 
 <style scoped>
-  .login-form-layout {
+  .form {
     position: absolute;
     left: 0;
     right: 0;
@@ -151,7 +161,7 @@
     color:#409EFF
   }
 
-  .login-title {
+  .form-title {
     text-align: center;
     color:#409EFF
   }
@@ -188,7 +198,5 @@
     .btn{
       font-size: 12px;
     }
-    .codeBtn{
-      border:none
-    }
+
 </style>

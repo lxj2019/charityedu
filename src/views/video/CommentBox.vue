@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="comment-box clear-fix">
-      <div class="user-face"><img src="@/assets/img/pic.jpg" alt=""></div>
+      <div class="user-face"><img :src="comment.commentatorImg" alt="用户头像"></div>
       <div class="comment-info">
         <a class="user">{{comment.commentatorName}}</a>
         <p class="text">{{comment.context}}</p>
@@ -28,13 +28,13 @@ import {formatDate} from '@/utils/date'
 
 <style scoped>
   .comment-box{
-
-    vertical-align: middle;
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid rgba(0,0,0,.1);
     box-sizing: content-box;
   }
   .user-face{
-   width: 10%;
+    width: 60px;
     display: inline-block;
 
   }
@@ -44,9 +44,9 @@ import {formatDate} from '@/utils/date'
   }
   .comment-info{
     position: relative;
-    width: 80%;
+    flex:1;
     margin-left: 20px;
-   padding: 22px 0 14px;
+     padding: 22px 0 14px;
     display: inline-block;
   }
   .user{

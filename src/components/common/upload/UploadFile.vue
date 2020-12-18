@@ -34,7 +34,7 @@
     chunkForce=true
     chunkRetryDelays=1000
 
-    :server="{url:'http://47.115.10.129:8443/charityedu/upload',process:'/works/',revert:'/works/',patch:'/works?patch='}"
+    :server="{url:'http://47.112.148.42:8443/charityedu/upload',process:'/works/',revert:'/works/',patch:'/works?patch='}"
 
     v-bind:files="myFiles"
     v-on:init="handleFilePondInit"

@@ -32,7 +32,15 @@ export function getcode(params) {
     })
 }
 //修改密码
-export function repwd(data) {
+export function modifyPwd(data) {
+    return request({
+        url: '/modifypwd',
+        method: 'post',
+        data
+    })
+}
+//重置密码
+export function resetPwd(data) {
     return request({
         url: '/repwd/modify',
         method: 'post',
@@ -40,11 +48,11 @@ export function repwd(data) {
     })
 }
 //修改获取验证码
-export function RepwdGetcode(data) {
+export function RepwdGetcode(params) {
     return request({
         url: '/repwd/getCode',
-        method: 'post',
-        data
+        method: 'get',
+        params
     })
 }
 

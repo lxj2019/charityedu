@@ -1,6 +1,9 @@
 <template>
   <div @click="enter()">
-    <works-item class="works"  placement="top" :works="works">
+    <works-item class="works"
+    :workWidth="'145px'"
+          :workHeight="'180px'"
+     placement="top" :works="works">
       <!--      /*左下角底部:作者名称和头像*/-->
       <div class="author" slot="bottom-left">
         <img class="avatar" :src="works.img" alt="用户头像" ><span>{{works.teachername}}</span>
@@ -27,8 +30,13 @@
     },
     methods:{
       enter(){
-        this.$router.push('/assessCheck/'+this.works.src)
+        this.$router.push({
+          name:'video',
+          params: {
+          work:this.works.src
       }
+    })
+    }
     }
   }
 </script>
@@ -38,7 +46,6 @@
   .author .avatar{
     width: 25px;
     height: 25px;
-    border-radius: 12px;
     vertical-align: middle;
   }
   .author span {

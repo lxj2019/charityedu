@@ -4,13 +4,24 @@
      @click="imagecropperShow=true">
       上传轮播图
     </Button>
-    <Table border :columns="columns12" :data="imgList" @on-selection-change='select' class="table">
+    <Table  :columns="columns12" 
+    :data="imgList"
+    size='small'
+    border
+    width="800"
+    :loading="loading" 
+    show-context-menu
+    @on-selection-change='select' class="table">
         <template slot-scope="{ row }" slot="id">
             <strong>{{ row.name }}</strong>
         </template>
         <template slot-scope="{ row, index }" slot="action">
             <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">预览</Button>
             <Button type="error" size="small" @click="remove(row,index)">删除</Button>
+        </template>
+        <template slot="contextMenu">
+            <DropdownItem @click.native="show(row)">编辑</DropdownItem>
+            <DropdownItem @click.native="remove(row,index)" style="color: #ed4014">删除</DropdownItem>
         </template>
     </Table>
      <Button type="success" icon="upload" 
@@ -53,29 +64,37 @@ export default {
                 imagecropperShow: false,
                 imagecropperKey: 0,
                 previewVisable:false,
+                loading:false,
                 columns12: [
                        {
                         title: '图片id',
-                        key: 'id'
+                        key: 'id',
+                        width:'100px'
                     },
                     {
                         title: '图片标题',
-                        key: 'imgName'
+                        key: 'imgName',
+                        align: 'center',
+                        // width:'200px'
                     },
                     {
                         title: '跳转路径',
-                        key: 'jumpUrl'
+                        key: 'jumpUrl',
+                        align: 'center',
+                        // minWidth:'200'
                     },
                      {
                         title: '操作',
                         slot: 'action',
                         width: 150,
-                        align: 'center'
+                        align: 'center',
+                        minWidth:'200px'
                     },
                       {
                         type: 'selection',
                         width: 60,
-                        align: 'center'
+                        align: 'center',
+                        // minWidth:'100px'
                     },
                 ],
                 imgList: [],
@@ -139,9 +158,11 @@ export default {
      
             },
             getLoopList(){
+                this.loading = true
                 loopManager().then(res=>{
                     this.imgList = res.data.data
                     this.selectImg()
+                    this.loading = false
                 })
             },
             select(section,row){

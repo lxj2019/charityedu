@@ -63,6 +63,7 @@ const routes = [{
     },
     {
         path: '/video/:id',
+        name: 'video',
         component: Video,
         meta: {
             title: "视频播放"

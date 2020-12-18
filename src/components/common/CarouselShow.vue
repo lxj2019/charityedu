@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div class="wrap">
+    <!-- <div class="wrap">
       <ul class="special">
         <li class="image" v-for="(item,index) in list" :class="{active:index==mark}" >
           <img :src="item.imgRealName" :alt="item.imgName">
@@ -12,42 +12,64 @@
       </ul>
     </div>
     <a class="prev" @click="prevMark()"></a>
-    <a class="next" @click="nextMark()"></a>
+    <a class="next" @click="nextMark()"></a> -->
+
+     <Carousel  autoplay v-model="value"
+     class="carousel"
+     :title="list ||list[value].imgName"
+     :autoplay-speed="setting.autoplaySpeed"
+     :dots="setting.dots"
+     :trigger="setting.trigger"
+     :arrow="setting.arrow"
+     :radius-dot="setting.radiusDot"
+     loop :height="380"
+     @on-click="jumpUrl">
+        <CarouselItem v-for="img in list" :key="img.imgName">
+              <img class="image" :src="img.imgRealName" :alt="img.imgName">
+        </CarouselItem>
+        <!-- <CarouselItem>
+            <div class="demo-carousel">2</div>
+        </CarouselItem>
+        <CarouselItem>
+            <div class="demo-carousel">3</div>
+        </CarouselItem>
+        <CarouselItem>
+            <div class="demo-carousel">4</div>
+        </CarouselItem> -->
+    </Carousel>
   </div>
 </template>
 
 <script>
 import {loopList} from '@/api/loop'
   export default {
-    name: "Carousel",
+    name: "CarouselShow",
     data(){
       return{
         mark:0,
-        list:[
-          {
-            src: 'https://edu-image.nosdn.127.net/52b9100bd0274850884a8a4ecaa287f2.jpg?imageView&quality=100&thumbnail=776y360'
-          },
-          {
-            src:'https://edu-image.nosdn.127.net/a17f2cffbdcb4f04b7b57f6cf046ffb2.png?imageView&quality=100'
-          },
-          {
-            src:'http://edu-image.nosdn.127.net/dcf383020c4a4bad9ed0b8d06d16eac2.png?imageView&quality=100&thumbnail=776y360'
-          },
-          {
-            src:'https://edu-image.nosdn.127.net/d5e4a32296ce4ef9aa1debd1e16c967a.png?imageView&quality=100&thumbnail=776y360'
-          },
-          {
-            src:'https://edu-image.nosdn.127.net/57ab100433d945a99a9948ee38284594.png?imageView&quality=100'
-          }
-      ]
+        value: 0,
+        list:[],
+        setting: {
+            autoplay: false,          //自动播放
+            autoplaySpeed: 3000,      //播放速度
+            dots: 'inside',       //指示器位置
+            radiusDot: false,    //原型指示器
+            trigger: 'click',   //指示器触发方式，hover
+            arrow: 'hover' //切换箭头，hover,never,always
+        },
       }
     },
     methods:{
+      jumpUrl(val){
+        window.location.assign(this.list[val].jumpUrl)
+        // window.push(this.list[val].jumpUrl)
+      },
       loopList(){
         loopList().then(res=>{
-          console.log(res)
+          // console.log(res)
           if(res.data.code==200){
             this.list = res.data.data
+            // console.log(this.list)
           }
         })
       },
@@ -68,7 +90,7 @@ import {loopList} from '@/api/loop'
     },
     created() {
       this.loopList()
-      this.autoplay()
+      // this.autoplay()
     }
   }
 
@@ -83,16 +105,19 @@ import {loopList} from '@/api/loop'
     height: 100%;
     margin: 10px auto;
   }
+  .carousel{
+    cursor: pointer;
+  }
   ul{
     list-style: none;
     padding: 0px;
   }
   .image{
-    position: absolute;
+    /* position: absolute; */
     width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: 5s;
+    height:100%;
+    /* text-align: center; */
+    /* transition: 5s; */
   }
   ul li img{
     width: 100%;
@@ -156,6 +181,7 @@ import {loopList} from '@/api/loop'
     margin: 3px;
     cursor: pointer;
   }
+
   .point.active{
     background-color: #ff5000;
   }

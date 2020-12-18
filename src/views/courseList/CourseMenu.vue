@@ -1,18 +1,19 @@
 <template>
   <div class="box">
-    <Menu :theme="theme2" class="navbar"  accordion style="width: 180px">
-      <Submenu class="submenu" v-for="(sort,xIndex) in list" :name="xIndex" >
-        <template slot="title">
-          <Icon type="ios-paper" />
-          {{sort.listname}}
-        </template>
-        <MenuItem class="menu-item"
-                  :name="xIndex-yIndex"
-                  v-for="(item,yIndex) in sort.list"
-                  @click.native="itemClick([xIndex,yIndex])">
-          {{item.listname}}</MenuItem>
-      </Submenu>
-    </Menu>
+    <el-menu default-active="home" 
+						 class="el-menu-vertical-demo"
+						 style="min-height: 100%; width: 100%"
+						 background-color="#fff" 
+						 text-color="#555"
+             
+						 active-text-color="#fff"
+              router>
+		<el-menu-item  index="home">
+				<i class="el-icon-menu"></i>
+				<span>一元二次方程</span></el-menu-item>
+      
+			<menu-tree :data="menuList"></menu-tree>
+		</el-menu>
     <br>
     <!--    <p>Change theme</p>-->
     <!--   <div>-->
@@ -21,26 +22,47 @@
     <!--       <Radio label="dark"></Radio>-->
     <!--     </RadioGroup>-->
     <!--   </div>-->
-  </div>
+  </div>  
 </template>
 <script>
-  import { Menu,MenuItem,Radio,RadioGroup,Submenu,Icon,Row,MenuGroup} from 'view-design'
+  import MenuTree from './MenuTree'
 
   export default {
     name: "CourseMenu",
     components: {
-      Menu,
-      MenuItem,
-      Radio,
-      RadioGroup,
-      Submenu,
-      MenuGroup,
-      Row,
-      Icon
+        MenuTree
     },
     props:["list"],
     data() {
       return {
+        menuList:[
+          {
+          menuId:1,
+          menuName:"一元二次方程",
+          sonMenuList:[{
+            menuId:3,
+           menuName:"概述",
+           sonMenuList:[]
+          },{
+            menuId:4,
+           menuName:"习题",
+           sonMenuList:[]
+          }]
+        },
+        {
+          menuId:2,
+          menuName:"一元二次方程",
+          sonMenuList:[{
+          menuId:5,
+          menuName:"概述",
+          sonMenuList:[]
+          },{
+          menuId:6,
+          menuName:"习题",
+          sonMenuList:[]
+          }]
+        }
+        ],
         theme2: 'light',
         subjectlist:["一年级上册数学","一年级下册数学","一年级上册语文"],
         loopimg:[
@@ -68,21 +90,31 @@
 </script>
 
 <style scoped>
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    /* width: 200px; */
+    min-height: 400px;
+	}
+	.el-menu-vertical-demo{
+	  transition:	width  .05s;
+	}
+  .el-menu-item.is-active{
+    background-color: #409EFF !important;
+  }
   /*导航菜单宽度*/
   .navbar{
-    width: 140px;
-    text-align: center;
-    padding-left:0px;
-    font-size: 12px;
+    /* width: 140px; */
+    /* text-align: center; */
+    /* padding-left:0px; */
+    /* font-size: 12px; */
   }
   /*子菜单宽度*/
   .submenu{
-    width:180px ;
-    padding: 0px !important ;
+    /* width:180px ; */
+    /* padding: 0px !important ; */
   }
   .menu-item{
-    font-size: 12px;
-    padding: 10px 0!important ;
+    /* font-size: 12px; */
+    /* padding: 10px 0!important ; */
   }
 
 </style>

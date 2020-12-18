@@ -34,7 +34,7 @@
 
 <script>
   import {Input,Icon,Form,FormItem,Button} from 'view-design'
-  import {repwd} from "@/api/user.js";
+  import {modifyPwd} from "@/api/user.js";
   export default {
     name: "ModifyPwd",
     data() {
@@ -75,9 +75,9 @@
         {
           this.$refs[name].validate((valid) => {
             if (valid) {
-              repwd({
-                  newPassword:this.newPassword,
-                  oldPassword:this.oldPassword
+              modifyPwd({
+                  newPassword:this.pwdInfo.newPassword,
+                  oldPassword:this.pwdInfo.oldPassword
                 }).then(res=>{
                 console.log(res);
                 if (res.data.code=='200')
@@ -106,8 +106,7 @@
 <style scoped>
   .updateBox{
     width: 100%;
-    height: 100%;
-
+    height: 450px;
   }
   .update-pwd{
     width: 300px;

@@ -9,7 +9,7 @@ axios.defaults.withCredentials = true
 
 const service = axios.create({
     // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-    baseURL: 'http://47.115.10.129:8443/charityedu',
+    baseURL: 'http://47.112.148.42:8443/charityedu',
     timeout: 5000,
     // baseURL: "/apis",
     // withCredentials: true, // send cookies when cross-domain requests
@@ -63,6 +63,7 @@ service.interceptors.response.use(
                 // return res
             return Promise.reject('error')
         } else {
+            // console.log(res)
             return res
         }
     },

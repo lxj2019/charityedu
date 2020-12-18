@@ -1,17 +1,19 @@
 <template>
   <div class="my-comment clear-fix">
-    <div class="user-face"><img src="@/assets/img/pic.jpg" alt=""></div>
-    <div class="text-area">
-      <Input type="textarea" v-model="content" :autosize="{minRows: 2,maxRows: 5}" placeholder="请发表友善的评论..."/>
-    </div>
-    <div class="publish">
-      <Button @click="addMessage">发表评论</Button>
-    </div>
+   <img class="avatar"  :src="$store.getters.avatar" alt="用户头像">
+    <!-- <div class="text-area"> -->
+      <el-input class="text-area" type="textarea" v-model="content" :rows="3" resize=none  placeholder="请发表友善的评论..."/>
+    <!-- </div> -->
+    <!-- <div class="publish"> -->
+      <Button class="publish" @click="addMessage">发表评论</Button>
+    <!-- </div> -->
   </div>
 </template>
 
 <script>
+
   import {addMessage} from "@/api/video"
+
   export default {
     name: "MyComment",
     data(){
@@ -19,17 +21,23 @@
         content:''
       }
     },
+    props:{
+      workId:{
+        type:Number
+      }
+    },
     components:{
-
+      
     },
     methods:{
       addMessage(){
         if(this.content!=''){
           addMessage({
-          worksid:1,
+          worksid:this.workId,
           content:this.content
         }).then(res=>{
           this.$Message.success(res.data.message)
+          this.$emit('getComments')
         })
         }else{
           this.$Message.error("评论不能为空！")
@@ -42,35 +50,31 @@
 
 <style scoped>
   .my-comment{
+    display: flex;
+    justify-content: space-around;
+    align-items:center;
     height: 100px;
     margin: 10px;
     line-height: 100px;
     border-bottom: 1px solid rgba(0,0,0,.1);
   }
-  .user-face{
-    display: inline-block;
-    float: left;
-    padding:20px 0;
-    width: 10%;
-    height: 100%;
-  }
-  .user-face img{
-    width: 100%;
+  
+  .avatar {
+    height:60px;
+    border-radius: 30px;
   }
   .text-area{
-    float: left;
-    display: inline-block;
-    width: 400px;
-    padding: 0 20px;
-    /*display: inline-block;*/
+    flex:1;
+    margin: 0 20px;
+
   }
   .publish{
-    display: inline-block;
-    float: left;
-    width: 100px;
-    height: 100px;
-    padding: 15px;
-    line-height: 60px;
+    width: 80px;
+    height: 80px;
+    background-color: rgba(50, 50, 255, .7);
+    font-size: 13px;
+    text-align: center;
+    color: #fff;
   }
   .publish Button{
     color: white;

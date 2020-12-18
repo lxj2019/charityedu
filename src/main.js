@@ -4,6 +4,15 @@ import router from "./router";
 import store from "./store/index";
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
+import VueVideoPlayer from 'vue-video-player'
+import 'video.js/dist/video-js.css'
+import { Input, Menu, Submenu, MenuItem } from 'element-ui';
+
+Vue.use(Input)
+Vue.use(Menu);
+Vue.use(Submenu);
+Vue.use(MenuItem);
+Vue.use(VueVideoPlayer)
 
 // import { Message } from 'view-design'
 // Vue.prototype.$Message = Message

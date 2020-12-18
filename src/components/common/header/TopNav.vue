@@ -64,8 +64,7 @@
 
     },
     created(){
-         this.$store.dispatch('user/getUserImg')     
-          console.log(this.$store.getters)      
+        //  this.$store.dispatch('user/getUserImg')        
     },
     computed: {
       isLogin() {
@@ -89,11 +88,15 @@
          this.$store.dispatch('user/logout')
          .then(res => {
             console.log(res.data); 
-            if(res.data.code=200)  
-              this.$Message.success('注销成功');
+            if(res.data.code=200)  {
+              this.$Message.success(res.data.message);             
               // localStorage.removeItem('Token')
-              this.$router.replace('/home')
-          })
+            }
+              else{
+              this.$router.replace('/login')
+              }
+
+            })
         }
 
       }

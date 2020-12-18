@@ -11,9 +11,9 @@
         </div>
         <h2 class="login-title">惠师惠学</h2>
         <FormItem prop="phoneNum">
-          <span class="svg-container">
-          <i class="el-icon-lock" />
-        </span>
+          <!-- <span class="svg-container">
+          <i class="el-icon-lock" /> -->
+        <!-- </span> -->
           <Input name="phoneNum"
                     type="text"
                     v-model="loginForm.phoneNum"
@@ -44,7 +44,10 @@
             登录
           </Button>
         </FormItem>
-     
+        <div>
+        <router-link to="register" class="register-btn">注册用户</router-link>
+        </div>
+        
       </Form>
       
     </Card>
@@ -92,9 +95,12 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.loading = true;
-            this.$store.dispatch('user/login', this.loginForm).then((res) => {
+            this.$store.dispatch('user/login', this.loginForm).then(() => {
               this.loading = false;
+              console.log("jfld")
                   this.$router.push({path: '/'})
+                  this.$store.dispatch('user/getUserImg')
+                  console.log("登陆")
                   if(this.loginForm.rememberMe==true){
                   setCookie("phoneNum",this.loginForm.phoneNum,15);
                    setCookie("password",this.loginForm.password,15);
@@ -177,6 +183,14 @@
     }
    .box button{
       display: inline-block
+    }
+    .register-btn{
+      font-size: 13px;
+      float:right;
+      color:#1890ff;
+      text-decoration: none;
+      cursor: pointer;
+
     }
 
 </style>

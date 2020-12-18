@@ -1,87 +1,87 @@
-
 @import "./normalize.css";
-
 @font-face {
-  font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?qyrj2q');
-  src:  url('../fonts/icomoon.eot?qyrj2q#iefix') format('embedded-opentype'),
-  url('../fonts/icomoon.ttf?qyrj2q') format('truetype'),
-  url('../fonts/icomoon.woff?qyrj2q') format('woff'),
-  url('../fonts/icomoon.svg?qyrj2q#icomoon') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
+    font-family: 'icomoon';
+    src: url('../fonts/icomoon.eot?qyrj2q');
+    src: url('../fonts/icomoon.eot?qyrj2q#iefix') format('embedded-opentype'), url('../fonts/icomoon.ttf?qyrj2q') format('truetype'), url('../fonts/icomoon.woff?qyrj2q') format('woff'), url('../fonts/icomoon.svg?qyrj2q#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
 }
 
 :root {
-  --color-text: #666;
-  --color-high-text: #ff5777;
-  --color-tint: #ff8198;
-  --color-background: #fffff7;
-  --font-size: 14px;
-  --line-height: 1.5;
+    --color-text: #666;
+    --color-high-text: #ff5777;
+    --color-tint: #ff8198;
+    --color-background: #fffff7;
+    --font-size: 14px;
+    --line-height: 1.5;
 }
 
 *,
 *::before,
 *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  /*font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,Helvetica,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif;*/
-  /*font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;*/
-  user-select: none; /* 禁止用户鼠标在页面上选中文字/图片等 */
-  -webkit-tap-highlight-color: transparent; /* webkit是苹果浏览器引擎，tap点击，highlight背景高亮，color颜色，颜色用数值调节 */
-  background:  rgba(247,247,247,1);
-  color: var(--color-text);
-  width: 100vw;
+    /*font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,Helvetica,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif;*/
+    /*font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;*/
+    user-select: none;
+    /* 禁止用户鼠标在页面上选中文字/图片等 */
+    -webkit-tap-highlight-color: transparent;
+    /* webkit是苹果浏览器引擎，tap点击，highlight背景高亮，color颜色，颜色用数值调节 */
+    background: rgba(247, 247, 247, 1);
+    color: var(--color-text);
+    width: 100vw;
 }
 
 a {
-  color: #666;
-  text-decoration: none;
-
+    color: #666;
+    text-decoration: none;
 }
-ul{
-  list-style: none;
+
+ul {
+    list-style: none;
 }
 
 .clear-fix::after {
-  clear: both;
-  content: '';
-  display: block;
-  width: 0;
-  height: 0;
-  visibility: hidden;
+    clear: both;
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    visibility: hidden;
 }
 
 .clear-fix {
-  zoom: 1;
+    zoom: 1;
 }
 
 .arrow-right {
-  border-top: 1px solid #999;
-  border-left: 1px solid #999;
-  width: 9px;
-  height: 9px;
-  background-color: transparent;
-  transform: rotate(135deg);
-  display: inline-block;
-  margin-left: .1rem;
+    border-top: 1px solid #999;
+    border-left: 1px solid #999;
+    width: 9px;
+    height: 9px;
+    background-color: transparent;
+    transform: rotate(135deg);
+    display: inline-block;
+    margin-left: .1rem;
 }
 
 .left {
-  float: left;
+    float: left;
 }
 
 .right {
-  float: right;
+    float: right;
 }
+
+
 /*版心*/
+
 .w {
-  width: 1100px;
-  margin: 0 auto;
+    width: 1270px;
+    margin: 0 auto;
 }

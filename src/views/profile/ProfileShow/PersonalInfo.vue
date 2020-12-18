@@ -51,9 +51,9 @@
 <!--        </Select>-->
 <!--      </FormItem>-->
       <FormItem label="出生日期："  class="Form-item">
-        <Row>
+        <!-- <Row> -->
           <DatePicker type="date" placeholder="Select date" v-model="userInfo.birthday"></DatePicker>
-        </Row>
+        <!-- </Row> -->
       </FormItem>
       <br>
 
@@ -123,7 +123,8 @@
       },
       updateInfo(){
        let {birthday,mail,region,schoolClass,schoolGrade,schoolName,sex,userId,userName} = this.userInfo
-       birthday = formatDate(birthday,'yyyy-MM-dd')
+        // birthday = new Date(birthday)
+      //  birthday = formatDate(birthday,'yyyy-MM-dd')
        console.log(birthday)
         updateInfo({
             birthday,
