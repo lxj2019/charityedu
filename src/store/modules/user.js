@@ -91,8 +91,8 @@ const actions = {
     getUserImg({ commit }) {
         return new Promise((resolve) => {
             getUserImg().then(response => {
-                console.log(response)
-                const data = response.data
+                console.log(response.data.message)
+                const data = response.data.message
                 commit('SET_AVATAR', data)
                 resolve(data)
             }).catch(err => {

@@ -77,8 +77,8 @@ export function updateInfo(data) {
 
 export function getUserImg() {
     return request({
-        url: '/filedeal/getUserImg',
-        method: 'post',
+        url: '/userInfo/getUserImg',
+        method: 'get',
 
     })
 }

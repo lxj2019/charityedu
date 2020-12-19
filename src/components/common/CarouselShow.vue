@@ -16,7 +16,7 @@
 
      <Carousel  autoplay v-model="value"
      class="carousel"
-     :title="list ||list[value].imgName"
+     :title="list.length==0  ||list[value].imgName"
      :autoplay-speed="setting.autoplaySpeed"
      :dots="setting.dots"
      :trigger="setting.trigger"
