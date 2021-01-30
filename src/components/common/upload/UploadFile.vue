@@ -4,8 +4,8 @@
     class="file-pond"
     ref="pond"
     name="file"
-    labelIdle='请将您作品拖到此处或点击上传'
-    labelInvalidField= '您选择的文件是无效文件'
+    labelIdle='请将文件拖到此处或点击上传'
+    labelInvalidField= '你选择的文件是无效文件'
     labelFileLoading= '加载中'
     labelFileLoadError= '加载失败'
     labelFileProcessing= '上传中'
@@ -19,7 +19,7 @@
     allowFileTypeValidation=true
     labelFileTypeNotAllowed='文件类型无效'
     fileValidateTypeLabelExpectedTypes="格式要求: {allButLastType} 和 {lastType}"
-    :accepted-file-types="['application/vnd.ms-powerpoint','application/vnd.openxmlformats-officedocument.presentationml.presentation','video/mp4']"
+    :accepted-file-types="fileType"
     :fileValidateTypeLabelExpectedTypesMap="{'application/vnd.ms-powerpoint':'ppt','application/vnd.openxmlformats-officedocument.presentationml.presentation':'pptx','video/mp4':'mp4'}"
 
 
@@ -30,11 +30,11 @@
 
     instantUpload=false
     chunkUploads=true
-    chunkSize=1024*1024*1
+    chunkSize=1024*1024*1024
     chunkForce=true
     chunkRetryDelays=1000
 
-    :server="{url:'http://47.112.148.42:8443/charityedu/upload',process:'/works/',revert:'/works/',patch:'/works?patch='}"
+    :server="{url:`${process.env.VUE_APP_BASE_API}+url`,process:'/works/',revert:'/works/',patch:'/works?patch='}"
 
     v-bind:files="myFiles"
     v-on:init="handleFilePondInit"
@@ -47,29 +47,41 @@
   // Import FilePond
   import vueFilePond from 'vue-filepond';
   // Import plugins
-  import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-  import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+  import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
+  import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 
   // Import styles
-  import 'filepond/dist/filepond.min.css';
-  import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+  import 'filepond/dist/filepond.min.css'
+  import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css'
 
   // Create FilePond component
-  const FilePond = vueFilePond( FilePondPluginFileValidateType, FilePondPluginImagePreview );
+  const FilePond = vueFilePond( FilePondPluginFileValidateType, FilePondPluginImagePreview )
 
   export default {
     name: "UploadFile",
+    props: {
+      fileType: {
+        type: Array,
+        default: () => {
+          return ['application/vnd.ms-powerpoint','application/vnd.openxmlformats-officedocument.presentationml.presentation','video/mp4']
+        }
+      },
+      url: {
+        type: String,
+        default: () => {
+          return '/upload'
+        }
+      }
+    },
     data: function() {
       return {
          myFiles: [] ,
-         serverId:''};
+         serverId:''
+        }
     },
   
     methods: {
-      handleFilePondInit: function() {
-        console.log('FilePond has initialized');
-        // example of instance method call on pond reference
-        
+      handleFilePondInit: function() {        
       },
       addfile(){
         this.serverId=this.$refs.pond.getFile().serverId;

@@ -31,13 +31,13 @@
               icon:'',
               iconType:"ios-image-outline",
               text: '我的头像',
-              path:'avatarUpload'
+              path:'avatar'
             },
             {
               icon:'',
               iconType:"ios-bookmarks-outline",
               text:'我的收藏',
-              path:'collections'
+              path:'myCollections'
             },
             {
               icon:'',
@@ -50,7 +50,7 @@
               icon:'',
               iconType:"ios-lock-outline",
               text:'修改密码',
-              path:'modifyPwd'
+              path:'modify-password'
             },
             {
               icon:'',
@@ -61,15 +61,15 @@
             {
               icon:'',
               iconType:'ios-cloud-upload-outline',
-              text: '上传视频',
-              path:'uploadWorks'
+              text: '作品上传',
+              path:'workUpload'
             },
             {
               icon:'',
               iconType:"ios-create-outline",
               text: '作品审核',
 
-              path:'checkWorks'
+              path:'workCheck'
             },
                {
               icon:'',

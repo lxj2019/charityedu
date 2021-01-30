@@ -85,6 +85,14 @@
         login_center_bg,
       }
     },
+    watch: {
+      $route: {
+        handler: function(route) {
+          this.redirect = route.query && route.query.redirect
+        },
+        immediate: true
+      }
+    },
     created(){
         this.loginForm.phoneNum = getCookie("phoneNum");
         this.loginForm.password = getCookie("password");
@@ -94,26 +102,25 @@
       handleLogin() {
         this.$refs.loginForm.validate(valid => {
           if (valid) {
-            this.loading = true;
-            this.$store.dispatch('user/login', this.loginForm).then(() => {
-              this.loading = false;
-              console.log("jfld")
-                  this.$router.push({path: '/'})
-                  this.$store.dispatch('user/getUserImg')
-                  console.log("登陆")
-                  if(this.loginForm.rememberMe==true){
-                  setCookie("phoneNum",this.loginForm.phoneNum,15);
-                   setCookie("password",this.loginForm.password,15);
-                  }else{
-                  setCookie("phoneNum",'',15);
-                   setCookie("password",'',15);
+            let obj = {}
+              obj.phoneNum = this.loginForm.phoneNum
+              obj.password = this.loginForm.password
+            this.loading = true
+            this.$store.dispatch('user/login', obj).then(() => {
+              this.$router.push({ path: this.redirect || '/' })
+              this.loading = false
+              if (this.loginForm.rememberMe==true) {
+                setCookie("phoneNum",this.loginForm.phoneNum,15)
+                setCookie("password",this.loginForm.password,15)
+              } else {
+                setCookie("phoneNum",'',15)
+                setCookie("password",'',15)
               }
             }).catch(() => {
-              this.$Message.error("账号或密码错误")
               this.loading = false
             })
           } else {
-            console.log('参数验证不合法！');
+            this.Message.error('登陆失败')
             return false
           }
         })

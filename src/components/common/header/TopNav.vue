@@ -5,24 +5,22 @@
       <router-link to="/home">首页</router-link>
       <!--       已登陆状态才会显示退出登陆和注销两个选项-->
     <Dropdown v-if="isLogin"  class="profile">
-        <a href="javascript:void(0)">
-          <img :src="$store.getters.avatar" alt="头像">
-          <span> {{$store.getters.userName}}</span>
-        </a>
-        <DropdownMenu slot="list">
-            <DropdownItem>
-              <router-link to="/Profile" title="个人信息">
-              个人信息
-              </router-link></DropdownItem>
-            <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
-        </DropdownMenu>
+      <a>
+        <img :src="avatar" alt="头像">
+      {{avatar}}
+        <span> {{ name }}</span>
+      </a>
+      <DropdownMenu slot="list">
+        <DropdownItem>
+          <router-link to="/Profile" title="个人信息">
+          个人信息
+          </router-link></DropdownItem>
+        <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
+      </DropdownMenu>
     </Dropdown>
-<!--      未登陆就显示 未登陆和注册选项-->
+<!--      未登陆就显示 登陆按钮-->
       <span v-else class="profile">
-          <Button type="primary"
-          size='small'
-           to="/Login">登陆</Button>
-          <!-- <router-link  to="/register" >注册</router-link> -->
+        <Button type="primary" size='small' to="/login">登陆</Button>
       </span>
       <div class="drop">
         <dropdown-show></dropdown-show>
@@ -42,6 +40,7 @@
 
 
 <script>
+  import { mapGetters } from 'vuex'
   import {Input,DropdownMenu,DropdownItem,Dropdown} from 'view-design'
   import DropdownShow from "./DropdownShow";
   import {request} from "../../../network/request"
@@ -53,35 +52,26 @@
     name: "TopNav",
     data() {
       return {
-        user: {
-          name: 'lxj'
-        },
-
       }
     },
     components: {
       Input, DropdownShow,AutoSearch,DropdownMenu,DropdownItem,Dropdown
 
     },
-    created(){
-        //  this.$store.dispatch('user/getUserImg')        
+    created() {
+      console.log(this.name,this.token,this.avatar)
     },
     computed: {
+      ...mapGetters([
+        'name',
+        'avatar',
+        'token'
+      ]),
       isLogin() {
-       
         return Boolean(this.$store.getters.token)
       }
     },
     methods: {
-      // outLogin() {
-      //   logout().then(res=>{
-      //     localStorage.removeItem('Token')
-      //   this.$Message.success('账号已退出登陆！');
-      //   this.$router.go(0);
-      //   }).catch(err=>{
-      //   this.$Message.error(err.message);
-      //   })
-      // },
       logout() {
         let comfile = confirm('退出登陆后将影响使用，请再次确认是否退出？')
         if(comfile){
@@ -89,8 +79,10 @@
          .then(res => {
             console.log(res.data); 
             if(res.data.code=200)  {
-              this.$Message.success(res.data.message);             
-              // localStorage.removeItem('Token')
+              this.$Message.success(res.data.message);   
+              console.log("退出登陆")          
+              localStorage.removeItem('Token')
+              // this.$router.replace('/home')
             }
               else{
               this.$router.replace('/login')

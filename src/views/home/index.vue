@@ -11,22 +11,19 @@
   <div>
     <Recommend></Recommend>
   </div>
-
-<!--  <div>{{window.localStorage.getItem(Use)}}</div>-->
 </div>
 
 </template>
 
 <script>
   import NavBar from "./nav/NavBar";
-  import Carousel from "../../components/common/CarouselShow";
-  import Login from "../login/Login";
+  import Carousel from "@/components/common/CarouselShow";
   import Recommend from "./Recommend";
+  import {setCookie,getCookie} from '@/utils/auth';
   export default {
     name: "Home",
     components:{
       NavBar,
-      Login,
       Carousel,
       Recommend
     },
@@ -53,11 +50,25 @@
         }
       },
     created() {
-
+      // this.autoLogin()+
     },
     mounted() {
 
+    },
+    methods:{
+      autoLogin(){
+        if(getCookie("phoneNum")!==''){
+          let obj ={}
+          obj.phoneNum = getCookie("phoneNum");
+          obj.password = getCookie("password");
+          this.$store.dispatch('user/login', obj).then(() => {
+              this.loading = false;
+                  this.$router.push({path: '/'})
+                  this.$store.dispatch('user/getUserImg')
+              }) 
+      }
     }
+  }
   }
 </script>
 

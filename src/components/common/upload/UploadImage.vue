@@ -4,7 +4,7 @@
       class="file-pond"
       ref="pond"
       name="fileImg"
-      labelIdle='请将作品封面拖到此处或点击上传'
+      labelIdle='请将图片拖到此处或点击上传'
       labelInvalidField= '您选择的图片格式无效'
       labelFileLoading= '加载中'
       labelFileLoadError= '加载失败'

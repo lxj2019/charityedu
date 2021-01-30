@@ -1,10 +1,12 @@
 <template>
-  <div class="profileBox ">
+  <div class="profileBox">
     <div class="profile-left ">
       <profile-menu></profile-menu>
     </div>
     <div class="profile-right ">
+      <keep-alive>
      <router-view class="show"></router-view>
+     </keep-alive>
     </div>
 
   </div>
@@ -12,14 +14,16 @@
 </template>
 
 <script>
-import ProfileShow from "./ProfileShow/ProfileShow";
-  import ProfileMenu from "./ProfileMenu";
+import ProfileMenu from './ProfileMenu'
+// import ProfileShow from "./ProfileShow/ProfileShow";
   export default {
       name: "Profile",
-    components:{
-      ProfileMenu,
-      ProfileShow,
-    }
+      components: {
+        ProfileMenu
+      },
+      created() {
+        console.log("hfh")
+      }
   }
 </script>
 

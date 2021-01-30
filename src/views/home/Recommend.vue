@@ -55,7 +55,7 @@
       },
       enter(work){
         this.$router.push({
-          name:'video',
+          name:'work',
           params: {
           id:work.worksId
         }

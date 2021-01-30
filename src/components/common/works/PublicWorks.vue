@@ -6,7 +6,7 @@
       <!-- 封面左下角：点赞数和播放量 -->
        <div class="comment" slot="img-leftBottom">
         <span class="icon"></span>
-        <span class="num">{{works.worksCount.applaudnum}}</span>
+        <span class="num">{{works.worksCount.applaudNum}}</span>
          <span class="icon icon2" ></span>
         <span class="num">{{works.worksCount.worksClickNum}}</span>
       </div>

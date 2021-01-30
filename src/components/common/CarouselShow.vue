@@ -97,7 +97,7 @@ import {loopList} from '@/api/loop'
 </script>
 
 <style scoped>
-  .box{
+  .box {
     position: relative;
     /*width: 520px;*/
     /*height: 280px;*/
@@ -105,21 +105,21 @@ import {loopList} from '@/api/loop'
     height: 100%;
     margin: 10px auto;
   }
-  .carousel{
+  .carousel {
     cursor: pointer;
   }
-  ul{
+  ul {
     list-style: none;
     padding: 0px;
   }
-  .image{
+  .image {
     /* position: absolute; */
     width: 100%;
     height:100%;
     /* text-align: center; */
     /* transition: 5s; */
   }
-  ul li img{
+  ul li img {
     width: 100%;
     height: 100%;
   }
@@ -139,23 +139,23 @@ import {loopList} from '@/api/loop'
     font-family:"icomoon";
   }
   .prev:hover,
-  .next:hover{
+  .next:hover {
     background-color: rgba(0,0,0,.6)
   }
 
-  .next{
+  .next {
     right: 0;
     border-radius: 15px 0 0 15px;
   }
-  .prev{
+  .prev {
     left: 0;
     border-radius: 0 15px 15px 0;
   }
-  .image.active{
+  .image.active {
     z-index: 10;
 
   }
-  .pointList{
+  .pointList {
     position: absolute;
     bottom: 20px;
     left: 360px;
@@ -182,7 +182,7 @@ import {loopList} from '@/api/loop'
     cursor: pointer;
   }
 
-  .point.active{
+  .point.active {
     background-color: #ff5000;
   }
 </style>

@@ -2,10 +2,6 @@
   <div class="video-box">
     
     <div class="video-top"></div>
-    <!-- <video :src="dd"
-           class="video"
-           controls
-    ></video> -->
     <video-player  class="video-player vjs-custom-skin"
      ref="videoPlayer"
      :playsinline="true"
