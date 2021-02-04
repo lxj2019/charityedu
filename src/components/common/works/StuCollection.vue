@@ -1,7 +1,7 @@
 <template>
 <!--  学生收藏作品卡的封装-->
   <div>
-    <works-item  placement="top" :works="works">
+    <work-common  placement="top" :works="works">
 <!--      /*左下角底部:作者名称和头像*/-->
       <div class="author" slot="bottom-left">
         <img class="avatar" :src="works.img" alt="用户头像" > <span>{{works.teachername}}</span>
@@ -19,18 +19,18 @@
       </Dropdown>
 <!--      左上角：收藏时间-->
       <span class="time" slot="top-left">收藏于{{works.collecttime}}</span>
-    </works-item>
+    </work-common>
   </div>
 
 </template>
 
 <script>
   import {request} from "../../../network/request";
-  import WorksItem from "./WorksItem";
+  import WorkCommon from "./WorkCommon";
   import {DropdownMenu,Dropdown,DropdownItem} from 'view-design'
   export default {
     name: "stuCollection",
-    components:{DropdownMenu,Dropdown,DropdownItem,WorksItem},
+    components:{DropdownMenu,Dropdown,DropdownItem,WorkCommon},
     props:['works'],
 
     data(){

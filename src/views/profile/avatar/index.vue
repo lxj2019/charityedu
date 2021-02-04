@@ -4,12 +4,12 @@
       <span slot="first">更换头像</span>
     </filter-menu>
     <div class="uploadAvatar-container">
-    <pan-thumb :image="$store.getters.avatar" />
-    <Button type="primary" icon="upload" style="position: relative;bottom: 15px;margin-left: 40px;" @click="imagecropperShow=true">
-      更换头像
-    </Button>
+      <pan-thumb :image="$store.getters.avatar" />
+      <Button type="primary" icon="upload" style="position: relative;bottom: 15px;margin-left: 40px;" @click="imagecropperShow=true">
+        更换头像
+      </Button>
     </div>
-  
+
     <image-cropper
       v-show="imagecropperShow"
       :key="imagecropperKey"
@@ -25,24 +25,23 @@
 <script>
 import ImageCropper from '@/components/common/ImageCropper'
 import PanThumb from '@/components/common/PanThumb'
-  import FilterMenu from "@/components/common/FilterMenu/FilterMenu";
+import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
 export default {
-  name: 'avatarUpload',
-  components: { ImageCropper, PanThumb,FilterMenu },
+  name: 'AvatarUpload',
+  components: { ImageCropper, PanThumb, FilterMenu },
   data() {
     return {
       imagecropperShow: false,
-      imagecropperKey: 0,
+      imagecropperKey: 0
     }
   },
   methods: {
     cropSuccess(resData) {
       // console.log(resData)
       this.$store.dispatch('user/getUserImg')
-       this.$Message.success(resData.message)
+      this.$Message.success(resData.message)
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
-     
     },
     close() {
       this.imagecropperShow = false

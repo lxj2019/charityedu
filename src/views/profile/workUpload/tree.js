@@ -1,5 +1,8 @@
-export default [{
+export default [
+  // eslint-disable-next-line indent
+  {
     value: '小学',
+
     label: '小学',
     children: [{
       value: '五年级',
@@ -195,4 +198,5 @@ export default [{
       label: '高三'
     }]
   }
+  // eslint-disable-next-line eol-last
 ]

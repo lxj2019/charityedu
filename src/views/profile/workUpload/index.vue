@@ -5,122 +5,117 @@
       <span slot="first">上传视频</span>
     </filter-menu>
     <div class="upload-box">
-    <h2>文件上传</h2>
-      <upload-file @updateServerId="updateServerId"></upload-file>
-    <div class="inline"></div>
+      <h2>文件上传</h2>
+      <upload-file @updateServerId="updateServerId" />
+      <div class="inline" />
 
-    <h2 >基本信息</h2>
-<!--    作品封面设置模块-->
-    <div>
-      <h3>作品封面设置  <span>  （格式jpeg、png，文件大小≤5MB，建议尺寸≥1146*717，最低尺寸≥960*600）</span></h3>
-     <upload-image @updateImg="updateImg"></upload-image>
+      <h2>基本信息</h2>
+      <!--    作品封面设置模块-->
+      <div>
+        <h3>作品封面设置  <span>  （格式jpeg、png，文件大小≤5MB，建议尺寸≥1146*717，最低尺寸≥960*600）</span></h3>
+        <upload-image @updateImg="updateImg" />
+      </div>
+      <h3>类型</h3>
+      <el-cascader
+        v-model="value"
+        :options="options"
+      />
+      <!-- <DropdownShow ></DropdownShow> -->
+      <div />
+
+      <h3>作品标题</h3>
+
+      <Input v-model="workTitle" style="width: 250px" min="5" max="20" placeholder="请输入标题" />
+
+      <h3>作品简介</h3>
+      <Input v-model="introduction" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..." />
+      <Button class="save" @click="up()">提交审核</Button>
     </div>
-    <h3>类型</h3>
-    <el-cascader
-      v-model="value"
-      :options="options"
-    ></el-cascader>
-    <!-- <DropdownShow ></DropdownShow> -->
-    <div></div>
-
-    <h3>作品标题</h3>
-
-      <Input v-model="workTitle" style="width: 250px" min="5" max="20" placeholder="请输入标题"/>
-
-    <h3>作品简介</h3>
-    <Input v-model="introduction" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..."/>
-    <Button class="save" @click="up()">提交审核</Button>
-  </div>
   </div>
 </template>
 <script>
-  import {Upload,Icon,FormItem,Input,Button} from 'view-design'
-  import DropdownShow from '@/components/common/header/DropdownShow'
-  import FilterMenu from "@/components/common/FilterMenu/FilterMenu";
-  import UploadFile from "@/components/common/upload/UploadFile";
-  import UploadImage from "@/components/common/upload/UploadImage";
-  import {uploadWork} from "@/api/upload"
+import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
+import UploadFile from '@/components/common/upload/UploadFile'
+import UploadImage from '@/components/common/upload/UploadImage'
+import { uploadWork } from '@/api/upload'
 import options from './tree.js'
-  export default {
-    name: 'UploadWorks',
-    components: {
-      Upload, Icon,DropdownShow,FormItem,Input,Button,FilterMenu,UploadFile,UploadImage
-    },
-    data() {
-      return {
-          value: [],
-          options: options,
-          worksImg: null,
-          serverId:'',
-          workTitle:'',
-          introduction:'',
-          knowledgeId:111,
+export default {
+  name: 'UploadWorks',
+  components: {
+    FilterMenu, UploadFile, UploadImage
+  },
+  data() {
+    return {
+      value: [],
+      options: options,
+      worksImg: null,
+      serverId: '',
+      workTitle: '',
+      introduction: '',
+      knowledgeId: 111
+    }
+  },
+  created() {
+    console.log(options)
+  },
+  methods: {
+    uploadFile(event) {
+      const _this = this
+      if (!event || !window.FileReader) return // 看支持不支持FileReader
+      console.log(event.target.files)
+      const reader = new FileReader()
+      reader.readAsDataURL(event.target.files[0]) // 这里是最关键的一步，转换就在这里（参数必须是blob对象）
+      reader.onloadend = function() {
+        _this.works.img = this.result
+        console.log(_this.works.img)
       }
     },
-    created() {
-      console.log(options);
+    updateServerId(value) {
+      this.serverId = value
+      console.log(this.serverId)
     },
-    methods: {
-      uploadFile(event) {
-        let _this = this;
-        if (!event || !window.FileReader) return  // 看支持不支持FileReader
-        console.log(event.target.files);
-        let reader = new FileReader()
-        reader.readAsDataURL(event.target.files[0]) // 这里是最关键的一步，转换就在这里（参数必须是blob对象）
-        reader.onloadend = function () {
-          _this.works.img = this.result
-          console.log(_this.works.img)
-        }
-      },
-      updateServerId(value){
-        this.serverId = value
-        console.log(this.serverId)
-      },
-      updateImg(value){
-        // console.log(value);
-        this.worksImg = value
-        console.log(this.worksImg)
-      },
-      up(){
-         if (this.worksImg != null && this.serverId != '' && this.knowledgeId != '' && this.workTitle != '' && this.introduction != '') {
-             let formData = new FormData();
-              formData.append('worksImg', this.worksImg);
-              formData.append('serverId', this.serverId);
-              formData.append('title', this.workTitle);
-              formData.append('knowledgeId', this.knowledgeId);
-              formData.append('introduction', this.introduction);
-              // request({
-              //    url: "/filedeal/new",
-              //    data: formData,
-              //    method:'post'
-              // })
-              uploadWork(formData)
-           .then(res=>{
-             console.log(res)
-            if(res.data.code == '200'){
-              this.$Message.success(res.data.message)
-            }
-           }).catch(err=>{
-             console.log(err)
-           })
-         }else{
-            if(this.serverId == '' ) this.$Message.error('请上传作品！')
-          if(this.worksImg == null ) this.$Message.error('请上传作品图片！')
-          if(this.workTitle == '' ) this.$Message.error('请输入作品标题')
-          if(this.knowledgeId == null ) this.$Message.error('请选择知识点！')
-          //  this.$Message.error('请将上传信息填写完整')
-         }
+    updateImg(value) {
+      // console.log(value);
+      this.worksImg = value
+      console.log(this.worksImg)
+    },
+    up() {
+      if (this.worksImg != null && this.serverId !== '' && this.knowledgeId !== '' && this.workTitle !== '' && this.introduction !== '') {
+        const formData = new FormData()
+        formData.append('worksImg', this.worksImg)
+        formData.append('serverId', this.serverId)
+        formData.append('title', this.workTitle)
+        formData.append('knowledgeId', this.knowledgeId)
+        formData.append('introduction', this.introduction)
+        // request({
+        //    url: "/filedeal/new",
+        //    data: formData,
+        //    method:'post'
+        // })
+        uploadWork(formData)
+          .then(res => {
+            console.log(res)
+            this.$Message.success(res.data.message)
+          }).catch(err => {
+            console.log(err)
+          })
+      } else {
+        if (this.serverId === '') this.$Message.error('请上传作品！')
+        if (this.worksImg === null) this.$Message.error('请上传作品图片！')
+        if (this.workTitle === '') this.$Message.error('请输入作品标题')
+        if (this.knowledgeId === null) this.$Message.error('请选择知识点！')
+        //  this.$Message.error('请将上传信息填写完整')
       }
-      // delFun() {
-      //   if (this.src1) {
-      //     this.src1 = "";
-      //     this.$refs.files.value = ""; //这里清空input的value 不然不可以选择相同的文件
-      //   }
-      // }
-    },
-
-
+    }
+    // delFun() {
+    //   if (this.src1) {
+    //     this.src1 = "";
+    //     this.$refs.files.value = ""; //这里清空input的value 不然不可以选择相同的文件
+    //   }
+    // }
   }
+
+}
 </script>
 
 <style scoped>

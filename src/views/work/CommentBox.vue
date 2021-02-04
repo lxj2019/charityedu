@@ -3,27 +3,34 @@
     <div class="comment-box clear-fix">
       <div class="user-face"><img :src="comment.commentatorImg" alt="用户头像"></div>
       <div class="comment-info">
-        <a class="user">{{comment.commentatorName}}</a>
-        <p class="text">{{comment.context}}</p>
-        <div class="information"><span>{{comment.applaudnum}}</span></div>
-        <div class="time"> {{comment.commentatorTime | formatDate}}</div>
+        <a class="user">{{ comment.commentatorName }}</a>
+        <p class="text">{{ comment.context }}</p>
+        <div class="information"><span>{{ comment.applaudnum }}</span></div>
+        <div class="time"> {{ comment.commentatorTime | formatDate }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {formatDate} from '@/utils/date'
-  export default {
-    name: "CommentBox",
-    props:['comment'],
-      filters:{
-      formatDate(time) {
-        let date = new Date(time)
-        return formatDate(date, 'yyyy-MM-dd  hh:mm:ss');
-      },
-    },
+import { formatDate } from '@/utils/date'
+export default {
+  name: 'CommentBox',
+  filters: {
+    formatDate(time) {
+      const date = new Date(time)
+      return formatDate(date, 'yyyy-MM-dd  hh:mm:ss')
+    }
+  },
+  props: {
+    comment: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   }
+}
 </script>
 
 <style scoped>

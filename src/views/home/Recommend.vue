@@ -7,63 +7,67 @@
       <a href="#">查看更多</a>
     </div>
     <div class="recommod">
-        <div class="course-wrapper" v-if="workList.length!=0">
-          <public-works 
-          @click.native="enter(item)"
-          class="course-list-works" 
-          :works="item" 
+      <div v-if="workList.length!=0" class="course-wrapper">
+        <public-works
           v-for="(item,index) in workList"
-          :key="index"></public-works>  
-        </div>
-          <div else class="no-works"
-          v-if="workList.length==0">
-            <p>暂无作品！</p>
-          </div>
+          :key="index"
+          class="course-list-works"
+          :works="item"
+          @click.native="enter(item)"
+        />
+      </div>
+      <div
+        v-if="workList.length==0"
+        else
+        class="no-works"
+      >
+        <p>暂无作品！</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import PublicWorks from "../../components/common/works/PublicWorks";
-  import {adminWorkList} from '@/api/getData'  
-  export default {
-    name: "Recommend",
-    components:{
-      PublicWorks
-    },
-    data(){
-      return{
-        workList:[],
-      }
-    },
+import PublicWorks from '../../components/common/works/PublicWorks'
+import { adminWorkList } from '@/api/getData'
+export default {
+  name: 'Recommend',
+  components: {
+    PublicWorks
+  },
+  data() {
+    return {
+      workList: []
+    }
+  },
 
-    created(){
-      this.getRecommendWorks()
-    },
-    methods:{
-      getRecommendWorks(){
-        adminWorkList({
-          pagenum :1
-        }).then(res=>{
-          console.log(res)
-          if(res.data.code == 200){
-            // this.workTotals  = res.data.data.total
-            this.workList = res.data.data.managerWorks
-            this.worksCount = res.data.data.worksCount
-          }
-        })
-      },
-      enter(work){
-        this.$router.push({
-          name:'work',
-          params: {
-          id:work.worksId
+  created() {
+    this.getRecommendWorks()
+  },
+  methods: {
+    getRecommendWorks() {
+      adminWorkList({
+        pagenum: 1
+      }).then(res => {
+        console.log(res)
+        if (res.data.code === 200) {
+          // this.workTotals  = res.data.data.total
+          this.workList = res.data.data.managerWorks
+          this.worksCount = res.data.data.worksCount
         }
       })
-      }
     },
-    
+    enter(work) {
+      this.$router.push({
+        name: 'work',
+        params: {
+          id: work.worksId
+        }
+      })
+    }
   }
+
+}
 </script>
 
 <style scoped>
@@ -105,6 +109,5 @@
     color:steelblue;
     font-size: 16px;
   }
-
 
 </style>

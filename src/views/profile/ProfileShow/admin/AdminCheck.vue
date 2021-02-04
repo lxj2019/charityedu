@@ -12,7 +12,7 @@
 <!--    应用封装好的”审核作品“组件-->
     <div class="works-wrapper">
       <div class="collect" v-for="(item,index) in workList" :key="index" @click="enter(item)">
-       <works-item 
+       <work-common 
        :workWidth="'155px'"
         :workHeight="'190px'"
       class="collection-works"
@@ -27,7 +27,7 @@
       </div>
       <!--      左上角：评分状态-->
       <span class="time" slot="top-left">{{item.commentState}}</span>
-    </works-item>
+    </work-common>
   </div>
     </div>
   <Page :total="workTotals"
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-  import WorksItem from "@/components/common/works/WorksItem";
+  import WorkCommon from "@/components/common/works/WorkCommon";
   import FilterMenu from "../../../../components/common/FilterMenu/FilterMenu";
   import {adminWorkList,searchAdminWorkList} from '@/api/getData'
 
@@ -47,7 +47,7 @@
     name: "MyClass",
     components:{
       FilterMenu,
-      WorksItem
+      WorkCommon
     },
     data(){
       return{

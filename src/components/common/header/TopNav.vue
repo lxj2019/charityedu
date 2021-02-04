@@ -1,99 +1,79 @@
 <template>
   <div class="top-nav">
     <div class="w">
-    <div class="logo"><h1>惠师惠学</h1></div>
+      <div class="logo"><h1>惠师惠学</h1></div>
       <router-link to="/home">首页</router-link>
       <!--       已登陆状态才会显示退出登陆和注销两个选项-->
-    <Dropdown v-if="isLogin"  class="profile">
-      <a>
-        <img :src="avatar" alt="头像">
-      {{avatar}}
-        <span> {{ name }}</span>
-      </a>
-      <DropdownMenu slot="list">
-        <DropdownItem>
-          <router-link to="/Profile" title="个人信息">
-          个人信息
-          </router-link></DropdownItem>
-        <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
-<!--      未登陆就显示 登陆按钮-->
-      <span v-else class="profile">
-        <Button type="primary" size='small' to="/login">登陆</Button>
+      <Dropdown v-if="isLogin" class="profile">
+        <a>
+          <img :src="avatar" alt="头像">
+          <span> {{ name }}</span>
+        </a>
+        <DropdownMenu slot="list">
+          <DropdownItem>
+            <router-link to="/Profile" title="个人信息">
+              个人信息
+            </router-link></DropdownItem>
+          <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+      <!--      未登陆就显示 登陆按钮-->
+      <span v-if="!isLogin" class="profile">
+        <Button type="primary" size="small" to="/login">登陆</Button>
       </span>
       <div class="drop">
-        <dropdown-show></dropdown-show>
+        <dropdown-show />
       </div>
-      <auto-search class="search"></auto-search>
-<!--      判断是否是登陆状态，已登陆则显示头像和名称，点击名称即可进入个人信息界面-->
+      <auto-search class="search" />
+      <!--      判断是否是登陆状态，已登陆则显示头像和名称，点击名称即可进入个人信息界面-->
       <!-- <span v-if="isLogin" class="profile">
         <img src="@/assets/img/pic.jpg" alt="个人头像">
         <router-link to="/Profile" title="个人信息">{{$store.state.userInfo.userName}}</router-link> -->
-
-
     </div>
 
   </div>
 <!--        <router-link :to="'/profile/'+user.name"  class="profile">个人信息</router-link>-->
 </template>
 
-
 <script>
-  import { mapGetters } from 'vuex'
-  import {Input,DropdownMenu,DropdownItem,Dropdown} from 'view-design'
-  import DropdownShow from "./DropdownShow";
-  import {request} from "../../../network/request"
-  import {logout,getUserInfo} from "@/api/user"
-  import AutoSearch from "./AutoSearch";
+import { mapGetters } from 'vuex'
+import DropdownShow from './DropdownShow'
+import AutoSearch from './AutoSearch'
 
-
-  export default {
-    name: "TopNav",
-    data() {
-      return {
-      }
-    },
-    components: {
-      Input, DropdownShow,AutoSearch,DropdownMenu,DropdownItem,Dropdown
-
-    },
-    created() {
-      console.log(this.name,this.token,this.avatar)
-    },
-    computed: {
-      ...mapGetters([
-        'name',
-        'avatar',
-        'token'
-      ]),
-      isLogin() {
-        return Boolean(this.$store.getters.token)
-      }
-    },
-    methods: {
-      logout() {
-        let comfile = confirm('退出登陆后将影响使用，请再次确认是否退出？')
-        if(comfile){
-         this.$store.dispatch('user/logout')
-         .then(res => {
-            console.log(res.data); 
-            if(res.data.code=200)  {
-              this.$Message.success(res.data.message);   
-              console.log("退出登陆")          
-              localStorage.removeItem('Token')
-              // this.$router.replace('/home')
-            }
-              else{
-              this.$router.replace('/login')
-              }
-
-            })
-        }
-
+export default {
+  name: 'TopNav',
+  components: {
+    AutoSearch, DropdownShow
+  },
+  data() {
+    return {
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'name',
+      'avatar',
+      'token'
+    ]),
+    isLogin() {
+      return Boolean(this.$store.getters.token)
+    }
+  },
+  methods: {
+    logout() {
+      const comfile = confirm('退出登陆后将影响使用，请再次确认是否退出？')
+      if (comfile) {
+        this.$store.dispatch('user/logout')
+          .then(res => {
+            this.$Message.success(res.data.message)
+            console.log('退出登陆')
+            localStorage.removeItem('Token')
+            // this.$router.replace('/home')
+          })
       }
     }
   }
+}
 </script>
 
 <style scoped>
@@ -124,7 +104,7 @@
    .search{
     float: right;
     margin-top: 13px;
-  
+
     display: inline-block;
   }
   .profile{
@@ -140,8 +120,5 @@
     padding:0 10px;
     font-size: 12px;
   }
-
-
-
 
 </style>

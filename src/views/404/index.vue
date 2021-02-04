@@ -1,6 +1,6 @@
 <template>
   <div class="bg">
-    <div class="head404"></div>
+    <div class="head404" />
     <div class="txtbg404">
       <div class="txtbox">
         <p>对不起，您请求的页面不存在、或已被删除、或暂时不可用</p>
@@ -14,9 +14,9 @@
 </template>
 
 <script>
-  export default {
-    name: "NotFound"
-  }
+export default {
+  name: 'NotFound'
+}
 </script>
 
 <style scoped>

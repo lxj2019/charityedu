@@ -74,76 +74,15 @@ const actions = {
     })
   },
 
-
-  // getPermission({ commit }) {
-  //     return new Promise((resolve) => {
-  //         getPermission().then(response => {
-  //             const data = response.data
-  //             console.log(data);
-  //             commit('SET_PERMISSION', data)
-  //             resolve(data)
-  //         }).catch(err => {
-  //             console.log(err);
-  //         })
-
-  //     })
-  // },
-
-  // getAllRole({ commit }) {
-  //     return new Promise((resolve) => {
-  //         getAllRole().then(response => {
-  //             const data = response.data
-  //             console.log(data);
-  //             let roleList = []
-  //             data.forEach(item => {
-  //                 const menu = {}
-  //                 menu.label = item.roleName
-  //                 menu.value = item.roleId
-  //                 roleList.push(menu)
-  //             })
-  //             commit('SET_ROLELIST', roleList)
-  //             resolve(data)
-  //         }).catch(err => {
-  //             console.log(err);
-  //         })
-  //     })
-  // },
-  // getAllMenu({ commit }) {
-  //     return new Promise((resolve) => {
-  //         getAllMenu().then(response => {
-  //             const data = response.data
-  //             console.log(data);
-  //             let menuList = []
-  //             data.forEach(item => {
-  //                 const menu = {}
-  //                 menu.label = item.menuName
-  //                 menu.value = item.menuId
-  //                 menuList.push(menu)
-  //             })
-  //             commit('SET_MENULIST', menuList)
-  //             resolve(data)
-  //         }).catch(err => {
-  //             console.log(err);
-  //         })
-  //     })
-  // },
-
-  // // user logout
-  // user logout
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-          // 移除用户信息
-        removeUserInfo()
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+  // remove token
+  resetToken({ commit }) {
+    return new Promise(resolve => {
+      removeToken() // must remove  token  first
+      commit('RESET_STATE')
+      resolve()
     })
   },
+  // user logout
   logout({ commit }) {
     return new Promise((resolve, reject) => {
       logout().then((res) => {

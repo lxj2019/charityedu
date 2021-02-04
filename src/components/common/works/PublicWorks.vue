@@ -1,66 +1,69 @@
 <template>
   <div>
-    <works-item class="works"  placement="top"
-    :workWidth="workWidth" :workHeight="workHeight"
-    :works="works">
+    <work-common
+      class="works"
+      placement="top"
+      :work-width="workWidth"
+      :work-height="workHeight"
+      :works="works"
+    >
       <!-- 封面左下角：点赞数和播放量 -->
-       <div class="comment" slot="img-leftBottom">
+      <div slot="img-leftBottom" class="comment">
         <span class="icon"></span>
-        <span class="num">{{works.worksCount.applaudNum}}</span>
-         <span class="icon icon2" ></span>
-        <span class="num">{{works.worksCount.worksClickNum}}</span>
+        <span class="num">{{ works.worksCount.applaudNum }}</span>
+        <span class="icon icon2"></span>
+        <span class="num">{{ works.worksCount.worksClickNum }}</span>
       </div>
       <!--      /*左下角底部:作者名称和头像*/-->
-      <div class="author" slot="bottom-left">
-        <img class="avatar" :src="works.worksImg" alt="头像" >
-        <span>{{works.teacherName}}</span>
+      <div slot="bottom-left" class="author">
+        <img class="avatar" :src="works.worksImg" alt="头像">
+        <span>{{ works.teacherName }}</span>
       </div>
       <!--      左上角：收藏时间-->
-<!--      <span class="time" slot="top-left">发布于{{works.publishtime}}</span>-->
-<!--      右下角:点赞数与播放数-->
-      <div class="comment" slot="bottom-right">
+      <!--      <span class="time" slot="top-left">发布于{{works.publishtime}}</span>-->
+      <!--      右下角:点赞数与播放数-->
+      <div slot="bottom-right" class="comment">
         <Icon type="md-thumbs-up" />
-        <span>{{works.worksCount.applaudnum}}</span> 
-        <span></span><span>{{works.worksCount.worksClickNum}}</span>
+        <span>{{ works.worksCount.applaudnum }}</span>
+        <span></span><span>{{ works.worksCount.worksClickNum }}</span>
       </div>
-    </works-item>
+    </work-common>
   </div>
 
 </template>
 
 <script>
-  import WorksItem from "./WorksItem";
-  export default {
-    name: "PublicWorks",
-    props:{
-      works:{
-        default:{ }
-      },
-      workWidth:{
-         default:'230px'
-      },
-      workHeight:{
-        default:'200px'
-      }
+import WorkCommon from './WorkCommon'
+export default {
+  name: 'PublicWorks',
+  components: {
+    WorkCommon
+  },
+  props: {
+    works: {
+      default: {}
     },
-
-    components:{
-      WorksItem
+    workWidth: {
+      default: '230px'
     },
-    methods:{
-      enter(work){
-        console.log("jdfj")
-        // this.$router.push('/assessCheck/'+this.works.src)
-        this.$router.push({
-          name:'video',
-          params: {
-          id:work.worksId
+    workHeight: {
+      default: '200px'
+    }
+  },
+  methods: {
+    enter(work) {
+      console.log('jdfj')
+      // this.$router.push('/assessCheck/'+this.works.src)
+      this.$router.push({
+        name: 'video',
+        params: {
+          id: work.worksId
         }
       })
-      },
     }
-    
   }
+
+}
 </script>
 
 <style scoped>
@@ -84,19 +87,19 @@
     width: 60px;
     height: 20px;
     line-height: 20px;
- 
+
     /*margin-bottom: 70px;*/
     /*color: white;*/
     color: #fff
   }
   .comment .icon{
-    display: inline-block;  
+    display: inline-block;
     font-family: icomoon;
     font-size: 14px;
     font-weight: 200;
   }
   .comment .num{
-    
+
   }
 
 </style>

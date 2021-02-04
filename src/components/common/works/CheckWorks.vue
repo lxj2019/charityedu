@@ -1,6 +1,6 @@
 <template>
   <div @click="enter()">
-    <works-item class="works"
+    <work-common class="works"
     :workWidth="'145px'"
           :workHeight="'180px'"
      placement="top" :works="works">
@@ -15,18 +15,18 @@
 
       <!--      左上角：评分状态-->
       <span class="time" slot="top-left">{{works.commentState}}</span>
-    </works-item>
+    </work-common>
   </div>
 
 </template>
 
 <script>
-  import WorksItem from "./WorksItem";
+  import WorkCommon from "./WorkCommon";
   export default {
     name: "CheckWorks",
     props:['works'],
     components:{
-      WorksItem
+      WorkCommon
     },
     methods:{
       enter(){

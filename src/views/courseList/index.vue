@@ -1,543 +1,292 @@
 <template>
-    <div class="course-box w">
-      <div class="course-menu">
-        <div class="menu-title">
-         <i class="el-icon-reading"></i>
-         <span style="margin-left:10px">课程列表</span> 
-        </div>
-        <course-menu
-           @setIndex="getIndex">
-        </course-menu>
+  <div class="course-box w">
+    <div class="course-menu">
+      <div class="menu-title">
+        <i class="el-icon-reading" />
+        <span style="margin-left:10px">课程列表</span>
       </div>
-      <div class="course-list">
-<!--        应用封装好的”筛选菜单“组件-->
-        <filter-menu class="course-filter">
-          <span slot="first">全部</span>
-          <span slot="second" @click="sort('applaudnum')">最多点赞</span>
-          <span slot="third" @click="sort('worksClickNum')">最多播放</span>
-          <span slot="forth" @click="sort('publishtime')">最近发布</span>
-          <Input class="work-search" search placeholder="查找作品名称"
-          @on-search="searchWorkList" 
-          v-model="searchInfo" />
-        </filter-menu>
-        <div>
-        <div class="course-wrapper" v-if="workList.length!=0">
-          <public-works
-          :workWidth="'200px'"
-          :workHeight="'230px'"
-          @click.native="enter(item)"
-          class="course-list-works" 
-          :works="item" 
-          v-for="(item,index) in workList"
-          :key="index"></public-works>  
+      <course-menu
+        @setIndex="getIndex"
+      />
+    </div>
+    <div class="course-list">
+      <!--        应用封装好的”筛选菜单“组件-->
+      <filter-menu class="course-filter">
+        <span slot="first">全部</span>
+        <span slot="second" @click="sort('applaudnum')">最多点赞</span>
+        <span slot="third" @click="sort('worksClickNum')">最多播放</span>
+        <span slot="forth" @click="sort('publishtime')">最近发布</span>
+        <Input
+          v-model="searchInfo"
+          class="work-search"
+          search
+          placeholder="查找作品名称"
+          @on-search="searchWorkList"
+        />
+      </filter-menu>
+      <div>
+        <div v-if="workList.length!=0" class="course-wrapper">
+          <work-common
+            v-for="(item,index) in workList"
+            :key="index"
+            class="course-list-works"
+            :type="item.type"
+            :title="item.worksTitle"
+            :image="item.worksImg"
+            @click.native="enter(item)"
+          >
+            <div slot="bottom-left" class="teacher">
+              <img class="avatar" :src="item.worksImg" alt="头像">
+              <span :title="item.worksTitle">{{ item.worksTitle }}</span>
+            </div>
+            <!--      右下角底部：“下拉菜单”-->
+            <Dropdown slot="bottom-right" placement="top" class="more">
+              <DropdownItem>
+                <Icon class="icon" type="md-more" />
+              </DropdownItem>
+              <DropdownMenu slot="list" class="dropdown-menu">
+                <DropdownItem @click.native="removeColl('ab')">移除收藏</DropdownItem>
+                <DropdownItem>详细信息</DropdownItem>
+              <!-- <DropdownItem></DropdownItem> -->
+              </DropdownMenu>
+            </Dropdown>
+          </work-common>
         </div>
-          <div v-if="workList.length==0"
-          class="no-works">
-            <p>暂无作品！</p>
-          </div>
-          <Page :total="workTotals"
+        <div
+          v-if="workList.length==0"
+          class="no-works"
+        >
+          <p>暂无作品！</p>
+        </div>
+        <Page
+          :total="workTotals"
           style="float:right"
+          show-elevator
           @on-change="changePagenum"
-          show-elevator />
-      </div>
+        />
       </div>
     </div>
+  </div>
 
 </template>
 
 <script>
 // import ProfileShow from "../profile/ProfileShow/ProfileShow";
-import {adminWorkList,searchAdminWorkList} from '@/api/getData'
-import FilterMenu from "./FilterMenu";
-import CourseMenu from "./CourseMenu";
-import PublicWorks from "../../components/common/works/PublicWorks";
-  export default {
-    name: "CourseList",
-    components:{
-      CourseMenu,FilterMenu,PublicWorks
-    },
-    data(){
-      return{
-        xIndex:0,
-        yIndex:0,
-        pagenum :1,
-        searchInfo:'',
-        workTotals:10,
-        bookname:"三年级上册",
-        knowledgeid: 1,
-        workList:[],
-        worksList:[
-            {
-               listname:"二元一次方程",
-               knowledgeid: 2,
-               order:1,
-              list:[
-            {listname:"概念",
-              list:[
-                {
-                  worksId:101,
-                  worksTitle: '一元二次方程',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.2.30 11:35",
-                  applaudnum:100,
-                  worksClickNum:150,
-                  commentnum:20
-                },{
-                  worksId:102,
-                  worksTitle: '勾股定理',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.1.20 11:35",
-                  applaudnum:1050,
-                  worksClickNum:140,
-                  commentnum:80
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2420.1.30 11:35",
-                  applaudnum:1007,
-                  worksClickNum:1540,
-                  commentnum:24
-                },{
-                  worksId:101,
-                  worksTitle: '高数fdfdfdfdfdfdfdfd发动机发的链接发链接',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.1.30 1:35",
-                  applaudnum:1040,
-                  worksClickNum:140,
-                  commentnum:20
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.7.30 11:35",
-                  applaudnum:1070,
-                  worksClickNum:1540,
-                  commentnum:200
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2030.1.30 11:35",
-                  applaudnum:1000,
-                  worksClickNum:1530,
-                  commentnum:20
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.1.30 11:37",
-                  applaudnum:100,
-                  worksClickNum:150,
-                  commentnum:20
-                },{
-                  worksId:101,
-                  worksTitle: '计算机组成原理',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2060.1.30 11:35",
-                  applaudnum:1085,
-                  worksClickNum:158,
-                  commentnum:20
-                }
-              ],
-              knowledgeid: 4,order:1},
-            {listname:"习题解析",
-              list:[
-                {
-                  worksId:101,
-                  worksTitle: '一元二次方程',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.2.30 11:35",
-                  applaudnum:100,
-                  worksClickNum:150,
-                  commentnum:20
-                },{
-                  worksId:102,
-                  worksTitle: '勾股定理',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.1.20 11:35",
-                  applaudnum:1050,
-                  worksClickNum:140,
-                  commentnum:80
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2420.1.30 11:35",
-                  applaudnum:1007,
-                  worksClickNum:1540,
-                  commentnum:24
-                },{
-                  worksId:101,
-                  worksTitle: '高数fdfdfdfdfdfdfdfd发动机发的链接发链接',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.1.30 1:35",
-                  applaudnum:1040,
-                  worksClickNum:140,
-                  commentnum:20
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.7.30 11:35",
-                  applaudnum:1070,
-                  worksClickNum:1540,
-                  commentnum:200
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2030.1.30 11:35",
-                  applaudnum:1000,
-                  worksClickNum:1530,
-                  commentnum:20
-                },{
-                  worksId:101,
-                  worksTitle: '高数',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2020.1.30 11:37",
-                  applaudnum:100,
-                  worksClickNum:150,
-                  commentnum:20
-                },{
-                  worksId:101,
-                  worksTitle: '计算机组成原理',
-                  teachername: '汪涵',
-                  worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                  src:"112",
-                  type:"video",
-                  publishtime:"2060.1.30 11:35",
-                  applaudnum:1085,
-                  worksClickNum:158,
-                  commentnum:20
-                }
-              ],
-              knowledgeid: 5,order:2}
-          ]
-             },
-            {
-              listname:"二元二次方程",
-              knowledgeid: 3,
-              order:2,
-              list:[
-              {listname:"概念",
-                list:[
-                  {
-                    worksId:101,
-                    worksTitle: '一元二次方程',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.2.30 11:35",
-                    applaudnum:100,
-                    worksClickNum:150,
-                    commentnum:20
-                  },{
-                    worksId:102,
-                    worksTitle: '勾股定理',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.1.20 11:35",
-                    applaudnum:1050,
-                    worksClickNum:140,
-                    commentnum:80
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2420.1.30 11:35",
-                    applaudnum:1007,
-                    worksClickNum:1540,
-                    commentnum:24
-                  },{
-                    worksId:101,
-                    worksTitle: '高数fdfdfdfdfdfdfdfd发动机发的链接发链接',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.1.30 1:35",
-                    applaudnum:1040,
-                    worksClickNum:140,
-                    commentnum:20
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.7.30 11:35",
-                    applaudnum:1070,
-                    worksClickNum:1540,
-                    commentnum:200
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2030.1.30 11:35",
-                    applaudnum:1000,
-                    worksClickNum:1530,
-                    commentnum:20
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.1.30 11:37",
-                    applaudnum:100,
-                    worksClickNum:150,
-                    commentnum:20
-                  },{
-                    worksId:101,
-                    worksTitle: '计算机组成原理',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2060.1.30 11:35",
-                    applaudnum:1085,
-                    worksClickNum:158,
-                    commentnum:20
-                  }
-                ],
-                knowledgeid: 6,order:1},
-              {listname:"习题解析",
-                list:[
-                  {
-                    worksId:101,
-                    worksTitle: '一元二次方程',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.2.30 11:35",
-                    applaudnum:100,
-                    worksClickNum:150,
-                    commentnum:20
-                  },{
-                    worksId:102,
-                    worksTitle: '勾股定理',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.1.20 11:35",
-                    applaudnum:1050,
-                    worksClickNum:140,
-                    commentnum:80
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2420.1.30 11:35",
-                    applaudnum:1007,
-                    worksClickNum:1540,
-                    commentnum:24
-                  },{
-                    worksId:101,
-                    worksTitle: '高数fdfdfdfdfdfdfdfd发动机发的链接发链接',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.1.30 1:35",
-                    applaudnum:1040,
-                    worksClickNum:140,
-                    commentnum:20
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.7.30 11:35",
-                    applaudnum:1070,
-                    worksClickNum:1540,
-                    commentnum:200
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2030.1.30 11:35",
-                    applaudnum:1000,
-                    worksClickNum:1530,
-                    commentnum:20
-                  },{
-                    worksId:101,
-                    worksTitle: '高数',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2020.1.30 11:37",
-                    applaudnum:100,
-                    worksClickNum:150,
-                    commentnum:20
-                  },{
-                    worksId:101,
-                    worksTitle: '计算机组成原理',
-                    teachername: '汪涵',
-                    worksImg:"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png",
-                    src:"112",
-                    type:"video",
-                    publishtime:"2060.1.30 11:35",
-                    applaudnum:1085,
-                    worksClickNum:158,
-                    commentnum:20
-                  }
-                ],
-                knowledgeid: 7,order:2}]}
-           ]
+import { adminWorkList, searchAdminWorkList } from '@/api/getData'
+import FilterMenu from './FilterMenu'
+import CourseMenu from './CourseMenu'
+// import PublicWorks from "../../components/common/works/PublicWorks";
+import WorkCommon from '@/components/common/works/WorkCommon.vue'
+export default {
+  name: 'CourseList',
+  components: {
+    CourseMenu, FilterMenu, WorkCommon
+  },
+  data() {
+    return {
+      xIndex: 0,
+      yIndex: 0,
+      pagenum: 1,
+      searchInfo: '',
+      workTotals: 10,
+      bookname: '三年级上册',
+      knowledgeid: 1,
+      // workList:[],
+      workList: [
+        {
+          worksId: 101,
+          worksTitle: '一元二次方程',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2020.2.30 11:35',
+          applaudnum: 100,
+          worksClickNum: 150,
+          commentnum: 20
+        }, {
+          worksId: 102,
+          worksTitle: '勾股定理',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2020.1.20 11:35',
+          applaudnum: 1050,
+          worksClickNum: 140,
+          commentnum: 80
+        },
+        {
+          worksId: 101,
+          worksTitle: '高数',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2420.1.30 11:35',
+          applaudnum: 1007,
+          worksClickNum: 1540,
+          commentnum: 24
+        },
+        {
+          worksId: 101,
+          worksTitle: '高数fdfdfdfdfdfdfdfd发动机发的链接发链接',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2020.1.30 1:35',
+          applaudnum: 1040,
+          worksClickNum: 140,
+          commentnum: 20
+        },
+        {
+          worksId: 101,
+          worksTitle: '高数',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2020.7.30 11:35',
+          applaudnum: 1070,
+          worksClickNum: 1540,
+          commentnum: 200
+        },
+        {
+          worksId: 101,
+          worksTitle: '高数',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2030.1.30 11:35',
+          applaudnum: 1000,
+          worksClickNum: 1530,
+          commentnum: 20
+        },
+        {
+          worksId: 101,
+          worksTitle: '高数',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2020.1.30 11:37',
+          applaudnum: 100,
+          worksClickNum: 150,
+          commentnum: 20
+        },
+        {
+          worksId: 101,
+          worksTitle: '计算机组成原理',
+          teachername: '汪涵',
+          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
+          src: '112',
+          type: 'video',
+          publishtime: '2060.1.30 11:35',
+          applaudnum: 1085,
+          worksClickNum: 158,
+          commentnum: 20
         }
+      ]
+    }
+  },
+  computed: {
+    // booksList(){
+    //   return this.book.list[this.xIndex].list[this.yIndex].list
+    // }
+  },
+  created() {
+    // this.userWorkList()
+    // this.workList = res.data.data.managerWorks
+  },
+  methods: {
+    getIndex(item) {
+      this.xIndex = item[0]
+      this.yIndex = item[1]
     },
-    computed:{
-      // booksList(){
-      //   return this.book.list[this.xIndex].list[this.yIndex].list
-      // }
-    },
-    created(){
-      this.userWorkList()
-    },
-    methods:{
-      getIndex(item){
-        console.log(item);
-        this.xIndex=item[0]
-        this.yIndex=item[1]
-      },
-      enter(work){
-        // this.$router.push('/assessCheck/'+this.works.src)
-        this.$router.push({
-          name:'video',
-          params: {
-          id:work.worksId
+    enter(work) {
+      // this.$router.push('/assessCheck/'+this.works.src)
+      this.$router.push({
+        name: 'work',
+        params: {
+          id: work.worksId
         }
       })
-      },
-      searchWorkList(){
-        searchAdminWorkList({
-          content:this.searchInfo,
-          pagenum:this.pagenum
-        }).then(res=>{
-          if(res.data.code == 200){
-            this.workTotals  = res.data.data.total
-            this.workList = res.data.data.managerWorks
+    },
+    searchWorkList() {
+      searchAdminWorkList({
+        content: this.searchInfo,
+        pagenum: this.pagenum
+      }).then(res => {
+        if (res.data.code === 200) {
+          this.workTotals = res.data.data.total
+          this.workList = res.data.data.managerWorks
+        }
+      })
+    },
+    userWorkList() {
+      adminWorkList({
+        pagenum: 1
+      }).then(res => {
+        console.log(res)
+        if (res.data.code === 200) {
+          this.workTotals = res.data.data.total
+          this.workList = res.data.data.managerWorks
+        }
+      })
+    },
+    changePagenum(val) {
+      this.pagenum = val
+      this.userWorkList()
+    },
+    sort(type) { // 排序
+      this.order = !this.order// 更改为 升序或降序
+      this.sortType = type
+      this.booksList.sort(this.compare(type))
+      // 调用下面 compare 方法 并传值
+    },
+    compare(attr) { // 排序方法
+      const that = this
+      return function(a, b) {
+        const val1 = a[attr]
+        const val2 = b[attr]
+        if (that.order) { // 升序
+          if (that.sortType === 'publishtime') { // 如果是时间就转换成时间格式
+            return new Date(val2.replace(/-/, '/')) - new Date(val1.replace(/-/, '/'))
+          } else {
+            return val2 - val1
           }
-        })
-      },
-      userWorkList(){
-        adminWorkList({
-          pagenum :1
-        }).then(res=>{
-          console.log(res)
-          if(res.data.code == 200){
-            this.workTotals  = res.data.data.total
-            this.workList = res.data.data.managerWorks
-          }
-        })
-      },
-      changePagenum(val){
-        this.pagenum = val
-        this.userWorkList()
-      },
-      sort(type){                     // 排序
-        this.order = !this.order;		// 更改为 升序或降序
-        this.sortType = type;
-        this.booksList.sort(this.compare(type));
-        // 调用下面 compare 方法 并传值
-      },
-      compare(attr){                  // 排序方法
-        let that = this;
-        return function(a,b){
-          let val1 = a[attr];
-          let val2 = b[attr];
-          if(that.order){               //升序
-            if(that.sortType == 'publishtime'){            // 如果是时间就转换成时间格式
-              return new Date(val2.replace(/-/,'/')) - new Date(val1.replace(/-/,'/'));
-            }else{
-              return val2 - val1;
-            }
-          }else{                          //降序
-            if(that.sortType == 'publishtime'){
-              return new Date(val1.replace(/-/,'/')) - new Date(val2.replace(/-/,'/'));
-            }else{
-              return val1 - val2;
-            }
+        } else { // 降序
+          if (that.sortType === 'publishtime') {
+            return new Date(val1.replace(/-/, '/')) - new Date(val2.replace(/-/, '/'))
+          } else {
+            return val1 - val2
           }
         }
-      },
-
+      }
     }
   }
-
-
+}
 
 </script>
 
+<style>
+ .ivu-dropdown-item {
+    padding: 5px;
+    z-index: 900;
+  }
+.ivu-select-dropdown {
+  padding: 5px;
+  z-index: 1000;
+}
+.ivu-dropdown-menu,.dropdown-menu{
+  margin:0;
+
+}
+</style>
 <style scoped>
+
   .course-box{
     display: flex;
     justify-content: space-between;
@@ -548,7 +297,7 @@ import PublicWorks from "../../components/common/works/PublicWorks";
     margin-bottom: 15px;
   }
   .work-search{
-  
+
     display: inline-block;
     position: absolute;
     width:250px;
@@ -575,7 +324,7 @@ import PublicWorks from "../../components/common/works/PublicWorks";
 
   .course-list{
     flex:1;
-    
+
   }
   .course-wrapper{
     display: flex;
@@ -583,7 +332,7 @@ import PublicWorks from "../../components/common/works/PublicWorks";
     justify-content: space-between ;
     align-content:space-around;
     width: 100%;
-    height: 100%;  
+    height: 100%;
   }
   .course-list-works{
     position: relative;
@@ -600,5 +349,30 @@ import PublicWorks from "../../components/common/works/PublicWorks";
     text-align: center;
     color:steelblue;
     font-size: 16px;
+  }
+  .teacher {
+    height: 30px;
+    overflow: hidden;
+    line-height: 30px;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+  }
+  .teacher .avatar{
+    width:25px;
+    height: 25px;
+    vertical-align: top;
+    border-radius: 50%;
+  }
+  .teacher span {
+    display: inline;
+    margin-left: 5px;
+    font-size: 12px;
+    font-weight: 100;
+  }
+
+  .icon {
+    display: inline-block;
+    font-size: 10px;
+    padding: 0px;
   }
 </style>
