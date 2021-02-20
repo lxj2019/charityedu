@@ -13,19 +13,22 @@
         @on-search="searchWorkList"
       />
     </filter-menu>
-    <!--    应用封装好的”审核作品“组件-->
-    <div class="works-wrapper">
-      <div v-for="(item,index) in workList" :key="index" class="collect" @click="enter(item)">
+    <div class="course-container">
+      <div v-if="workList.length!=0" class="course-wrapper clear-fix">
         <work-common
-          :work-width="'155px'"
-          :work-height="'190px'"
-          class="collection-works"
-          placement="top"
-          :works="item"
+          v-for="(item,index) in workList"
+          :key="index"
+          class="card"
+          :type="item.type"
+          :title="item.worksTitle"
+          :image="item.worksImg"
+          :card-style="{ width:'160px'}"
+          @click-image="clickCard(item.id)"
+          @click-title="clickCard(item.id)"
         >
-          <!--      /*左下角底部:作者名称和头像*/-->
-          <div slot="bottom-left" class="author">
-            <img class="avatar" :src="item.worksImg" alt="用户头像"><span>{{ item.teacherName }}</span>
+          <div slot="bottom-left" class="teacher">
+            <img class="avatar" :src="item.worksImg" alt="头像">
+            <span :title="item.worksTitle">{{ item.worksTitle }}</span>
           </div>
           <!--      右下角底部：“审核状态”-->
           <div slot="bottom-right">
@@ -35,6 +38,13 @@
           <span slot="top-left" class="time">{{ item.commentState }}</span>
         </work-common>
       </div>
+      <div
+        v-if="workList.length==0"
+        class="no-works"
+      >
+        <p>暂无作品！</p>
+      </div>
+
     </div>
     <Page
       :total="workTotals"
@@ -50,7 +60,7 @@
 import WorkCommon from '@/components/common/works/WorkCommon'
 import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
 import { adminWorkList, searchAdminWorkList } from '@/api/getData'
-
+import workList from '@/works.js'
 export default {
   name: 'MyClass',
   components: {
@@ -62,7 +72,7 @@ export default {
       pagenum: 1,
       searchInfo: '',
       workTotals: 0,
-      workList: [],
+      workList: workList,
       listShow: []
     }
   },
@@ -71,6 +81,12 @@ export default {
     this.getWorkList()
   },
   methods: {
+    clickCard(id) {
+      this.$router.push({
+        name: 'work',
+        params: { id }
+      })
+    },
     getWorkList() {
       adminWorkList({
         pagenum: this.pagenum
@@ -87,15 +103,6 @@ export default {
       }).then(res => {
         this.workTotals = res.data.data.total
         this.workList = res.data.data.managerWorks
-      })
-    },
-    enter(work) {
-      // this.$router.push('/assessCheck/'+this.works.src)
-      this.$router.push({
-        name: 'video',
-        params: {
-          id: work.worksId
-        }
       })
     },
     // 页码改变的回调，返回改变后的页码
@@ -163,28 +170,42 @@ export default {
     right: 10px;
     top:50%;
   }
-  .works-wrapper{
+ .course-wrapper {
     width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    padding-left: 10px;
+    height: 100%;
+    padding-left: 12px;
+    padding-top: 5px;
   }
-
-  .collection-works{
-    margin:10px 6px;
-    flex: 1;
-    /*当动画效果变大时，才不会撑开盒子*/
-    /* box-sizing: border-box; */
+  .card {
+    float:left;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
   }
- .author .avatar{
-    width: 25px;
+   .no-works{
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    color:steelblue;
+    font-size: 16px;
+  }
+  .teacher {
+    height: 30px;
+    overflow: hidden;
+    line-height: 30px;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+  }
+  .teacher .avatar{
+    width:25px;
     height: 25px;
-    border-radius: 12px;
-    vertical-align: middle;
+    vertical-align: top;
+    border-radius: 50%;
   }
-  .author span {
+  .teacher span {
+    display: inline;
+    margin-left: 5px;
     font-size: 12px;
-    color: #999999;
+    font-weight: 100;
   }
 </style>

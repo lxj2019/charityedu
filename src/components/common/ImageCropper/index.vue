@@ -119,30 +119,32 @@ export default {
     // 域，上传文件name，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
     field: {
       type: String,
-      'default': 'file'
+      default: 'file'
     },
     // 原名key，类似于id，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
     ki: {
-      'default': 0
+      type: Number,
+      default: 0
     },
     // 显示该控件与否
     value: {
-      'default': true
+      type: Boolean,
+      default: true
     },
     // 上传地址
     url: {
       type: String,
-      'default': ''
+      default: ''
     },
     // 其他要上传文件附带的数据，对象格式
     params: {
       type: Object,
-      'default': null
+      default: null
     },
     // Add custom headers
     headers: {
       type: Object,
-      'default': null
+      default: null
     },
     // 剪裁图片的宽
     width: {
@@ -172,27 +174,27 @@ export default {
     // 单文件大小限制
     maxSize: {
       type: Number,
-      'default': 10240
+      default: 10240
     },
     // 语言类型
     langType: {
       type: String,
-      'default': 'zh'
+      default: 'zh'
     },
     // 语言包
     langExt: {
       type: Object,
-      'default': null
+      default: null
     },
     // 图片上传格式
     imgFormat: {
       type: String,
-      'default': 'png'
+      default: 'png'
     },
     // 是否支持跨域
     withCredentials: {
       type: Boolean,
-      'default': false
+      default: false
     }
   },
   data() {
@@ -210,9 +212,10 @@ export default {
       'png'
     ]
     const tempImgFormat = allowImgFormat.indexOf(imgFormat) === -1 ? 'jpg' : imgFormat
-    const lang = language[langType] ? language[langType] : language['en']
+    const lang = language[langType] ? language[langType] : language.en
     const mime = mimes[tempImgFormat]
     // 规范图片格式
+    // eslint-disable-next-line vue/no-mutating-props
     that.imgFormat = tempImgFormat
     if (langExt) {
       Object.assign(lang, langExt)
@@ -228,6 +231,7 @@ export default {
       // 浏览器是否支持该控件
       isSupported,
       // 浏览器是否支持触屏事件
+      // eslint-disable-next-line no-prototype-builtins
       isSupportTouch: document.hasOwnProperty('ontouchstart'),
       // 步骤
       step: 1, // 1选择文件 2剪裁 3上传
@@ -353,8 +357,8 @@ export default {
       } = this
       const sic = sourceImgContainer
       const sim = sourceImgMasking
-      const w = sim.width == sic.width ? sim.width : (sic.width - sim.width) / 2
-      const h = sim.height == sic.height ? sim.height : (sic.height - sim.height) / 2
+      const w = sim.width === sic.width ? sim.width : (sic.width - sim.width) / 2
+      const h = sim.height === sic.height ? sim.height : (sic.height - sim.height) / 2
       return {
         width: w + 'px',
         height: h + 'px'
@@ -362,8 +366,8 @@ export default {
     },
     previewStyle() {
       const {
-        width,
-        height,
+        // width,
+        // height,
         ratio,
         previewContainer
       } = this
@@ -385,10 +389,18 @@ export default {
   },
   watch: {
     value(newValue) {
-      if (newValue && this.loading != 1) {
+      if (newValue && this.loading !== 1) {
         this.reset()
       }
     }
+  },
+  created() {
+    // 绑定按键esc隐藏此插件事件
+    document.addEventListener('keyup', (e) => {
+      if (this.value && (e.key === 'Escape' || e.keyCode === 27)) {
+        this.off()
+      }
+    })
   },
   methods: {
     // 点击波纹效果
@@ -400,7 +412,7 @@ export default {
       setTimeout(() => {
         this.$emit('input', false)
         this.$emit('close')
-        if (this.step == 3 && this.loading == 2) {
+        if (this.step === 3 && this.loading === 2) {
           this.setStep(1)
         }
       }, 200)
@@ -441,11 +453,11 @@ export default {
     /* ---------------------------------------------------------------*/
     // 检测选择的文件是否合适
     checkFile(file) {
-      let that = this,
-        {
-          lang,
-          maxSize
-        } = that
+      const that = this
+      const {
+        lang,
+        maxSize
+      } = that
       // 仅限图片
       if (file.type.indexOf('image') === -1) {
         that.hasError = true
@@ -470,8 +482,8 @@ export default {
     },
     // 设置图片源
     setSourceImg(file) {
-      let that = this,
-        fr = new FileReader()
+      const that = this
+      const fr = new FileReader()
       fr.onload = function(e) {
         that.sourceImgUrl = fr.result
         that.startCrop()
@@ -480,27 +492,27 @@ export default {
     },
     // 剪裁前准备工作
     startCrop() {
-      let that = this,
-        {
-          width,
-          height,
-          ratio,
-          scale,
-          sourceImgUrl,
-          sourceImgMasking,
-          lang
-        } = that,
-        sim = sourceImgMasking,
-        img = new Image()
+      const that = this
+      const {
+        width,
+        height,
+        ratio,
+        scale,
+        sourceImgUrl,
+        sourceImgMasking,
+        lang
+      } = that
+      const sim = sourceImgMasking
+      const img = new Image()
       img.src = sourceImgUrl
       img.onload = function() {
-        let nWidth = img.naturalWidth,
-          nHeight = img.naturalHeight,
-          nRatio = nWidth / nHeight,
-          w = sim.width,
-          h = sim.height,
-          x = 0,
-          y = 0
+        const nWidth = img.naturalWidth
+        const nHeight = img.naturalHeight
+        const nRatio = nWidth / nHeight
+        let w = sim.width
+        let h = sim.height
+        let x = 0
+        let y = 0
         // 图片像素不达标
         if (nWidth < width || nHeight < height) {
           that.hasError = true
@@ -539,12 +551,12 @@ export default {
       if (this.isSupportTouch && !e.targetTouches) {
         return false
       }
-      let et = e.targetTouches ? e.targetTouches[0] : e,
-        {
-          sourceImgMouseDown,
-          scale
-        } = this,
-        simd = sourceImgMouseDown
+      const et = e.targetTouches ? e.targetTouches[0] : e
+      const {
+        sourceImgMouseDown,
+        scale
+      } = this
+      const simd = sourceImgMouseDown
       simd.mX = et.screenX
       simd.mY = et.screenY
       simd.x = scale.x
@@ -558,25 +570,25 @@ export default {
       if (this.isSupportTouch && !e.targetTouches) {
         return false
       }
-      let et = e.targetTouches ? e.targetTouches[0] : e,
-        {
-          sourceImgMouseDown: {
-            on,
-            mX,
-            mY,
-            x,
-            y
-          },
-          scale,
-          sourceImgMasking
-        } = this,
-        sim = sourceImgMasking,
-        nX = et.screenX,
-        nY = et.screenY,
-        dX = nX - mX,
-        dY = nY - mY,
-        rX = x + dX,
-        rY = y + dY
+      const et = e.targetTouches ? e.targetTouches[0] : e
+      const {
+        sourceImgMouseDown: {
+          on,
+          mX,
+          mY,
+          x,
+          y
+        },
+        scale,
+        sourceImgMasking
+      } = this
+      const sim = sourceImgMasking
+      const nX = et.screenX
+      const nY = et.screenY
+      const dX = nX - mX
+      const dY = nY - mY
+      let rX = x + dX
+      let rY = y + dY
       if (!on) return
       if (rX > 0) {
         rX = 0
@@ -593,12 +605,12 @@ export default {
       scale.x = rX
       scale.y = rY
     },
-     // 按钮按下开始向右旋转
+    // 按钮按下开始向右旋转
     startRotateRight(e) {
-      let that = this,
-        {
-          scale
-        } = that
+      const that = this
+      const {
+        scale
+      } = that
       scale.rotateRight = true
       function rotate() {
         if (scale.rotateRight) {
@@ -613,10 +625,10 @@ export default {
     },
     // 按钮按下开始向右旋转
     startRotateLeft(e) {
-      let that = this,
-        {
-          scale
-        } = that
+      const that = this
+      const {
+        scale
+      } = that
       scale.rotateLeft = true
       function rotate() {
         if (scale.rotateLeft) {
@@ -639,10 +651,10 @@ export default {
     },
     // 按钮按下开始放大
     startZoomAdd(e) {
-      let that = this,
-        {
-          scale
-        } = that
+      const that = this
+      const {
+        scale
+      } = that
       scale.zoomAddOn = true
       function zoom() {
         if (scale.zoomAddOn) {
@@ -661,10 +673,10 @@ export default {
     },
     // 按钮按下开始缩小
     startZoomSub(e) {
-      let that = this,
-        {
-          scale
-        } = that
+      const that = this
+      const {
+        scale
+      } = that
       scale.zoomSubOn = true
       function zoom() {
         if (scale.zoomSubOn) {
@@ -692,7 +704,7 @@ export default {
       const that = this
       const {
         sourceImgMasking,
-        sourceImgMouseDown,
+        // sourceImgMouseDown,
         scale
       } = this
       const {
@@ -703,8 +715,8 @@ export default {
         width,
         height,
         x,
-        y,
-        range
+        y
+        // range
       } = scale
       const sim = sourceImgMasking
       // 蒙版宽高
@@ -736,30 +748,30 @@ export default {
       scale.height = nHeight
       scale.range = newRange
       setTimeout(function() {
-        if (scale.range == newRange) {
+        if (scale.range === newRange) {
           that.createImg()
         }
       }, 300)
     },
-     // 生成需求图片
+    // 生成需求图片
     createImg(e) {
-      let that = this,
-        {
-          mime,
-          sourceImg,
-          scale: {
-            x,
-            y,
-            width,
-            height,
-            degree
-          },
-          sourceImgMasking: {
-            scale
-          }
-        } = that,
-        canvas = that.$refs.canvas,
-        ctx = canvas.getContext('2d')
+      const that = this
+      const {
+        mime,
+        sourceImg,
+        scale: {
+          x,
+          y,
+          width,
+          height,
+          degree
+        },
+        sourceImgMasking: {
+          scale
+        }
+      } = that
+      const canvas = that.$refs.canvas
+      const ctx = canvas.getContext('2d')
       if (e) {
         // 取消鼠标按下移动状态
         that.sourceImgMouseDown.on = false
@@ -792,20 +804,19 @@ export default {
     },
     // 上传图片
     upload() {
-      let that = this,
-        {
-          lang,
-          imgFormat,
-          mime,
-          url,
-          params,
-          headers,
-          field,
-          ki,
-          createImgUrl,
-          withCredentials
-        } = this,
-        fmData = new FormData()
+      const that = this
+      const {
+        lang,
+        imgFormat,
+        mime,
+        url,
+        params,
+        field,
+        ki,
+        createImgUrl
+        // withCredentials
+      } = this
+      const fmData = new FormData()
       fmData.append(field, data2blob(createImgUrl, mime), field + '.' + imgFormat)
       // 添加其他参数
       if (typeof params === 'object' && params) {
@@ -814,11 +825,11 @@ export default {
         })
       }
       // 监听进度回调
-      const uploadProgress = function(event) {
-        if (event.lengthComputable) {
-          that.progress = 100 * Math.round(event.loaded) / event.total
-        }
-      }
+      // const uploadProgress = function(event) {
+      //   if (event.lengthComputable) {
+      //     that.progress = 100 * Math.round(event.loaded) / event.total
+      //   }
+      // }
       // 上传文件
       that.reset()
       that.loading = 1
@@ -840,14 +851,6 @@ export default {
         }
       })
     }
-  },
-  created() {
-    // 绑定按键esc隐藏此插件事件
-    document.addEventListener('keyup', (e) => {
-      if (this.value && (e.key == 'Escape' || e.keyCode == 27)) {
-        this.off()
-      }
-    })
   }
 }
 </script>

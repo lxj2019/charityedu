@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Card class="login-form-layout">
+    <Card class="form-layout">
       <Form
         ref="registerForm"
         auto-complete="on"
@@ -38,9 +38,9 @@
           >
           <!-- <Icon slot="prefix" class="icon" type="ios-person" /> -->
           <Select slot="prepend" v-model="registerForm.grant" style="width: 80px; ">
-            <Option value="学生">学生</Option>
-            <Option value="教师">教师</Option>
-            <Option value="管理员">管理员</Option>
+            <Option value="student">学生</Option>
+            <Option value="teacher">教师</Option>
+            <Option value="admin">管理员</Option>
           </Select>
           <!-- eslint-disable-next-line vue/no-parsing-error -->
           </Input>
@@ -90,10 +90,10 @@
         </FormItem>
         <div class="btn-box">
           <Checkbox v-model="registerForm.rememberMe" class="btn"> 记住用户名</Checkbox>
-          <router-link style="float:right" to="/forgetpasswd"> 忘记密码?</router-link>
+          <router-link style="float:right" to="/forget-password"> 忘记密码?</router-link>
         </div>
         <FormItem style="margin-bottom: 60px;text-align: center">
-          <Button style="width: 100%; border-radius:0" type="primary" size="large" :loading="loading" @click.native.prevent="registerSubmit">
+          <Button style="width: 100%; border-radius:0" type="primary" size="large" :loading="loading" @click="registerSubmit">
             注册
           </Button>
         </FormItem>
@@ -121,7 +121,7 @@ export default {
         password: '',
         userName: '',
         code: '',
-        grant: '学生'
+        grant: 'student'
 
       },
       count: '',
@@ -157,21 +157,18 @@ export default {
     registerSubmit() {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
+          console.log('df')
           register({
-            code: this.registerInfo.code,
-            userName: this.registerInfo.userName,
-            phoneNum: this.registerInfo.phoneNum,
-            password: this.registerInfo.password,
-            grant: this.registerInfo.grant
+            ...this.registerForm
+          }).then(res => {
+            this.$Message.success('注册成功！请登陆')
+            this.$router.push('/login')
+          }).catch(() => {
+            this.$Message.error('提交注册失败')
           })
-            .then(res => {
-              console.log(res.data)
-              if (res.data.code === 200) { this.$Message.success(res.data.message) } else this.$Message.error(res.data.message)
-            }).catch(() => {
-              this.$Message.error('提交注册失败')
-            })
         } else {
           this.$Message.error('提交失败!请检查信息格式是否正确')
+          this.$router.push('/login')
         }
       })
     },
@@ -195,7 +192,7 @@ export default {
           getcode({
             phoneNum: this.registerForm.phoneNum
           }).then(res => {
-            this.$message.success(res.data.message)
+            this.$Message.success(res.data.message)
           })
         }
       })
@@ -212,21 +209,22 @@ export default {
 }
 </style>
 <style scoped>
-  .login-form-layout {
-    position: absolute;
-    left: 0;
-    right: 0;
-    width: 500px;
-    margin: 80px auto;
-    padding: 0 60px;
-    border-top: 10px solid #409EFF;
-  }
+.form-layout {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 450px;
+  padding: 0 40px;
+  margin: 80px auto;
+  border-top: 10px solid #409EFF;
+}
   .title-icon{
-    font-size: 50px;
+    font-size: 60px;
     color:#409EFF
   }
   .login-title {
     text-align: center;
+    margin-bottom: 20px;
     color:#409EFF
   }
 

@@ -1,90 +1,111 @@
 <template>
-  <!--  教师端：我的课堂展示模块-->
   <div class="collectBox">
-    <!--    引入筛选菜单组件-->
+    <!--    重用筛选导航组件-->
     <filter-menu class="top">
-      <span slot="first" @click="sort('publishtime')">最近发布</span>
-      <span slot="second" @click="sort('applaudnum')">最多点赞</span>
-      <span slot="third" @click="sort('worksClickNum')">最多点击</span>
-      <span slot="forth" @click="select('checkstate')"> 已审核/未审核</span>
+      <span slot="first" @click="listShow=list">全部作品</span>
+      <span slot="second" @click="select('commentState')">已评分/未评分</span>
+      <span slot="third" @click="select('checkstate')"> 已审核/未审核</span>
+      <Input
+        v-model="searchInfo"
+        class="work-search"
+        search
+        placeholder="根据作品名称查找"
+        @on-search="searchWorkList"
+      />
     </filter-menu>
-    <!--    引入“教师作品“卡片组件，并根据作品数遍历-->
-    <div class="collect">
-      <teacher-works v-for="(item,index) in listShow" :key="index" class="collection-works" :works="item" />
+    <div class="course-container">
+      <div v-if="workList.length!=0" class="course-wrapper clear-fix">
+        <work-common
+          v-for="(item,index) in workList"
+          :key="index"
+          class="card"
+          :type="item.type"
+          :title="item.worksTitle"
+          :image="item.worksImg"
+          :card-style="{ width:'160px'}"
+          @click-image="clickCard(item.id)"
+          @click-title="clickCard(item.id)"
+        >
+          <!--      右下角底部：“审核状态”-->
+          <div slot="bottom-right">
+            <span>{{ item.checkState }}</span>
+          </div>
+          <!--      左上角：评分状态-->
+          <span slot="top-left" class="time">{{ item.commentState }}</span>
+        </work-common>
+        <Page
+          :total="workTotals"
+          style="float:right;margin:20px"
+          show-total
+          show-elevator
+          @on-change="changePagenum"
+        />
+      </div>
+      <div
+        v-if="workList.length==0"
+        class="no-works"
+      >
+        <Icon class="icon" type="ios-folder-open-outline" />
+        <span>空空如也</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import TeacherWorks from '@/components/common/works/TeacherWorks'
+import WorkCommon from '@/components/common/works/WorkCommon'
 import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
-
+import { adminWorkList, searchAdminWorkList } from '@/api/getData'
+// import workList from '@/works.js'
 export default {
   name: 'MyClass',
   components: {
     FilterMenu,
-    TeacherWorks
+    WorkCommon
   },
   data() {
-    // 模仿后端传过来的数据
     return {
-      list: [
-        {
-          worktitle: '二元一次方程',
-          img: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.04.30 10:35',
-          applaudnum: 10,
-          worksClickNum: 10,
-          commentnum: 20,
-          commentState: '已评分',
-          checkstate: '未审核通过'
-        },
-        {
-          worktitle: '二元一次方程',
-          img: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.1.30 11:35',
-          applaudnum: 1000,
-          worksClickNum: 150,
-          commentnum: 20,
-          commentState: '已评分',
-          checkstate: '未审核通过'
-        },
-        {
-          worktitle: '二元一次方程',
-          img: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.02.30 11:35',
-          applaudnum: 1200,
-          worksClickNum: 170,
-          commentnum: 20,
-          commentState: '已评分',
-          checkstate: '已审核通过'
-        },
-        {
-          worktitle: '二元一次方程',
-          img: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.4.30 11:35',
-          applaudnum: 1,
-          worksClickNum: 109,
-          commentnum: 20,
-          commentState: '已评分',
-          checkstate: '已审核通过'
-        }
-      ],
-      listShow: [] // 真正用于展示的数据，根据筛选的条件改变
+      pagenum: 1,
+      searchInfo: '',
+      workTotals: 0,
+      workList: [],
+      listShow: []
     }
   },
   mounted() {
-    this.sort('publishtime')
+    // this.listShow=this.list
+    this.getWorkList()
   },
   methods: {
+    clickCard(id) {
+      this.$router.push({
+        name: 'work',
+        params: { id }
+      })
+    },
+    getWorkList() {
+      adminWorkList({
+        pagenum: this.pagenum
+      }).then(res => {
+        // console.log(res)
+        this.workTotals = res.data.data.total
+        this.workList = res.data.data.managerWorks
+      })
+    },
+    searchWorkList() {
+      searchAdminWorkList({
+        content: this.searchInfo,
+        pagenum: this.pagenum
+      }).then(res => {
+        this.workTotals = res.data.data.total
+        this.workList = res.data.data.managerWorks
+      })
+    },
+    // 页码改变的回调，返回改变后的页码
+    changePagenum(val) {
+      this.pagenum = val
+      this.getWorkList()
+    },
     sort(type) { // 排序
       this.listShow = this.list
       // 更改为 升序或降序
@@ -113,11 +134,17 @@ export default {
         }
       }
     },
-    // 筛选出已审核通过的作品
+
     select(type) {
-      this.listShow = this.list.filter((item) => {
-        return item.checkstate === '已审核通过'
-      })
+      if (type === 'checkstate') {
+        this.listShow = this.list.filter((item) => {
+          return item.checkstate === '已审核通过'
+        })
+      } else {
+        this.listShow = this.list.filter((item) => {
+          return item.commentState === '已评分'
+        })
+      }
     }
   }
 }
@@ -128,23 +155,37 @@ export default {
     width:100%;
     height: 100%;
   }
-  .collect{
-
-    /*display: flex;*/
-    /*justify-content: space-around;*/
-    /*width: 100%;*/
-
-    /*flex-wrap: wrap;*/
-    /*overflow: auto;*/
-    /*margin: 20px;*/
-  }
-  .collection-works{
+  .top{
     position: relative;
-    float: left;
-    padding:5px;
-    flex: 1;
-    /*当动画效果变大时，才不会撑开盒子*/
+  }
+  .work-search{
+    display: inline-block;
+    position: absolute;
+    width:250px;
+    transform: translateY(-50%);
+    right: 10px;
+    top:50%;
+  }
+ .course-wrapper {
+    width: 100%;
+    height: 100%;
+    padding-left: 12px;
+  }
+  .card {
+    float:left;
+    margin-right: 10px;
+    margin-bottom: 20px;
     box-sizing: border-box;
   }
-
+  .no-works {
+    width: 100%;
+    text-align: center;
+    color:skyblue;
+    font-size: 20px;
+  }
+  .no-works .icon {
+    margin-top:100px;
+    display: block;
+    font-size: 80px;
+  }
 </style>

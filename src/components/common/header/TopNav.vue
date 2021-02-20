@@ -4,9 +4,10 @@
       <div class="logo"><h1>惠师惠学</h1></div>
       <router-link to="/home">首页</router-link>
       <!--       已登陆状态才会显示退出登陆和注销两个选项-->
-      <Dropdown v-if="isLogin" class="profile">
+      <Dropdown v-if="token" class="profile">
         <a>
-          <img :src="avatar" alt="头像">
+          <!-- <img :src="avatar" alt="头像"> -->
+          <Avatar :src="avatar" />
           <span> {{ name }}</span>
         </a>
         <DropdownMenu slot="list">
@@ -18,7 +19,7 @@
         </DropdownMenu>
       </Dropdown>
       <!--      未登陆就显示 登陆按钮-->
-      <span v-if="!isLogin" class="profile">
+      <span v-if="!token" class="profile">
         <Button type="primary" size="small" to="/login">登陆</Button>
       </span>
       <div class="drop">
@@ -54,10 +55,7 @@ export default {
       'name',
       'avatar',
       'token'
-    ]),
-    isLogin() {
-      return Boolean(this.$store.getters.token)
-    }
+    ])
   },
   methods: {
     logout() {

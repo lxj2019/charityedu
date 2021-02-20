@@ -4,56 +4,56 @@
     <div class="video-left">
       <!--    视频信息区-->
       <div class="video-info">
-        <h1>{{video.title}}</h1>
-        <div><span>{{video.type}}</span><span>{{video.publicTime}}</span></div>
-<!--        <div><span>{{video.applaudnum}}播放</span><span>未经作者授权，禁止转载</span></div>-->
+        <h1>{{ video.title }}</h1>
+        <div><span>{{ video.type }}</span><span>{{ video.publicTime }}</span></div>
+        <!--        <div><span>{{video.applaudnum}}播放</span><span>未经作者授权，禁止转载</span></div>-->
       </div>
       <!--    视频-->
-      <video-show :src="video.src"></video-show>
+      <video-show :src="video.src" />
       <!--    视频简介-->
       <div class="summary">
-        {{video.summary}}
+        {{ video.summary }}
       </div>
-      <div class="line"></div>
+      <div class="line" />
       <!--  右边打分审核区-->
     </div>
     <div class="video-right">
       <div class="teacher-info">
         <img src="@/assets/img/pic.jpg" alt="">
-        <h2>{{video.teacherName}}</h2>
+        <h2>{{ video.teacherName }}</h2>
       </div>
-      <div class="assess"></div>
+      <div class="assess" />
 
     </div>
   </div>
 </template>
 
 <script>
-  import VideoShow from "../../../video/VideoShow";
-  export default {
-    name: "AssessCheck",
-    components:{
-      VideoShow
-    },
-    data(){
-      return{
-        score:0,
-        video:{
-          type:'数学',
-          title:'妹子为了阻止男的跳楼当场告白！【阅片无数动漫篇01】\n',
-          teacherName:'汪涵',
-          publicTime:'2020-1-1 20:12:03',
-          applaudnum:1000,
-          worksClickNum:150,
-          collectionsNum:5,
-          commentnum:20,
-          summary:' 附近的浪费了进了房间的积分的奖励费德勒。\n' +
+import VideoShow from '../../../video/VideoShow'
+export default {
+  name: 'AssessCheck',
+  components: {
+    VideoShow
+  },
+  data() {
+    return {
+      score: 0,
+      video: {
+        type: '数学',
+        title: '妹子为了阻止男的跳楼当场告白！【阅片无数动漫篇01】\n',
+        teacherName: '汪涵',
+        publicTime: '2020-1-1 20:12:03',
+        applaudnum: 1000,
+        worksClickNum: 150,
+        collectionsNum: 5,
+        commentnum: 20,
+        summary: ' 附近的浪费了进了房间的积分的奖励费德勒。\n' +
             '      地方的房价立刻搭街坊了解到了警方了解到大幅降低警方了解到解决的方法的垃圾分类',
-          src:'https://dss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/cae-legoup-video-target/a3a51fd0-9b04-4ca8-ba79-a70d7a0e371a.mp4',
-        },
+        src: 'https://dss0.bdstatic.com/-0U0bnSm1A5BphGlnYG/cae-legoup-video-target/a3a51fd0-9b04-4ca8-ba79-a70d7a0e371a.mp4'
       }
     }
   }
+}
 </script>
 
 <style scoped>

@@ -25,31 +25,31 @@
         />
       </filter-menu>
       <div>
-        <div v-if="workList.length!=0" class="course-wrapper">
+        <div v-if="workList.length!=0" class="course-wrapper clear-fix">
           <work-common
             v-for="(item,index) in workList"
             :key="index"
-            class="course-list-works"
+            class="card"
             :type="item.type"
             :title="item.worksTitle"
             :image="item.worksImg"
-            @click.native="enter(item)"
+            @click-image="clickCard(item.id)"
+            @click-title="clickCard(item.id)"
           >
             <div slot="bottom-left" class="teacher">
               <img class="avatar" :src="item.worksImg" alt="头像">
               <span :title="item.worksTitle">{{ item.worksTitle }}</span>
             </div>
             <!--      右下角底部：“下拉菜单”-->
-            <Dropdown slot="bottom-right" placement="top" class="more">
-              <DropdownItem>
+            <el-dropdown slot="bottom-right" trigger="click" placement="top" class="more">
+              <span>
                 <Icon class="icon" type="md-more" />
-              </DropdownItem>
-              <DropdownMenu slot="list" class="dropdown-menu">
-                <DropdownItem @click.native="removeColl('ab')">移除收藏</DropdownItem>
-                <DropdownItem>详细信息</DropdownItem>
-              <!-- <DropdownItem></DropdownItem> -->
-              </DropdownMenu>
-            </Dropdown>
+              </span>
+              <el-dropdown-menu slot="dropdown" class="dropdown-menu">
+                <el-dropdown-item @click.native="removeColl('ab')">移除收藏</el-dropdown-item>
+                <el-dropdown-item divided>详细信息</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </work-common>
         </div>
         <div
@@ -71,12 +71,11 @@
 </template>
 
 <script>
-// import ProfileShow from "../profile/ProfileShow/ProfileShow";
 import { adminWorkList, searchAdminWorkList } from '@/api/getData'
 import FilterMenu from './FilterMenu'
 import CourseMenu from './CourseMenu'
-// import PublicWorks from "../../components/common/works/PublicWorks";
 import WorkCommon from '@/components/common/works/WorkCommon.vue'
+import workList from '@/works.js'
 export default {
   name: 'CourseList',
   components: {
@@ -91,104 +90,7 @@ export default {
       workTotals: 10,
       bookname: '三年级上册',
       knowledgeid: 1,
-      // workList:[],
-      workList: [
-        {
-          worksId: 101,
-          worksTitle: '一元二次方程',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.2.30 11:35',
-          applaudnum: 100,
-          worksClickNum: 150,
-          commentnum: 20
-        }, {
-          worksId: 102,
-          worksTitle: '勾股定理',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.1.20 11:35',
-          applaudnum: 1050,
-          worksClickNum: 140,
-          commentnum: 80
-        },
-        {
-          worksId: 101,
-          worksTitle: '高数',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2420.1.30 11:35',
-          applaudnum: 1007,
-          worksClickNum: 1540,
-          commentnum: 24
-        },
-        {
-          worksId: 101,
-          worksTitle: '高数fdfdfdfdfdfdfdfd发动机发的链接发链接',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.1.30 1:35',
-          applaudnum: 1040,
-          worksClickNum: 140,
-          commentnum: 20
-        },
-        {
-          worksId: 101,
-          worksTitle: '高数',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.7.30 11:35',
-          applaudnum: 1070,
-          worksClickNum: 1540,
-          commentnum: 200
-        },
-        {
-          worksId: 101,
-          worksTitle: '高数',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2030.1.30 11:35',
-          applaudnum: 1000,
-          worksClickNum: 1530,
-          commentnum: 20
-        },
-        {
-          worksId: 101,
-          worksTitle: '高数',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2020.1.30 11:37',
-          applaudnum: 100,
-          worksClickNum: 150,
-          commentnum: 20
-        },
-        {
-          worksId: 101,
-          worksTitle: '计算机组成原理',
-          teachername: '汪涵',
-          worksImg: 'https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png',
-          src: '112',
-          type: 'video',
-          publishtime: '2060.1.30 11:35',
-          applaudnum: 1085,
-          worksClickNum: 158,
-          commentnum: 20
-        }
-      ]
+      workList: workList
     }
   },
   computed: {
@@ -201,39 +103,36 @@ export default {
     // this.workList = res.data.data.managerWorks
   },
   methods: {
-    getIndex(item) {
-      this.xIndex = item[0]
-      this.yIndex = item[1]
-    },
-    enter(work) {
-      // this.$router.push('/assessCheck/'+this.works.src)
+    clickCard(id) {
       this.$router.push({
         name: 'work',
         params: {
-          id: work.worksId
+          id
         }
       })
+    },
+    removeColl(a) {
+      console.log(a)
+    },
+    getIndex(item) {
+      this.xIndex = item[0]
+      this.yIndex = item[1]
     },
     searchWorkList() {
       searchAdminWorkList({
         content: this.searchInfo,
         pagenum: this.pagenum
       }).then(res => {
-        if (res.data.code === 200) {
-          this.workTotals = res.data.data.total
-          this.workList = res.data.data.managerWorks
-        }
+        this.workTotals = res.data.data.total
+        this.workList = res.data.data.managerWorks
       })
     },
     userWorkList() {
       adminWorkList({
         pagenum: 1
       }).then(res => {
-        console.log(res)
-        if (res.data.code === 200) {
-          this.workTotals = res.data.data.total
-          this.workList = res.data.data.managerWorks
-        }
+        this.workTotals = res.data.data.total
+        this.workList = res.data.data.managerWorks
       })
     },
     changePagenum(val) {
@@ -270,18 +169,21 @@ export default {
 }
 
 </script>
-
 <style>
- .ivu-dropdown-item {
-    padding: 5px;
-    z-index: 900;
-  }
 .ivu-select-dropdown {
+  /* position:relative !important;
+  top: 0  !important;
+  left:0  !important;
   padding: 5px;
-  z-index: 1000;
+  z-index: 1000  !important; */
 }
-.ivu-dropdown-menu,.dropdown-menu{
+.ivu-dropdown-menu .dropdown-menu{
   margin:0;
+    z-index: 100;
+
+}
+ivu-select-dropdown {
+  position: abs;
 
 }
 </style>
@@ -297,7 +199,6 @@ export default {
     margin-bottom: 15px;
   }
   .work-search{
-
     display: inline-block;
     position: absolute;
     width:250px;
@@ -326,21 +227,14 @@ export default {
     flex:1;
 
   }
-  .course-wrapper{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between ;
-    align-content:space-around;
+  .course-wrapper {
     width: 100%;
     height: 100%;
   }
-  .course-list-works{
-    position: relative;
-    /* margin-right: 12px; */
+  .card {
+    float:left;
+    margin-right: 12px;
     margin-bottom: 20px;
-    /* padding:5px; */
-    /* flex: 1;   */
-    /*当动画效果变大时，才不会撑开盒子*/
     box-sizing: border-box;
   }
    .no-works{
@@ -372,7 +266,7 @@ export default {
 
   .icon {
     display: inline-block;
-    font-size: 10px;
+    font-size: 20px;
     padding: 0px;
   }
 </style>

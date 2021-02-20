@@ -10,19 +10,32 @@
         <p><span>{{ worksCount.worksClickNum }}播放</span><span>未经作者授权，禁止转载</span></p>
       </div>
       <!--    视频-->
-
       <video-show
         v-if="false"
         :works-link="work.worksLink"
         class="work-show"
       />
-      <iframe
-        v-if="true"
-        :src="'https://view.officeapps.live.com/op/view.aspx?src='+pptUrl"
-        width="100%"
-        height="100%"
-        frameborder="1"
-      />
+
+      <button @click="getNumPages('http://image.cache.timepack.cn/nodejs.pdf')">加载</button>
+      {{ load }}
+      <el-scrollbar style="height: 500px">
+        <pdf
+          :src="pdfSrc"
+          class="pdf-container"
+          :page="currentPage"
+          @num-pages="pageTotalNum=$event"
+          @page-loaded="currentPage=$event"
+          @loaded="loadPdfHandler"
+          @error="pdfError($event)"
+          @progress="load = $event"
+        />
+      </el-scrollbar>
+      {{ currentPage }} / {{ pageTotalNum }}<Page size="small" show-elevator />
+      <div class="arrow">
+        <span class="turn" :class="{grey: currentPage==1}" @click="prePage">Preview</span>
+
+        <span class="turn" :class="{grey: currentPage==pageTotalNum}" @click="nextPage">Next</span>
+      </div>
       <!--    点赞收藏-->
       <div class="praise-box">
         <span class="icon-box">
@@ -60,7 +73,7 @@
         <!--      他人评论区-->
         <comment-box v-for="(item,index) in commentlist" :key="index" :comment="item" />
       </div>
-    </div>
+      </pdf></div>
     <!--  右边推荐区-->
     <div class="video-right" />
   </div>
@@ -73,10 +86,11 @@ import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
 import CommentBox from './CommentBox'
 import VideoShow from './VideoShow'
 import MyComment from './MyComment'
+import pdf from 'vue-pdf'
 export default {
   name: 'Work',
   components: {
-    FilterMenu, CommentBox, VideoShow, MyComment
+    FilterMenu, CommentBox, VideoShow, MyComment, pdf
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -94,7 +108,11 @@ export default {
       worksId: 0,
       worksCount: {},
       order: true,
-      pptUrl: 'http://qnyhiyb0q.hn-bkt.clouddn.com/TFT%E6%98%BE%E7%A4%BA%E6%8E%A8%E5%B9%BF%E8%B5%84%E6%96%99PPT%E5%88%9D%E7%A8%BF-20201125.pptx'
+      pdfSrc: 'http://image.cache.timepack.cn/nodejs.pdf',
+      load: 0,
+      currentPage: 0, // pdf文件页码
+      pageTotalNum: 0 // pdf文件总页数
+      // src: '' // pdf文件地址ddn.com/TFT%E6%98%BE%E7%A4%BA%E6%8E%A8%E5%B9%BF%E8%B5%84%E6%96%99PPT%E5%88%9D%E7%A8%BF-20201125.pptx'
     }
   },
   computed: {
@@ -105,12 +123,39 @@ export default {
     }
   },
   created() {
+    // this.getNumPages('http://image.cache.timepack.cn/nodejs.pdf')
   },
   mounted() {
     //  this.addClick()
 
   },
   methods: {
+    abc(e) {
+      console.log(e)
+    },
+    getNumPages(url) {
+      console.log('gg')
+      var loadingTask = pdf.createLoadingTask(url)
+      loadingTask.promise.then((pdf) => {
+        console.log(pdf)
+        this.pdfSrc = loadingTask
+        this.pageTotalNum = pdf.numPages
+      }).catch((err) => {
+        console.error('pdf加载失败', err)
+      })
+    },
+    // 上一页函数，
+    prePage() {
+      let page = this.currentPage
+      page = page > 1 ? page - 1 : this.pageTotalNum
+      this.currentPage = page
+    },
+    // 下一页函数
+    nextPage() {
+      let page = this.currentPage
+      page = page < this.pageTotalNum ? page + 1 : 1
+      this.currentPage = page
+    },
     getWorkInfo(worksid, callback) {
       getUnreviewedWorkInfo({ worksid }).then(res => {
         if (res.data.code === 200) {
@@ -122,6 +167,17 @@ export default {
         }
       })
     },
+
+    // pdf加载时
+    loadPdfHandler (e) {
+      console.log(e)
+      this.currentPage = 1 // 加载的时候先加载第一页
+    },
+    // 加载失败
+    pdfError(error) {
+      console.error(error)
+    },
+
     // 点赞
     addLike() {
       addLike({ worksId: this.work.worksId }).then(res => {
@@ -215,7 +271,8 @@ export default {
 .work-show{
   margin-top: 15px;
 }
-
+.pdf-container {
+}
 .video-right{
   float: right;
   width: 26%;

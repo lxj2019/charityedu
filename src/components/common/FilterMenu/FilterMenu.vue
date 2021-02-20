@@ -1,31 +1,34 @@
 <template>
-<!--  筛选菜单封装-->
+  <!--  筛选菜单封装-->
   <div class="menu-wrapper">
-    <a class="item" v-for="(item,index) in list"
+    <a
+      v-for="(item,index) in list"
       :key="index"
-       :class="{isActive: currentIndex===index}"
-       @click="isActive(index)">
-      <slot :name="item" ></slot></a>
-      <slot></slot>
-    <div class="inline"></div>
+      class="item"
+      :class="{isActive: currentIndex===index}"
+      @click="isActive(index)"
+    >
+      <slot :name="item" /></a>
+    <slot />
+    <div class="inline" />
   </div>
 </template>
 
 <script>
-  export default {
-    name: "FilterMenu",
-    data(){
-      return{
-        list:['first','second','third','forth'],
-        currentIndex:0
-      }
-    },
-    methods:{
-      isActive(index){
-        return this.currentIndex = index
-      }
+export default {
+  name: 'FilterMenu',
+  data() {
+    return {
+      list: ['first', 'second', 'third', 'forth'],
+      currentIndex: 0
+    }
+  },
+  methods: {
+    isActive(index) {
+      this.currentIndex = index
     }
   }
+}
 </script>
 
 <style scoped>
@@ -47,7 +50,7 @@
 
   .inline{
     /* padding:10px 0 0; */
-    
+
   }
 
 </style>

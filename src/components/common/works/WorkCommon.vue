@@ -1,63 +1,65 @@
 <template>
   <div>
-    <div v-bind:class="['card',type=='ppt' ? 'ppt' : 'video']" :style="cardStyle">
-      <div class="front-cover" :style="{'background-image':`url('${image}')`}" >
+    <div :class="['card',type=='ppt' ? 'ppt' : 'video']" :style="cardStyle">
+      <div class="front-cover" :style="{'background-image':`url('${image}')`}" @click="clickImage">
         <!-- 封面左下角区域 -->
-      <div class="count">
-        <slot name="count" />
-      </div>
+        <div class="count">
+          <slot name="count" />
+        </div>
       </div>
       <div class="card-info">
-        <h2 class="title" :title="title">{{ title }}</h2>
-        <div class=""></div>
-        <slot/>
-        <slot class="bottom-left"><slot name="bottom-left"></slot></slot>
-        <div class="bottom-right"><slot name="bottom-right"></slot></div>
-        <div class="top-left"> <slot name="top-left"></slot></div>
-      </div>  
+        <h2 class="title" :title="title" @click="clickTitle">{{ title }}</h2>
+        <slot />
+        <slot class="bottom-left"><slot name="bottom-left" /></slot>
+        <div class="bottom-right"><slot name="bottom-right" /></div>
+        <div class="top-left"><slot name="top-left" /></div>
+      </div>
     </div>
   </div>
 </template>
 <script>
-  export default {
-    name: "WorkCommon",
-    props:{
-      image: {
-        type: String,
-        default: '"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png"'
-      },
-      type: {
-        type: String,
-        default: 'ppt'
-      },
-      cardStyle: {
-        type: Object,
-        default: () => {
-          return {
-            width: '200px'
-          }
-        }
-      },
-      title: {
-        type: String,
-        default: () => {
-          return '暂无标题'
+export default {
+  name: 'WorkCommon',
+  props: {
+    image: {
+      type: String,
+      default: '"https://edu-image.nosdn.127.net/F355766D26A19A259FD020126628FD36.png"'
+    },
+    type: {
+      type: String,
+      default: 'ppt'
+    },
+    cardStyle: {
+      type: Object,
+      default: () => {
+        return {
+          width: '200px'
         }
       }
     },
-    data(){
-      return{
-      
-      }
-    },
-    computed:{
-      bgImg(){
-        let url=this.image
-        let bgUrl = "backgroundImage:"+`url('${url}')`
-        return  bgUrl
+    title: {
+      type: String,
+      default: () => {
+        return '暂无标题'
       }
     }
+  },
+  computed: {
+    bgImg() {
+      const url = this.image
+      const bgUrl = 'backgroundImage:' + `url('${url}')`
+      return bgUrl
+    }
+  },
+  methods: {
+    clickImage() {
+      this.$emit('click-image')
+    },
+    clickTitle() {
+      this.$emit('click-title')
+    }
   }
+}
 </script>
 
 <style scoped>
@@ -70,7 +72,7 @@
     font-size: 12px;
     z-index: 1;
     border-radius: 5px;
-    transition:all ease-in 0.5s; 
+    transition:all ease-in 0.2s;
     /* box-shadow: 0 6px 10px 0 rgba(95,101,105,.15);  */
   }
   .front-cover {
@@ -92,19 +94,19 @@
     z-index: 0;
   }
   .card:hover .front-cover {
-    transition:all 1s; 
+    transition:all 1s;
     /* animation: move 1s infinite; */
     animation: play 1.8s steps(10) infinite
     /* background: no-repeat center/102%; */
   }
   @keyframes play {
   from {
-    background: no-repeat
-    /* background-size: center/100%; */
+    /* background: no-repeat */
+    background-size: center/100%;
   }
   to {
-    /* background: rgba(2,0,0,0.1); */
-    background: repeat-x
+    background-size: center;
+    /* background: repeat-x */
   }
 }
 
@@ -123,22 +125,26 @@
   }
   .video::before{
     content: '视频';
-  }  
+  }
   .card-info{
-    padding: 10px;
+    padding:8px 10px 0px 10px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .card-info .title {
-    height: 40px;
+    height: 32px;
     margin:0;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 13px;
     color: #333;
     font-weight: 500;
     font-family: PingFangSC-Medium, PingFangSC;
-    line-height: 18px;
+    line-height: 16px;
   }
   .bottom-left{
     position: absolute;

@@ -1,11 +1,10 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'charity_token'
+const TokenKey = 'f'
 
 export function getToken() {
   // console.log(Cookies.get());
   return Cookies.get(TokenKey)
-
 }
 
 export function setToken(token) {

@@ -1,91 +1,90 @@
 <template>
   <div>
     <file-pond
-      class="file-pond"
       ref="pond"
+      class="file-pond"
       name="fileImg"
-      labelIdle='请将图片拖到此处或点击上传'
-      labelInvalidField= '您选择的图片格式无效'
-      labelFileLoading= '加载中'
-      labelFileLoadError= '加载失败'
-      labelFileProcessing= '上传中'
-      labelFileProcessingComplete='上传成功'
-      labelFileProcessingAborted='取消上传'
-      labelFileProcessingError='上传期间出现错误'
-      labelButtonRemoveItem='移除'
-      labelButtonAbortItemProcessing="取消"
-      labelTapToUndo="撤销"
+      label-idle="请将图片拖到此处或点击上传"
+      label-invalid-field="您选择的图片格式无效"
+      label-file-loading="加载中"
+      label-file-load-error="加载失败"
+      label-file-processing="上传中"
+      label-file-processing-complete="上传成功"
+      label-file-processing-aborted="取消上传"
+      label-file-processing-error="上传期间出现错误"
+      label-button-remove-item="移除"
+      label-button-abort-item-processing="取消"
+      label-tap-to-undo="撤销"
 
-      allowFileTypeValidation=true
-      labelFileTypeNotAllowed='文件格式无效'
-      fileValidateTypeLabelExpectedTypes="格式要求: {allButLastType} 和 {lastType}"
+      allow-file-type-validation="true"
+      label-file-type-not-allowed="文件格式无效"
+      file-validate-type-label-expected-types="格式要求: {allButLastType} 和 {lastType}"
       accepted-file-types="image/jpeg, image/png"
 
-      allowFileSizeValidation= true,
-      maxFileSize= 1000*500
-      labelMaxFileSizeExceeded='文件超出范围'
-      labelMaxFileSize='限制{filesize}以下'
+      allow-file-size-validation="true,"
+      max-file-size="1000*500"
+      label-max-file-size-exceeded="文件超出范围"
+      label-max-file-size="限制{filesize}以下"
 
-      instantUpload=false
+      instant-upload="false"
+      allow-image-preview="true"
+      image-preview-min-height="50"
+      image-preview-max-height="100"
+      image-preview-transparency-indicator="grid"
 
-      allowImagePreview=true
-      imagePreviewMinHeight=50
-      imagePreviewMaxHeight=100
-      imagePreviewTransparencyIndicator='grid'
+      allow-image-resize="true"
+      image-resize-target-width="600"
+      image-resize-target-height="400"
+      image-resize-mode="contain"
+      image-resize-upscale="false"
 
-
-      allowImageResize=true
-      imageResizeTargetWidth=600
-      imageResizeTargetHeight=400
-      imageResizeMode='contain'
-      imageResizeUpscale=false
-
-      allowImageCrop=true,
-      imageCropAspectRatio='16:10'
-      v-bind:files="myFiles"
-      v-on:init="handleFilePondInit"
-      v-on:addfile="addfile"/>
+      allow-image-crop="true,"
+      image-crop-aspect-ratio="16:10"
+      :files="myFiles"
+      @init="handleFilePondInit"
+      @addfile="addfile"
+    />
   </div>
 </template>
 
 <script>
-  // Import FilePond
-  import vueFilePond from 'vue-filepond';
-  // Import plugins
-  import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-  import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+// Import FilePond
+import vueFilePond from 'vue-filepond'
+// Import plugins
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 
-  // Import styles
-  import 'filepond/dist/filepond.min.css';
-  import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+// Import styles
+import 'filepond/dist/filepond.min.css'
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css'
 
-  // Create FilePond component
-  const FilePond = vueFilePond( FilePondPluginFileValidateType, FilePondPluginImagePreview );
+// Create FilePond component
+const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview)
 
-  export default {
-    name: "UploadImage",
-    data: function() {
-      return {
-        myFiles:[],
-        worksImg: {}, 
-         };
+export default {
+  name: 'UploadImage',
+  components: {
+    FilePond
+  },
+  data() {
+    return {
+      myFiles: [],
+      worksImg: {}
+    }
+  },
+  methods: {
+    handleFilePondInit: function() {
+      console.log('FilePond has initialized')
+      // example of instance method call on pond reference
+      this.$refs.pond.getFiles()
     },
-    methods: {
-      handleFilePondInit: function() {
-        console.log('FilePond has initialized');
-        // example of instance method call on pond reference
-        this.$refs.pond.getFiles();
-      },
-      addfile(){
-        // console.log( this.$refs.pond.getFile().file)
-        this.worksImg= this.$refs.pond.getFile().file
-        this.$emit('updateImg', this.worksImg)
-      }
-    },
-    components: {
-      FilePond
+    addfile() {
+      // console.log( this.$refs.pond.getFile().file)
+      this.worksImg = this.$refs.pond.getFile().file
+      this.$emit('updateImg', this.worksImg)
     }
   }
+}
 </script>
 
 <style scoped>

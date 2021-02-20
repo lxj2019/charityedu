@@ -1,11 +1,11 @@
-import { login, logout, getInfo, getPermission, getUserImg } from '@/api/user'
+import { login, logout, getUserImg } from '@/api/user'
 
 // import { getAllMenu } from '@/api/menu'
 // import { getAllRole } from '@/api/role'
-import { getToken, setToken, removeToken, setUserInfo, getUserInfo, removeUserInfo } from '@/utils/auth'
+import { removeToken, setToken, getToken, setUserInfo, getUserInfo, removeUserInfo } from '@/utils/auth'
 // import router, { resetRouter } from '@/router'
 import { Message } from 'view-design'
-import router from "@/router";
+import router from '@/router'
 
 const getDefaultState = () => {
   return {
@@ -42,29 +42,45 @@ const actions = {
     const { phoneNum, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ phoneNum: phoneNum.trim(), password: password }).then(response => {
-        if (response.data.code == '200') {
-          const data = response.data.data
-            // const token = getToken()
-            // commit('SET_TOKEN', token)
-          commit('SET_USERINFO', data)
-          commit('SET_NAME', data.userName)
-          setToken('true')
-          getUserImg().then(res => {
-            commit('SET_AVATAR', res.data.message)
-            setUserInfo({
-              name: data.userName,
-              avatar: res.data.message
-            })
+        const data = response.data.data
+        const token = 'abc'
+        commit('SET_TOKEN', token)
+        setToken('abc')
+        commit('SET_USERINFO', data)
+        commit('SET_NAME', data.userName)
+        setUserInfo({
+          name: data.userName
+        })
+        getUserImg().then(res => {
+          commit('SET_AVATAR', res.data.message)
+          setUserInfo({
+            name: data.userName,
+            avatar: res.data.message
           })
-          resolve()
-        }
+        })
+        resolve()
       }).catch(error => {
         reject(error)
       })
     })
   },
   // get user info
+  getUserImg({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getUserImg().then(res => {
+        commit('SET_AVATAR', res.data.message)
+        setUserInfo({
+          name: state.userName,
+          avatar: res.data.message
+        })
+        resolve()
+      })
+    })
+  },
+  // get user info
   getInfo({ commit, state }) {
+    const a = getUserInfo()
+    console.log(a, 'kfd')
     return new Promise((resolve, reject) => {
       const { name, avatar } = getUserInfo()
       console.log(name, avatar)
@@ -87,21 +103,21 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout().then((res) => {
         Message.success(res.data.message)
+        removeToken()
         commit('RESET_STATE')
         router.replace('/home')
-          // 移除用户信息
+        // 移除用户信息
         removeUserInfo()
-        removeToken()
       }).catch(error => {
+        removeToken()
         commit('RESET_STATE')
         router.replace('/home')
-          // 移除用户信息
+        // 移除用户信息
         removeUserInfo()
-        removeToken()
         reject(error)
       })
     })
-  },
+  }
 
   // // remove token
   // resetToken({ commit }) {

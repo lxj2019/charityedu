@@ -6,7 +6,7 @@
     </filter-menu>
     <div class="upload-box">
       <h2>文件上传</h2>
-      <upload-file @updateServerId="updateServerId" />
+      <upload-file upload-url="upload" @updateServerId="updateServerId" />
       <div class="inline" />
 
       <h2>基本信息</h2>
@@ -55,9 +55,6 @@ export default {
       knowledgeId: 111
     }
   },
-  created() {
-    console.log(options)
-  },
   methods: {
     uploadFile(event) {
       const _this = this
@@ -94,7 +91,6 @@ export default {
         // })
         uploadWork(formData)
           .then(res => {
-            console.log(res)
             this.$Message.success(res.data.message)
           }).catch(err => {
             console.log(err)

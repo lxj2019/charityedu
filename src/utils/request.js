@@ -6,14 +6,14 @@ import { MessageBox, Message } from 'view-design'
 // import { Message } from 'view-design'
 // import { getToken } from '@/utils/auth'
 axios.defaults.withCredentials = true
-  // 创建一个axios实例
+// 创建一个axios实例
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   timeout: 10000,
   // baseURL: "/apis",
   // withCredentials: true, // send cookies when cross-domain requests
-  withCredentials: true,
+  withCredentials: true
 })
 
 // request interceptor
@@ -30,23 +30,21 @@ service.interceptors.request.use(
   error => {
     // do something with request error
     console.log(error) // for debug
-    this.$Message.error("请重新登陆")
+    this.$Message.error('请重新登陆')
     return Promise.reject(error)
   }
 )
-
-
 
 // response interceptor
 service.interceptors.response.use(
   response => {
     const res = response
-      // if the custom code is not 20000, it is judged as an error.
-    if (res.data.code < "200" || res.data.code >= "300") {
+    // if the custom code is not 20000, it is judged as an error.
+    if (res.data.code < 200 || res.data.code >= 300) {
       Message.error(
-        res.data.message || 'Error',
+        res.data.message || 'Error'
       )
-      if (res.data.code == "403") {
+      if (res.data.code === 403) {
         // 重新登陆
         MessageBox.confirm('您已登出，可以取消停留在此页面上，或者再次登录', '确认登出', {
           confirmButtonText: '重新登陆',
@@ -59,17 +57,16 @@ service.interceptors.response.use(
         })
       }
       console.log(res)
-        // return res
+      // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject('error')
     } else {
-      // console.log(res)
       return res
     }
   },
   error => {
     console.log('err:' + error) // for debug
     Message.error(
-      error.message,
+      error.message
     )
     return Promise.reject(error)
   }

@@ -1,5 +1,4 @@
 export default [
-  // eslint-disable-next-line indent
   {
     value: '小学',
 
@@ -198,5 +197,4 @@ export default [
       label: '高三'
     }]
   }
-  // eslint-disable-next-line eol-last
 ]

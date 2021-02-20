@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Card class="login-form-layout">
+    <Card class="form-layout">
       <Form
         ref="loginForm"
         auto-complete="on"
@@ -22,7 +22,7 @@
             autocomplete="on"
             placeholder="请输入用户名"
           >
-          <Icon slot="prefix" class="icon" type="ios-person" />
+          <Icon slot="prefix" class="icon" type="ios-shirt-outline" />
           <!-- eslint-disable-next-line vue/no-parsing-error -->
           </Input>
         </FormItem>
@@ -32,29 +32,28 @@
             v-model="loginForm.password"
             name="password"
             autocomplete="on"
-            class="input"
             size="large"
             password
             type="password"
             placeholder="请输入密码"
             @keyup.enter.native="handleLogin"
           >
-          <Icon slot="prefix" class="icon" type="ios-lock" />
+          <Icon slot="prefix" class="icon" type="ios-lock-outline" />
             <!-- eslint-disable-next-line vue/no-parsing-error -->
           </Input>
         </FormItem>
         <div class="btn-box">
           <Checkbox v-model="loginForm.rememberMe" class="btn"> 记住用户名</Checkbox>
-          <router-link style="float:right" to="/forgetpasswd"> 忘记密码?</router-link>
+          <router-link style="float:right" to="/forget-password"> 忘记密码?</router-link>
         </div>
-        <FormItem style="margin-bottom: 60px;text-align: center">
-          <Button style="width: 100%;border-radius:0px" type="primary" size="large" :loading="loading" @click.native.prevent="handleLogin">
-            登录
+        <FormItem style="margin-bottom: 20px;text-align: center">
+          <Button :loading="loading" style="width: 100%;border-radius:0px" type="primary" size="large" @click="handleLogin">
+            登陆
           </Button>
         </FormItem>
-        <div>
-          <router-link to="register" class="register-btn">注册用户</router-link>
-        </div>
+        <!-- <div> -->
+        <router-link to="register" class="register-btn">注册</router-link>
+        <!-- </div> -->
       </Form>
     </Card>
 
@@ -64,7 +63,7 @@
 </template>
 
 <script>
-import { setCookie, getCookie } from '@/utils/auth'
+import { getCookie } from '@/utils/auth'
 import login_center_bg from '@/assets/img/login_center_bg.png'
 
 export default {
@@ -112,14 +111,14 @@ export default {
           obj.password = this.loginForm.password
           this.loading = true
           this.$store.dispatch('user/login', obj).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+            this.$router.replace({ path: this.redirect || '/' })
             this.loading = false
             if (this.loginForm.rememberMe === true) {
-              setCookie('phoneNum', this.loginForm.phoneNum, 15)
-              setCookie('password', this.loginForm.password, 15)
+              // setCookie('phoneNum', this.loginForm.phoneNum, 15)
+              // setCookie('password', this.loginForm.password, 15)
             } else {
-              setCookie('phoneNum', '', 15)
-              setCookie('password', '', 15)
+              // setCookie('phoneNum', '', 15)
+              // setCookie('password', '', 15)
             }
           }).catch(() => {
             this.loading = false
@@ -133,29 +132,32 @@ export default {
   }
 }
 </script>
-<style >
+<style>
 .ivu-input-large {
     font-size: 16px;
     border-radius: 1px;
     padding: 8px 40px;
     height: 40px;
 }
+
 </style>
 <style scoped>
-.login-form-layout {
+.form-layout {
   position: absolute;
   left: 0;
   right: 0;
-  width: 360px;
-  margin: 140px auto;
+  width: 450px;
+  padding: 0 40px;
+  margin: 80px auto;
   border-top: 10px solid #409EFF;
 }
 .title-icon{
-  font-size: 50px;
+  font-size: 60px;
   color:#409EFF
 }
 .login-title {
   text-align: center;
+   margin-bottom: 30px;
   color:#409EFF
 }
 .login-center-layout {
@@ -195,11 +197,16 @@ span:first-of-type {
   display: inline-block
 }
 .register-btn{
-  font-size: 13px;
-  float:right;
+  display: inline-block;
+  font-size: 14px;
+  margin-bottom: 20px;
   color:#1890ff;
   text-decoration: none;
   cursor: pointer
 }
 
+.loading {
+  display: inline-block;
+  color:#fff
+}
 </style>

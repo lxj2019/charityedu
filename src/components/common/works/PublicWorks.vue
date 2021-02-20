@@ -41,12 +41,17 @@ export default {
   },
   props: {
     works: {
-      default: {}
+      type: Object,
+      default: () => {
+        return {}
+      }
     },
     workWidth: {
+      type: String,
       default: '230px'
     },
     workHeight: {
+      type: String,
       default: '200px'
     }
   },

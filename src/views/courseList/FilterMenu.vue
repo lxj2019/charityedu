@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     isActive(index) {
-      return this.currentIndex = index
+      return this.currentIndex === index
     }
   }
 }

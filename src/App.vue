@@ -1,18 +1,18 @@
 <template>
-<div>
-  <top-nav></top-nav>
-  <div class="main">
-    <router-view></router-view>
-  </div>
+  <div>
+    <top-nav />
+    <div class="main">
+      <router-view />
+    </div>
 
-</div>
+  </div>
 
 </template>
 
 <script>
 
-import TopNav from "./components/common/header/TopNav";
-import 'view-design/dist/styles/iview.css';
+import TopNav from './components/common/header/TopNav'
+import 'view-design/dist/styles/iview.css'
 
 export default {
   name: 'App',
@@ -23,14 +23,14 @@ export default {
   data: () => ({
     //
   })
-};
+}
 </script>
 <style scoped>
   @import "./assets/css/base.css";
 
-  a{
-    color: #666;
-  }
+    a{
+      color: #666;
+    }
   /*.v-application ul, .v-application ol {*/
   /*  padding-left: 0px!important;*/
   /*}*/

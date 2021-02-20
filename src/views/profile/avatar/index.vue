@@ -15,7 +15,7 @@
       :key="imagecropperKey"
       :width="300"
       :height="300"
-      url="http://47.112.148.42:8443/charityedu/filedeal/saveImg"
+      :url="url"
       lang-type="zh"
       @close="close"
       @crop-upload-success="cropSuccess"
@@ -32,12 +32,12 @@ export default {
   data() {
     return {
       imagecropperShow: false,
-      imagecropperKey: 0
+      imagecropperKey: 0,
+      url: `${process.env.VUE_APP_BASE_API}/filedeal/saveImg`
     }
   },
   methods: {
     cropSuccess(resData) {
-      // console.log(resData)
       this.$store.dispatch('user/getUserImg')
       this.$Message.success(resData.message)
       this.imagecropperShow = false
