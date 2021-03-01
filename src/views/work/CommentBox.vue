@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div class="comment-box clear-fix">
-      <div class="user-face"><img :src="comment.commentatorImg" alt="用户头像"></div>
+    <div class="comment-box clearfix">
+      <!-- <div class="user-face"><img :src="comment.commentatorImg" alt="用户头像"></div> -->
+      <Avatar :src="comment.commentatorImg" size="large" />
       <div class="comment-info">
         <a class="user">{{ comment.commentatorName }}</a>
         <p class="text">{{ comment.context }}</p>
-        <div class="information"><span>{{ comment.applaudnum }}</span></div>
-        <div class="time"> {{ comment.commentatorTime | formatDate }}</div>
+        <div class="information"><span><Icon size="15" type="md-thumbs-up" />{{ comment.applaudnum }}</span></div>
+        <div class="time"><Icon size="15" type="ios-time-outline" /> {{ comment.commentatorTime | formatDate }}</div>
       </div>
     </div>
   </div>
@@ -62,8 +63,10 @@ export default {
     color: #6D757A;
   }
   .text{
-    font-size: 14px;
-    color: #222222;
+    padding: 5px 0;
+    line-height: 20px;
+    font-size: 13px;
+    color: #444;
 
   }
   .information{

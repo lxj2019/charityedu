@@ -35,7 +35,7 @@ export default {
 
 <style scoped>
   .filter-box{
-    height: 55px;;
+    height: 55px;
     background-color: #fff;
     line-height: 55px;
   }

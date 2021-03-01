@@ -25,7 +25,7 @@
         />
       </filter-menu>
       <div>
-        <div v-if="workList.length!=0" class="course-wrapper">
+        <div v-if="workList.length!=0" class="works-wrapper">
           <public-works
             v-for="(item,index) in workList"
             :key="index"
@@ -597,7 +597,7 @@ export default {
     flex:1;
 
   }
-  .course-wrapper{
+  .works-wrapper{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between ;

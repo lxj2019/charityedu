@@ -18,9 +18,9 @@
       label-tap-to-retry="点击重试"
 
       :allow-file-type-validation="true"
-      label-file-type-not-allowed="文件类型无效"
-      file-validate-type-label-expected-types="格式要求: {allButLastType} 和 {lastType}"
-      :accepted-file-types="['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'video/mp4']"
+      label-file-type-not-allowed="文件类型错误！"
+      file-validate-type-label-expected-types=""
+      :accepted-file-types="fileType"
       :file-validate-type-label-expected-types-map="{'application/vnd.ms-powerpoint':'ppt','application/vnd.openxmlformats-officedocument.presentationml.presentation':'pptx','video/mp4':'mp4'}"
 
       :allow-file-size-validation="true"
@@ -85,7 +85,12 @@ export default {
     fileType: {
       type: Array,
       default: () => {
-        return ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'video/mp4']
+        return [
+          'video/mpeg', 'video/mp4', 'video/webm', 'application/octet-stream', 'video/3gpp', 'video/quicktime', 'asx video/x-ms-asf',
+          'application/vnd.mspowerpoint',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+
+        ]
       }
     },
     uploadUrl: {

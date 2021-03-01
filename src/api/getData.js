@@ -1,4 +1,4 @@
-import { request } from '@/network/request.js'
+import request from '@/utils/request.js'
 
 // 获得年级数据
 export function getGrade() {

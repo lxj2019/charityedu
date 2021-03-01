@@ -13,8 +13,18 @@
         @on-search="searchWorkList"
       />
     </filter-menu>
-    <div class="course-container">
-      <div v-if="workList.length!=0" class="course-wrapper clear-fix">
+    <div class="works-container">
+      <div class="icon-box">
+        <!-- <Icon type="md-checkmark-circle-outline" />：审核通过
+        <Icon type="ios-checkmark-titlecircle-outline" />：审核通过 -->
+        <span class="title">状态说明：</span>
+        <Icon class="icon" size="25" type="ios-checkmark-circle-outline" /><Tag type="border" color="default">审核通过</Tag>、
+        <Icon class="icon" style="color:#bf3553;font-weight:bold" size="25" type="ios-close-circle-outline" /><Tag type="border" color="default">未通过</Tag>、
+        <Icon class="icon" size="25" type="ios-create-outline" /><Tag type="border" color="default">未审核</Tag>、
+        <Icon class="icon" size="25" type="md-sad" /><Tag type="border" color="default">作品失效</Tag>、
+        <Icon class="icon" size="25" type="md-warning" /><Tag type="border" color="default">不明错误</Tag>
+      </div>
+      <div v-if="workList.length!=0" class="works-wrapper clearfix">
         <work-common
           v-for="(item,index) in workList"
           :key="index"
@@ -23,23 +33,28 @@
           :title="item.worksTitle"
           :image="item.worksImg"
           :card-style="{ width:'160px'}"
-          @click-image="clickCard(item.id)"
-          @click-title="clickCard(item.id)"
+          @click-image="clickCard(item.worksId)"
+          @click-title="clickCard(item.worksId)"
         >
           <!--      右下角底部：“审核状态”-->
           <div slot="bottom-right">
-            <span>{{ item.checkState }}</span>
+            <el-dropdown slot="bottom-right" placement="top" class="more">
+              <Icon :type="stateOptions[item.checkState] || 'md-warning'" size="25" style="color:#aaa" :title="item.checkState" />
+              <el-dropdown-menu slot="dropdown" class="dropdown-menu">
+                <el-dropdown-item @click.native="deleteWork(item.worksId)"><Icon type="ios-trash-outline" />删除</el-dropdown-item>
+                <el-dropdown-item divided><Icon type="ios-trash-outline" />投诉</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
-          <!--      左上角：评分状态-->
-          <span slot="top-left" class="time">{{ item.commentState }}</span>
+
         </work-common>
-        <Page
+        <!-- <Page
           :total="workTotals"
           style="float:right;margin:20px"
           show-total
           show-elevator
           @on-change="changePagenum"
-        />
+        /> -->
       </div>
       <div
         v-if="workList.length==0"
@@ -55,7 +70,7 @@
 <script>
 import WorkCommon from '@/components/common/works/WorkCommon'
 import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
-import { adminWorkList, searchAdminWorkList } from '@/api/getData'
+import { myWorksList, deleteMyWork } from '@/api/myWork'
 // import workList from '@/works.js'
 export default {
   name: 'MyClass',
@@ -69,7 +84,13 @@ export default {
       searchInfo: '',
       workTotals: 0,
       workList: [],
-      listShow: []
+      listShow: [],
+      stateOptions: {
+        作品失效: 'md-sad',
+        审核通过: 'ios-checkmark-circle-outline',
+        未通过: 'ios-close-circle-outline',
+        未审核: 'ios-create-outline'
+      }
     }
   },
   mounted() {
@@ -77,29 +98,50 @@ export default {
     this.getWorkList()
   },
   methods: {
+    deleteWork(worksId) {
+      this.$Modal.confirm({
+        title: '警告',
+        content: '<p>确定删除该作品吗？</p>',
+        onOk: () => {
+          deleteMyWork({ worksId }).then(res => {
+            this.$Message.success('删除作品成功!')
+            this.getWorkList()
+          })
+        },
+        onCancel: () => {
+          this.$Message.info('已取消删除')
+        }
+      })
+    },
     clickCard(id) {
       this.$router.push({
         name: 'work',
         params: { id }
       })
     },
+    deleteMyWork(worksId) {
+      deleteMyWork({ worksId }).then(res => {
+        this.getWorkList()
+        this.$Message.success('删除成功')
+      })
+    },
     getWorkList() {
-      adminWorkList({
+      myWorksList({
         pagenum: this.pagenum
       }).then(res => {
         // console.log(res)
         this.workTotals = res.data.data.total
-        this.workList = res.data.data.managerWorks
+        this.workList = res.data.data
       })
     },
     searchWorkList() {
-      searchAdminWorkList({
-        content: this.searchInfo,
-        pagenum: this.pagenum
-      }).then(res => {
-        this.workTotals = res.data.data.total
-        this.workList = res.data.data.managerWorks
-      })
+      // searchAdminWorkList({
+      //   content: this.searchInfo,
+      //   pagenum: this.pagenum
+      // }).then(res => {
+      //   this.workTotals = res.data.data.total
+      //   this.workList = res.data.data.managerWorks
+      // })
     },
     // 页码改变的回调，返回改变后的页码
     changePagenum(val) {
@@ -149,7 +191,17 @@ export default {
   }
 }
 </script>
+<style>
+.ivu-dropdown-menu .dropdown-menu{
+  margin:0;
+  z-index: 100;
 
+}
+ivu-select-dropdown {
+  position: abs;
+
+}
+</style>
 <style scoped>
   .collectBox{
     width:100%;
@@ -166,7 +218,7 @@ export default {
     right: 10px;
     top:50%;
   }
- .course-wrapper {
+ .works-wrapper {
     width: 100%;
     height: 100%;
     padding-left: 12px;
@@ -177,8 +229,19 @@ export default {
     margin-bottom: 20px;
     box-sizing: border-box;
   }
+  .icon-box {
+    padding: 0 0 20px 20px;
+  }
+  .icon-box .title {
+    color: rgb(0, 0, 0);
+    font-size:13px
+  }
+  .icon-box Tag {
+    vertical-align: top;
+  }
   .no-works {
     width: 100%;
+    height: 100%;
     text-align: center;
     color:skyblue;
     font-size: 20px;

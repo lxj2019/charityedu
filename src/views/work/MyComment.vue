@@ -1,6 +1,7 @@
 <template>
-  <div class="my-comment clear-fix">
-    <img class="avatar" :src="$store.getters.avatar" alt="用户头像">
+  <div class="my-comment clearfix">
+    <!-- <img class="avatar" :src="$store.getters.avatar" alt="用户头像"> -->
+    <Avatar :src="$store.getters.avatar" size="large" />
     <!-- <div class="text-area"> -->
     <el-input v-model="content" class="text-area" type="textarea" :rows="3" resize="none" placeholder="请发表友善的评论..." />
     <!-- </div> -->
@@ -11,7 +12,7 @@
 </template>
 
 <script>
-import { addMessage } from '@/api/video'
+import { addMessage } from '@/api/work'
 export default {
   name: 'MyComment',
   props: {

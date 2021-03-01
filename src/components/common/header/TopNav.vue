@@ -15,6 +15,7 @@
             <router-link to="/Profile" title="个人信息">
               个人信息
             </router-link></DropdownItem>
+          <DropdownItem> <a @click="$router.push('/manage')">管理员入口</a></DropdownItem>
           <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
         </DropdownMenu>
       </Dropdown>
@@ -76,10 +77,12 @@ export default {
 
 <style scoped>
   .top-nav {
-    position: relative;
+    position:relative;
     top: 0;
+    width: 100%;
     height: 60px;
     line-height: 60px;
+    z-index: 1000;
     /*border-bottom: 1px solid rgba(0,0,0,0.1);*/
     box-shadow: 0px 1px 5px 1px rgba(0,0,0,.1);
     color: #666666 ;

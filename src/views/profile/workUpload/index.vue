@@ -5,6 +5,10 @@
       <span slot="first">上传视频</span>
     </filter-menu>
     <div class="upload-box">
+      <Spin v-if="loading" fix>
+        <Icon type="ios-loading" size="18" class="demo-spin-icon-load" />
+        <div>作品正在提交中，请稍等...</div>
+      </Spin>
       <h2>文件上传</h2>
       <upload-file upload-url="upload" @updateServerId="updateServerId" />
       <div class="inline" />
@@ -52,7 +56,8 @@ export default {
       serverId: '',
       workTitle: '',
       introduction: '',
-      knowledgeId: 111
+      knowledgeId: 111,
+      loading: false
     }
   },
   methods: {
@@ -78,22 +83,20 @@ export default {
     },
     up() {
       if (this.worksImg != null && this.serverId !== '' && this.knowledgeId !== '' && this.workTitle !== '' && this.introduction !== '') {
+        this.loading = true
         const formData = new FormData()
         formData.append('worksImg', this.worksImg)
         formData.append('serverId', this.serverId)
         formData.append('title', this.workTitle)
         formData.append('knowledgeId', this.knowledgeId)
         formData.append('introduction', this.introduction)
-        // request({
-        //    url: "/filedeal/new",
-        //    data: formData,
-        //    method:'post'
-        // })
         uploadWork(formData)
           .then(res => {
+            this.loading = false
             this.$Message.success(res.data.message)
           }).catch(err => {
             console.log(err)
+            this.loading = false
           })
       } else {
         if (this.serverId === '') this.$Message.error('请上传作品！')
@@ -116,7 +119,16 @@ export default {
 
 <style scoped>
   .upload-box{
+    position: relative;
     margin: 10px 20px;
+  }
+  .demo-spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
+  }
+  @keyframes ani-demo-spin {
+      from { transform: rotate(0deg);}
+      50%  { transform: rotate(180deg);}
+      to   { transform: rotate(360deg);}
   }
   h2{
     display: block;

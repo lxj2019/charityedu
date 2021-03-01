@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { getCookie } from '@/utils/auth'
+import { getCookie, setCookie } from '@/utils/auth'
 import login_center_bg from '@/assets/img/login_center_bg.png'
 
 export default {
@@ -114,11 +114,11 @@ export default {
             this.$router.replace({ path: this.redirect || '/' })
             this.loading = false
             if (this.loginForm.rememberMe === true) {
-              // setCookie('phoneNum', this.loginForm.phoneNum, 15)
-              // setCookie('password', this.loginForm.password, 15)
+              setCookie('phoneNum', this.loginForm.phoneNum, 15)
+              setCookie('password', this.loginForm.password, 15)
             } else {
-              // setCookie('phoneNum', '', 15)
-              // setCookie('password', '', 15)
+              setCookie('phoneNum', '', 15)
+              setCookie('password', '', 15)
             }
           }).catch(() => {
             this.loading = false

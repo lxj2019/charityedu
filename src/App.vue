@@ -1,6 +1,6 @@
 <template>
   <div>
-    <top-nav />
+    <top-nav class="header" />
     <div class="main">
       <router-view />
     </div>
@@ -26,11 +26,12 @@ export default {
 }
 </script>
 <style scoped>
-  @import "./assets/css/base.css";
-
-    a{
+ .header {
+   position: sticky;
+ }
+    /* a{
       color: #666;
-    }
+    } */
   /*.v-application ul, .v-application ol {*/
   /*  padding-left: 0px!important;*/
   /*}*/

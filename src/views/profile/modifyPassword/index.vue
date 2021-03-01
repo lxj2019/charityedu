@@ -1,6 +1,9 @@
 <template>
   <!--  修改密码模块-->
   <div class="updateBox">
+    <filter-menu>
+      <span slot="first">修改密码</span>
+    </filter-menu>
     <div class="update-pwd">
       <Form
         ref="pwdInfo"
@@ -72,8 +75,11 @@
 
 <script>
 import { modifyPwd } from '@/api/user.js'
+import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
+
 export default {
   name: 'ModifyPassword',
+  components: { FilterMenu },
   data() {
     const validatePassCheck = (rule, value, callback) => {
       if (value === '') {

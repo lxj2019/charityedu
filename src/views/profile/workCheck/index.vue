@@ -13,8 +13,8 @@
         @on-search="searchWorkList"
       />
     </filter-menu>
-    <div class="course-container">
-      <div v-if="workList.length!=0" class="course-wrapper clear-fix">
+    <div class="works-container">
+      <div v-if="workList.length!=0" class="works-wrapper">
         <work-common
           v-for="(item,index) in workList"
           :key="index"
@@ -23,11 +23,11 @@
           :title="item.worksTitle"
           :image="item.worksImg"
           :card-style="{ width:'160px'}"
-          @click-image="clickCard(item.id)"
-          @click-title="clickCard(item.id)"
+          @click-image="clickCard(item.worksId)"
+          @click-title="clickCard(item.worksId)"
         >
           <div slot="bottom-left" class="teacher">
-            <img class="avatar" :src="item.worksImg" alt="头像">
+            <Avatar :src="item.worksImg" shape="circle" size="small" />
             <span :title="item.worksTitle">{{ item.worksTitle }}</span>
           </div>
           <!--      右下角底部：“审核状态”-->
@@ -82,8 +82,9 @@ export default {
   },
   methods: {
     clickCard(id) {
+      console.log(id)
       this.$router.push({
-        name: 'work',
+        name: 'check',
         params: { id }
       })
     },
@@ -170,9 +171,9 @@ export default {
     right: 10px;
     top:50%;
   }
- .course-wrapper {
+ .works-wrapper {
     width: 100%;
-    height: 100%;
+    height: 400px;
     padding-left: 12px;
     padding-top: 5px;
   }
@@ -196,16 +197,8 @@ export default {
     text-overflow:ellipsis;
     white-space: nowrap;
   }
-  .teacher .avatar{
-    width:25px;
-    height: 25px;
-    vertical-align: top;
-    border-radius: 50%;
-  }
   .teacher span {
-    display: inline;
-    margin-left: 5px;
+    margin-right: 5px;
     font-size: 12px;
-    font-weight: 100;
   }
 </style>

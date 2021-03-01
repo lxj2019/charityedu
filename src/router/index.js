@@ -1,7 +1,82 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Layout from '@/views/admin'
 
 Vue.use(VueRouter)
+export const manageRoutes = [
+  {
+    path: '/manage',
+    name: '后台首页',
+    component: Layout,
+    redirect: '/manage/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/admin/views/dashboard'),
+        meta: { title: '后台首页', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
+    path: '/manage/system',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: '系统管理',
+    meta: { title: '系统管理', icon: 'el-icon-menu' },
+    children: [
+      {
+        path: 'user',
+        name: '用户管理',
+        component: () => import('@/views/admin/views/loop'),
+        meta: { title: '用户管理', icon: 'el-icon-add' }
+      },
+      {
+        path: 'role',
+        name: '角色管理',
+        component: () => import('@/views/admin/views/loop'),
+        meta: { title: '角色管理', icon: 'el-icon-edit' }
+      }
+
+    ]
+  },
+  {
+    path: '/manage/work',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: '作品管理',
+    meta: { title: '作品管理', icon: 'el-icon-reading' },
+    children: [
+      {
+        path: 'check/:id',
+        name: '作品审核',
+        component: () => import('@/views/admin/views/work/check'),
+        meta: { title: '作品审核', icon: 'el-icon-document-checked' }
+      },
+      {
+        path: 'manage',
+        name: '作品管理',
+        component: () => import('@/views/admin/views/work/manage'),
+        meta: { title: '作品管理', icon: 'el-icon-reading' }
+      }
+    ]
+  },
+  {
+    path: '/manage/loop',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: '轮播图管理',
+    meta: { title: '轮播图管理', icon: 'el-icon-picture-outline-round' },
+    children: [
+      {
+        path: 'manage',
+        name: '轮播图管理',
+        component: () => import('@/views/admin/views/loop'),
+        meta: { title: '轮播图管理', icon: 'el-icon-picture-outline' }
+      }
+    ]
+  }
+]
 
 const routes = [{
   path: '',
@@ -41,6 +116,7 @@ const routes = [{
     title: '作品审核'
   }
 },
+
 {
   path: '/profile',
   component: () =>
@@ -175,12 +251,8 @@ const routes = [{
 ]
 
 const router = new VueRouter({
-  routes,
+  routes: [...manageRoutes, ...routes],
   linkActiveClass: 'active',
   mode: 'history'
-})
-router.beforeEach((to, from, next) => {
-  document.title = to.matched[0].meta.title
-  next()
 })
 export default router

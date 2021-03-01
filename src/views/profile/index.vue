@@ -47,8 +47,7 @@ export default {
 }
   .profile-right{
     float: left;
-    /* padding: 10px; */
-    /* width: 829px; */
+    min-height: 500px;
     border-left: 1px solid #ddd;
     width: 85%;
     background-color: #fff;

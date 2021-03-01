@@ -53,7 +53,6 @@ export default {
 <style scoped>
 .avatar-wrapper{
   height: 500px;
-
 }
   .avatar{
     width: 200px;

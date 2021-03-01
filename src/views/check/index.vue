@@ -1,28 +1,25 @@
 <template>
   <div class="w">
+    <!-- <Button @click="screen">全屏</Button> -->
     <div class="check-container">
-      <el-scrollbar :style="{width: '550px',height: pdfHeight + 'px'}">
-        <div class="pdf-wrapper" style="width: 550px">
-          <pdf
-            v-if="show"
-            ref="pdf"
-            style="width: 500px"
-            src="http://image.cache.timepack.cn/nodejs.pdf"
-            :page="page"
-            :rotate="rotate"
-            @password="password"
-            @progress="loadedRatio = $event"
-            @error="error"
-            @num-pages="numPages = $event"
-            @link-clicked="page = $event"
-          />
-          <Spin v-if="loadedRatio > 0 && loadedRatio < 1" size="large" fix />
-        <!-- </Spin> -->
-        </div>
-      </el-scrollbar>
+      <!--    视频-->
+      <div v-if="false" class="video-wrapper">
+        <video-show
+          class="video"
+          :works-link="work.worksLink"
+        />
+      </div>
+      <div v-if="true" class="pdf-wrapper">
+        <PDF-comm
+          :pdf-height="pdfHeight"
+          pdf-width="550px"
+          :pdf-src="work.worksLink"
+          @progress="loadedRatio = $event"
+        />
+      </div>
       <div class="work-detail">
-        <Card :bordered="false" dis-hover>
-          <h2 slot="title">
+        <Card :bordered="true" dis-hover>
+          <h2 slot="title" class="card-title">
             <Icon type="ios-bookmarks-outline" />
             作品信息
           </h2>
@@ -42,15 +39,9 @@
               <div class="value">{{ item.value }}</div>
             </li>
           </ul>
-          <div class="work-controll">
-            <span>共 {{ numPages }} 页</span><Page :current.sync="page" :total="numPages" :page-size="1" size="small" show-elevator />
-            <Button class="pdf-btn" size="small" type="dashed" title="逆时针旋转" @click="rotate -= 90">&#x27F2;</Button>
-            <Button class="pdf-btn" size="small" type="dashed" title="顺时针旋转" @click="rotate += 90">&#x27F3;</Button>
-            <Button class="pdf-btn" type="info" size="small" title="打印" icon="ios-print-outline" @click="$refs.pdf.print()" />
-          </div>
         </Card>
-        <Card :bordered="false" dis-hover>
-          <h2 slot="title">
+        <Card :bordered="true" dis-hover>
+          <h2 slot="title" class="card-title">
             <Icon type="ios-bookmarks-outline" />
             作品审核
           </h2>
@@ -58,128 +49,161 @@
             <Icon type="ios-create-outline" />
             已审核
           </a>
-
+          <Form ref="formInline" :model="checkForm" class="checkForm" :label-width="80">
+            <FormItem prop="num" label="评分">
+              <InputNumber v-model="checkForm.num" :max="100" :min="0" placeholder="百分制" />
+            </FormItem>
+            <FormItem prop="text" label="评语">
+              <Input v-model="checkForm.text" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入评语....." />
+            </FormItem>
+            <FormItem>
+              <Button type="primary">通过</Button>
+              <Button style="margin-left: 8px">不通过</Button>
+            </FormItem>
+          </Form>
         </Card>
       </div>
-
     </div>
   </div>
 </template>
 <script>
-import pdf from 'vue-pdf'
+// import pdf from 'vue-pdf'
+import VideoShow from '@/components/common/VideoShow'
+import { check } from '@/api/admin.js'
+import { getUnCheckWorkInfo } from '@/api/work.js'
+import PDFComm from '@/components/common/PDFComm'
 
 export default {
+  name: 'Check',
   components: {
-    pdf: pdf
+    VideoShow, PDFComm
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.worksId = Number(to.params.id)
+      vm.getWorkInfo(vm.worksId)
+    })
+  },
+
   data () {
     return {
-      show: true,
-      pdfHeight: 0,
-      spinShow: true,
-      src: '',
+      work: {},
+      pdfHeight: '500px',
       loadedRatio: 0,
-      page: 1,
-      numPages: 0,
-      rotate: 0,
+      checkForm: {
+        num: 0,
+        text: ''
+      },
       list: [
         {
           name: '标题：',
-          value: 'nodeJs 开发指南'
+          value: 'worksTitle'
         },
         {
-          name: '简介：',
-          value: '房间里看电视剧李开复监考老fsdfdsfjskdjflkldsjfjlfjlsjjflkdsjlfjsldjfljsdlkfj师大家发链接'
+          name: '作者：',
+          value: 'author'
+        },
+        {
+          name: '类型：',
+          value: 'type'
         },
         {
           name: '发布时间：',
           value: '2021:02:50'
         },
+        // {
+        //   name: '分类：',
+        //   value: 'nodj、学习、 高中'
+        // },
+
         {
-          name: '分类：',
-          value: 'nodj、学习、 高中'
-        },
-        {
-          name: '类型：',
-          value: 'PPT'
+          name: '简介：',
+          value: 'worksIntroduction'
         }
       ]
 
     }
   },
   created() {
-    this.pdfHeight = document.documentElement.clientHeight - 85
+    this.pdfHeight = document.documentElement.clientHeight - 115 + 'px'
     window.onresize = () => {
-      this.pdfHeight = document.documentElement.clientHeight - 85
+      this.pdfHeight = document.documentElement.clientHeight - 85 + 'px'
     }
   },
   methods: {
-    password: function(updatePassword, reason) {
-      updatePassword(prompt('password is "test"'))
+    // 根据worksid，获取作品详细信息
+    getWorkInfo(worksid, callback) {
+      getUnCheckWorkInfo({ worksid }).then(res => {
+        this.work = res.data.data
+        this.worksCount = res.data.data.worksCount
+        if (typeof callback === 'function') {
+          callback()
+        }
+      })
     },
-    error: function(err) {
-      console.log(err)
-    },
-    logContent() {
-      this.$refs.pdf.pdf.forEachPage(function(page) {
-        return page.getTextContent()
-          .then(function(content) {
-            var text = content.items.map(item => item.str)
-            console.log(text)
-          })
+    // 审核作品
+    chenck (checkCode) {
+      check({
+        checkCode,
+        worksId: this.work.worksId
       })
     }
   }
 }
 </script>
 <style>
-.check-container .el-scrollbar__wrap{
-    overflow-x: hidden;
-  }
+
+.checkForm .ivu-form-item {
+  margin-bottom: 12px;
+}
 </style>
 <style scoped>
 .check-container {
-  padding: 10px;
+  padding-top: 6px;
   display: flex;
 }
 .work-detail {
   flex:1;
 }
 .pdf-wrapper {
-  /* width: 600px; */
+  flex:1.3;
   position: relative;
+  height: 600px
+}
 
+.video-wrapper {
+  flex: 1;
+  margin-right: 5px
 }
 .work-info {
   display: flex;
-  padding: 6px;
+  padding: 10px;
   align-items:center;/*垂直居中*/
+}
+.card-title {
+  font-size: 20;
+  color: #000;
+  font-weight: normal;
 }
  .work-info .title {
   flex: 20%;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 15px;
+  color: #333;
+  font-weight: 600;
 }
  .work-info .value {
   flex: 80%;
   padding:5px;
   background-color:#F7F7F7;
-  font-size: 13px;
-  font-weight: bold;
-  color:#555;
+  font-size: 14px;
+  font-weight: normal;
+  color:#000;
   border-radius: 5px;
   /* overflow:auto; */
 }
-.work-controll {
-  padding: 10px;
-  display: flex;
-  align-items:center;/*垂直居中*/
-}
-.pdf-btn {
-  width: 30px;
-  height: 30px;
-  margin-left: 15px;
-  /* cursor: pointer; */
-  border-radius: 50%;
+
+.checkForm {
+  padding: 0;
+  margin: 0
 }
 </style>

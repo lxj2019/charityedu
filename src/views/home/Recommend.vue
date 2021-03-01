@@ -7,14 +7,23 @@
       <a href="#">查看更多</a>
     </div>
     <div class="recommod">
-      <div v-if="workList.length!=0" class="course-wrapper">
-        <public-works
+      <div v-if="workList.length!=0" class="works-wrapper">
+        <work-common
           v-for="(item,index) in workList"
           :key="index"
-          class="course-list-works"
-          :works="item"
-          @click.native="enter(item)"
-        />
+          class="card"
+          :type="item.type"
+          :title="item.worksTitle"
+          :image="item.worksImg"
+          :card-style="{ width:'230px'}"
+          @click-image="clickCard(item.worksId)"
+          @click-title="clickCard(item.worksId)"
+        >
+          <div slot="bottom-left" class="teacher">
+            <Avatar :src="item.worksImg" shape="circle" size="small" />
+            <span :title="item.worksTitle">{{ item.teacherName }}</span>
+          </div>
+        </work-common>
       </div>
       <div
         v-if="workList.length==0"
@@ -28,12 +37,12 @@
 </template>
 
 <script>
-import PublicWorks from '../../components/common/works/PublicWorks'
-import { adminWorkList } from '@/api/getData'
+import WorkCommon from '@/components/common/works/WorkCommon'
+import { userWorkList } from '@/api/getData'
 export default {
   name: 'Recommend',
   components: {
-    PublicWorks
+    WorkCommon
   },
   data() {
     return {
@@ -45,15 +54,22 @@ export default {
     this.getRecommendWorks()
   },
   methods: {
+    clickCard(id) {
+      this.$router.push({
+        name: 'work',
+        params: { id }
+      })
+    },
     getRecommendWorks() {
-      adminWorkList({
+      userWorkList({
         pagenum: 1
       }).then(res => {
         console.log(res)
         if (res.data.code === 200) {
           // this.workTotals  = res.data.data.total
-          this.workList = res.data.data.managerWorks
-          this.worksCount = res.data.data.worksCount
+          this.workList = res.data.data.usersWorks
+          console.log(this.WorkList)
+          // this.worksCount = res.data.data.worksHeat
         }
       })
     },
@@ -94,10 +110,17 @@ export default {
     width: 100%;
     /* background-color: #fff; */
   }
-  .course-wrapper{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+  .works-wrapper {
+    width: 100%;
+    height: 400px;
+    padding-left: 12px;
+    padding-top: 5px;
+  }
+  .card {
+    float:left;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
   }
   .course-list-works{
     margin-bottom: 15px;

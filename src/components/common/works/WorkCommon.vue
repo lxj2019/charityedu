@@ -109,25 +109,33 @@ export default {
     /* background: repeat-x */
   }
 }
-
   .card::before{
     position: absolute;
     top: 6px;
     right: -6px;
-    width: 38px;
-    height: 23px;
+    width: 30px;
+    height: 20px;
     color: #fff;
-    background: no-repeat center/100%;
-    z-index: 1;
+    font-weight: normal;
+    font-style:oblique;
+
+    border-radius: 13px 2px;
+    z-index: 10;
   }
   .ppt::before{
     content: 'PPT';
+    font-size: 12px;
+    background-color:turquoise;
+    text-shadow: 2px 2px 2px blue;
   }
   .video::before{
-    content: '视频';
+    content: 'video';
+    font-size: 12px;
+    background-color:pink;
+    text-shadow: 2px 2px 2px #FF0000;
   }
   .card-info{
-    padding:8px 10px 0px 10px;
+    /* padding:8px 10px 0px 10px; */
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -135,7 +143,8 @@ export default {
   }
   .card-info .title {
     height: 32px;
-    margin:0;
+    line-height: 16px;
+    margin: 5px ;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -144,7 +153,6 @@ export default {
     color: #333;
     font-weight: 500;
     font-family: PingFangSC-Medium, PingFangSC;
-    line-height: 16px;
   }
   .bottom-left{
     position: absolute;

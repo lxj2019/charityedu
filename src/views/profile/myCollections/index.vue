@@ -10,11 +10,11 @@
         class="work-search"
         search
         placeholder="根据作品名称查找"
-        @on-search="searchWorkList"
+        @on-search="searchCollection"
       />
     </filter-menu>
-    <div class="course-container">
-      <div v-if="workList.length!=0" class="course-wrapper clear-fix">
+    <div class="works-container">
+      <div v-if="workList.length!=0" class="works-wrapper clearfix">
         <work-common
           v-for="(item,index) in workList"
           :key="index"
@@ -23,24 +23,34 @@
           :title="item.worksTitle"
           :image="item.worksImg"
           :card-style="{ width:'160px'}"
-          @click-image="clickCard(item.id)"
-          @click-title="clickCard(item.id)"
+          @click-image="clickCard(item.worksId)"
+          @click-title="clickCard(item.worksId)"
         >
           <div slot="bottom-left" class="teacher">
-            <img class="avatar" :src="item.worksImg" alt="头像">
+            <Avatar :src="item.worksImg" shape="circle" size="small" />
             <span :title="item.worksTitle">{{ item.worksTitle }}</span>
           </div>
+          <!--      右下角底部：“下拉菜单”-->
+          <el-dropdown slot="bottom-right" trigger="click" placement="top" class="more">
+            <span>
+              <Icon size="20" class="icon" type="md-more" />
+            </span>
+            <el-dropdown-menu slot="dropdown" class="dropdown-menu">
+              <el-dropdown-item @click.native="removeCollection(item.worksId)">移除收藏</el-dropdown-item>
+              <el-dropdown-item divided>详细信息</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </work-common>
-        <Page
+        <!-- <Page
           :total="workTotals"
           style="float:right;margin:20px"
           show-total
           show-elevator
           @on-change="changePagenum"
-        />
+        /> -->
       </div>
       <div
-        v-if="workList.length==0"
+        v-else
         class="no-works"
       >
         <Icon class="icon" type="ios-folder-open-outline" />
@@ -53,7 +63,7 @@
 <script>
 import WorkCommon from '@/components/common/works/WorkCommon'
 import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
-import { adminWorkList, searchAdminWorkList } from '@/api/getData'
+import { collectionList, removeCollection } from '@/api/collection'
 // import workList from '@/works.js'
 export default {
   name: 'MyCollections',
@@ -78,25 +88,31 @@ export default {
     clickCard(id) {
       this.$router.push({
         name: 'work',
-        params: { id }
+        params: {
+          id
+        }
       })
     },
     getWorkList() {
-      adminWorkList({
-        pagenum: this.pagenum
-      }).then(res => {
-        // console.log(res)
+      collectionList().then(res => {
         this.workTotals = res.data.data.total
-        this.workList = res.data.data.managerWorks
+        this.workList = res.data.data
       })
     },
-    searchWorkList() {
-      searchAdminWorkList({
-        content: this.searchInfo,
-        pagenum: this.pagenum
-      }).then(res => {
-        this.workTotals = res.data.data.total
-        this.workList = res.data.data.managerWorks
+    searchCollection() {
+      console.log(this.content)
+      // searchCollection({
+      //   content: this.searchInfo,
+      //   pagenum: this.pagenum
+      // }).then(res => {
+      //   this.workTotals = res.data.data.total
+      //   this.workList = res.data.data.managerWorks
+      // })
+    },
+    removeCollection(worksId) {
+      removeCollection({ worksId }).then(res => {
+        this.$Message.success('移除收藏成功')
+        this.getWorkList()
       })
     },
     // 页码改变的回调，返回改变后的页码
@@ -164,7 +180,7 @@ export default {
     right: 10px;
     top:50%;
   }
- .course-wrapper {
+ .works-wrapper {
     width: 100%;
     height: 100%;
     padding-left: 12px;
@@ -175,27 +191,9 @@ export default {
     margin-bottom: 20px;
     box-sizing: border-box;
   }
-  .teacher {
-    height: 30px;
-    overflow: hidden;
-    line-height: 30px;
-    text-overflow:ellipsis;
-    white-space: nowrap;
-  }
-  .teacher .avatar{
-    width:25px;
-    height: 25px;
-    vertical-align: top;
-    border-radius: 50%;
-  }
-  .teacher span {
-    display: inline;
-    margin-left: 5px;
-    font-size: 12px;
-    font-weight: 100;
-  }
   .no-works {
     width: 100%;
+    height: 100%;
     text-align: center;
     color:skyblue;
     font-size: 20px;

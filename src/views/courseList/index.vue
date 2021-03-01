@@ -25,7 +25,7 @@
         />
       </filter-menu>
       <div>
-        <div v-if="workList.length!=0" class="course-wrapper clear-fix">
+        <div v-if="workList.length!=0" class="works-wrapper clearfix">
           <work-common
             v-for="(item,index) in workList"
             :key="index"
@@ -33,21 +33,19 @@
             :type="item.type"
             :title="item.worksTitle"
             :image="item.worksImg"
-            @click-image="clickCard(item.id)"
-            @click-title="clickCard(item.id)"
+            @click-image="clickCard(item.worksId)"
+            @click-title="clickCard(item.worksId)"
           >
             <div slot="bottom-left" class="teacher">
-              <img class="avatar" :src="item.worksImg" alt="头像">
+              <Avatar :src="item.worksImg" shape="circle" size="small" />
               <span :title="item.worksTitle">{{ item.worksTitle }}</span>
             </div>
             <!--      右下角底部：“下拉菜单”-->
-            <el-dropdown slot="bottom-right" trigger="click" placement="top" class="more">
-              <span>
-                <Icon class="icon" type="md-more" />
-              </span>
+            <el-dropdown slot="bottom-right" placement="top" class="more">
+              <Icon class="icon" size="20" type="ios-cog-outline" />
               <el-dropdown-menu slot="dropdown" class="dropdown-menu">
-                <el-dropdown-item @click.native="removeColl('ab')">移除收藏</el-dropdown-item>
-                <el-dropdown-item divided>详细信息</el-dropdown-item>
+                <el-dropdown-item>不感兴趣</el-dropdown-item>
+                <el-dropdown-item divided>投诉</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </work-common>
@@ -71,11 +69,11 @@
 </template>
 
 <script>
-import { adminWorkList, searchAdminWorkList } from '@/api/getData'
+import { userWorkList, searchUserWorkList } from '@/api/getData'
 import FilterMenu from './FilterMenu'
 import CourseMenu from './CourseMenu'
 import WorkCommon from '@/components/common/works/WorkCommon.vue'
-import workList from '@/works.js'
+// import workList from '@/works.js'
 export default {
   name: 'CourseList',
   components: {
@@ -90,7 +88,7 @@ export default {
       workTotals: 10,
       bookname: '三年级上册',
       knowledgeid: 1,
-      workList: workList
+      workList: []
     }
   },
   computed: {
@@ -99,11 +97,12 @@ export default {
     // }
   },
   created() {
-    // this.userWorkList()
+    this.userWorkList()
     // this.workList = res.data.data.managerWorks
   },
   methods: {
     clickCard(id) {
+      console.log(id)
       this.$router.push({
         name: 'work',
         params: {
@@ -111,28 +110,25 @@ export default {
         }
       })
     },
-    removeColl(a) {
-      console.log(a)
-    },
     getIndex(item) {
       this.xIndex = item[0]
       this.yIndex = item[1]
     },
     searchWorkList() {
-      searchAdminWorkList({
+      searchUserWorkList({
         content: this.searchInfo,
         pagenum: this.pagenum
       }).then(res => {
         this.workTotals = res.data.data.total
-        this.workList = res.data.data.managerWorks
+        this.workList = res.data.data.usersWorks
       })
     },
     userWorkList() {
-      adminWorkList({
+      userWorkList({
         pagenum: 1
       }).then(res => {
         this.workTotals = res.data.data.total
-        this.workList = res.data.data.managerWorks
+        this.workList = res.data.data.usersWorks
       })
     },
     changePagenum(val) {
@@ -177,18 +173,17 @@ export default {
   padding: 5px;
   z-index: 1000  !important; */
 }
-.ivu-dropdown-menu .dropdown-menu{
+/* .ivu-dropdown-menu .dropdown-menu{
   margin:0;
-    z-index: 100;
+  z-index: 100;
 
-}
-ivu-select-dropdown {
+} */
+/* ivu-select-dropdown {
   position: abs;
 
-}
+} */
 </style>
-<style scoped>
-
+<style lang="scss" scoped>
   .course-box{
     display: flex;
     justify-content: space-between;
@@ -227,7 +222,7 @@ ivu-select-dropdown {
     flex:1;
 
   }
-  .course-wrapper {
+  .works-wrapper {
     width: 100%;
     height: 100%;
   }
@@ -251,22 +246,13 @@ ivu-select-dropdown {
     text-overflow:ellipsis;
     white-space: nowrap;
   }
-  .teacher .avatar{
-    width:25px;
-    height: 25px;
-    vertical-align: top;
-    border-radius: 50%;
-  }
   .teacher span {
-    display: inline;
-    margin-left: 5px;
+    margin-right: 5px;
     font-size: 12px;
-    font-weight: 100;
   }
-
-  .icon {
-    display: inline-block;
-    font-size: 20px;
-    padding: 0px;
+  .more {
+    .icon {
+      color: #aaa
+    }
   }
 </style>

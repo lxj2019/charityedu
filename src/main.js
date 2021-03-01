@@ -4,9 +4,12 @@ import router from './router'
 import store from './store/index'
 import './permission' // permission control
 import ViewUI from 'view-design'
-import 'view-design/dist/styles/iview.css'
 import VueVideoPlayer from 'vue-video-player'
+
 import 'video.js/dist/video-js.css'
+import 'view-design/dist/styles/iview.css'
+import '@/styles/index.scss' // global css
+
 import { Input, Menu, Submenu, MenuItem, Cascader, DropdownItem, DropdownMenu, Dropdown, scrollbar } from 'element-ui'
 
 // 解决路由重复问题

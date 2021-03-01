@@ -5,37 +5,20 @@
       <!--    视频信息区-->
       <div class="work-info">
         <h1 class="work-title">{{ work.worksTitle }}</h1>
-        <!-- <div><span>{{work.type}}</span><span>{{work.publicTime}}</span></div> -->
-        {{ work.worksLink }}
-        <p><span>{{ worksCount.worksClickNum }}播放</span><span>未经作者授权，禁止转载</span></p>
+        <p><span>{{ worksCount.worksClickNum }}次访问</span><span>未经作者授权，禁止转载</span></p>
       </div>
       <!--    视频-->
       <video-show
-        v-if="false"
+        v-if="work.type === 'video'"
         :works-link="work.worksLink"
         class="work-show"
       />
-
-      <button @click="getNumPages('http://image.cache.timepack.cn/nodejs.pdf')">加载</button>
-      {{ load }}
-      <el-scrollbar style="height: 500px">
-        <pdf
-          :src="pdfSrc"
-          class="pdf-container"
-          :page="currentPage"
-          @num-pages="pageTotalNum=$event"
-          @page-loaded="currentPage=$event"
-          @loaded="loadPdfHandler"
-          @error="pdfError($event)"
-          @progress="load = $event"
-        />
-      </el-scrollbar>
-      {{ currentPage }} / {{ pageTotalNum }}<Page size="small" show-elevator />
-      <div class="arrow">
-        <span class="turn" :class="{grey: currentPage==1}" @click="prePage">Preview</span>
-
-        <span class="turn" :class="{grey: currentPage==pageTotalNum}" @click="nextPage">Next</span>
-      </div>
+      <PDF-comm
+        v-else
+        :pdf-src="work.worksLink"
+        :pdf-height="400"
+        :pdf-width="700"
+      />
       <!--    点赞收藏-->
       <div class="praise-box">
         <span class="icon-box">
@@ -45,14 +28,21 @@
             type="md-thumbs-up"
             @click="addLike"
           />
-          <span>{{ worksCount.applaudNum }}</span></span>
-        <span class="icon-box"><Icon
-          class="icon"
-          :class="{active:work.collect}"
-          type="md-heart"
-          @click="collect"
-        />{{ worksCount.applaudNum }}</span>
-        <span class="icon-box"><Icon class="icon" type="md-star" />{{ worksCount.applaudNum }}</span>
+          {{ worksCount.applaudNum }}
+        </span>
+        <span class="icon-box">
+          <Icon
+            class="icon"
+            :class="{active:work.collect}"
+            type="md-heart"
+            @click="collectWork(work.worksId)"
+          />{{ worksCount.applaudNum }}</span>
+        <span class="icon-box">
+          <Icon
+            class="icon"
+            type="md-star"
+          />
+          {{ worksCount.applaudNum }}</span>
       </div>
       <!--    视频简介-->
       <div class="summary">
@@ -68,12 +58,16 @@
           <span slot="second" @click="sort('applaudnum',false)">按热度排序</span>
         </filter-menu>
         <!--      我的评论-->
-        <my-comment :work-id="worksId" @getComments="getComments" />
+        <my-comment :work-id="worksId" @getComments="getComments(work.worksId)" />
 
         <!--      他人评论区-->
         <comment-box v-for="(item,index) in commentlist" :key="index" :comment="item" />
+        <div v-if="commentlist.length === 0" class="empty">
+          <Icon type="ios-chatbubbles-outline" class="empty-icon" />
+          还没有人评论
+        </div>
       </div>
-      </pdf></div>
+    </div>
     <!--  右边推荐区-->
     <div class="video-right" />
   </div>
@@ -81,30 +75,45 @@
 
 <script>
 
-import { getComments, addLike, addClick, collect, getUnreviewedWorkInfo } from '@/api/video'
+import { getComments, addLike, addClick, getWorkInfo } from '@/api/work'
+import { collectWork } from '@/api/collection.js'
 import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
 import CommentBox from './CommentBox'
-import VideoShow from './VideoShow'
+import VideoShow from '@/components/common/VideoShow'
 import MyComment from './MyComment'
-import pdf from 'vue-pdf'
+import PDFComm from '@/components/common/PDFComm'
+// import work from '@/work.js'
 export default {
   name: 'Work',
   components: {
-    FilterMenu, CommentBox, VideoShow, MyComment, pdf
+    FilterMenu, CommentBox, VideoShow, MyComment, PDFComm
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.worksId = Number(to.params.id)
-      // getWorkInfo(vm.worksId, () => {
-      //   vm.getComments(vm.worksId)
-      //   vm.addClick(vm.worksId)
-      // })
+      vm.getWorkInfo(vm.worksId, () => {
+        vm.getComments(vm.worksId)
+        vm.addClick(vm.worksId)
+      })
     })
   },
   data() {
     return {
       work: {},
-      commentlist: [],
+      commentlist: [
+      //   {
+      //   commentatorName: '李逍遥',
+      //   context: '看风景的说了句分离焦虑的时间浪费精力的fdsffffffffffffffffffffffffffsdf的发射点发射点发射点发射点犯得上犯得上大师傅士大夫大师傅打发士大夫fffffffffffffffffffffffffffffffffffffff',
+      //   applaudnum: 10,
+      //   commentatorTime: '2021:05:06'
+      // },
+      // {
+      //   commentatorName: '李逍遥',
+      //   context: '看风景的说了句分离焦虑的时间浪费精力的fdsffffffffffffffffffffffffffsdf的发射点发射点发射点发射点犯得上犯得上大师傅士大夫大师傅打发士大夫fffffffffffffffffffffffffffffffffffffff',
+      //   applaudnum: 10,
+      //   commentatorTime: '2021:05:06'
+      // }
+      ],
       worksId: 0,
       worksCount: {},
       order: true,
@@ -122,78 +131,31 @@ export default {
       return 'http://view.officeapps.live.com/op/view.aspx?src=' + `${encodeURI('http://47.112.148.42:8443/charityedu/works/ppt/dacfce78bf7f3e3ab8a6989374c911f4.pptx')}`
     }
   },
-  created() {
-    // this.getNumPages('http://image.cache.timepack.cn/nodejs.pdf')
-  },
-  mounted() {
-    //  this.addClick()
-
-  },
   methods: {
-    abc(e) {
-      console.log(e)
-    },
-    getNumPages(url) {
-      console.log('gg')
-      var loadingTask = pdf.createLoadingTask(url)
-      loadingTask.promise.then((pdf) => {
-        console.log(pdf)
-        this.pdfSrc = loadingTask
-        this.pageTotalNum = pdf.numPages
-      }).catch((err) => {
-        console.error('pdf加载失败', err)
-      })
-    },
-    // 上一页函数，
-    prePage() {
-      let page = this.currentPage
-      page = page > 1 ? page - 1 : this.pageTotalNum
-      this.currentPage = page
-    },
-    // 下一页函数
-    nextPage() {
-      let page = this.currentPage
-      page = page < this.pageTotalNum ? page + 1 : 1
-      this.currentPage = page
-    },
+
     getWorkInfo(worksid, callback) {
-      getUnreviewedWorkInfo({ worksid }).then(res => {
-        if (res.data.code === 200) {
-          this.work = res.data.data
-          this.worksCount = res.data.data.worksCount
-          if (typeof callback === 'function') {
-            callback()
-          }
+      getWorkInfo({ worksid }).then(res => {
+        this.work = res.data.data
+        this.worksCount = this.work.worksHeat
+        console.log(this.work)
+        console.log(this.worksCount)
+        if (typeof callback === 'function') {
+          callback()
         }
       })
     },
-
-    // pdf加载时
-    loadPdfHandler (e) {
-      console.log(e)
-      this.currentPage = 1 // 加载的时候先加载第一页
+    // 收藏
+    collectWork(worksId) {
+      collectWork({ worksId }).then(res => {
+        this.getWorkInfo(this.work.worksId)
+        this.$Message.success('添加收藏成功')
+      })
     },
-    // 加载失败
-    pdfError(error) {
-      console.error(error)
-    },
-
     // 点赞
     addLike() {
       addLike({ worksId: this.work.worksId }).then(res => {
-        this.getWorkInfo()
+        this.getWorkInfo(this.work.worksId)
         this.$Message.success(res.data.message)
-      })
-    },
-    // 收藏作品
-    collect() {
-      collect({
-        worksId: this.work.worksId
-      }).then(res => {
-        if (res.data.code === 200) {
-          this.getWorkInfo(this.worksId)
-          this.$Message.success(res.data.message)
-        }
       })
     },
     // 增加播放量
@@ -256,6 +218,9 @@ export default {
   height: 800px;
   /*background-color: pink;*/
 }
+.work-info {
+  margin-bottom: 10px;
+}
 .work-info span{
   font-size: 12px;
   color: #999999;
@@ -268,9 +233,7 @@ export default {
   color: #212121;
   margin-bottom: 5px;
 }
-.work-show{
-  margin-top: 15px;
-}
+
 .pdf-container {
 }
 .video-right{
@@ -292,7 +255,7 @@ export default {
   display: inline-block;
   margin-right: 8px;
   width: 100px;
-  font-size: 14px;
+  font-size: 15px;
   color:#505050;
   /* height: 30px; */
 }
@@ -324,5 +287,15 @@ export default {
     font-size: 18px;
     font-weight: 500;;
   }
-
+.empty {
+  width: 100%;
+  height: 200px;
+  line-height: 200px;
+  text-align: center;
+  font-size:20px;
+}
+.empty-icon {
+  display: inline-block;
+  font-size: 35px;
+}
 </style>

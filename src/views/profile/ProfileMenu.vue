@@ -6,10 +6,9 @@
         <li
           v-for="(item,index) in menu"
           :key="index"
-          :class="{on:isActive==index}"
-          @click="selectMenu(index,item)"
+          :class="{on: activeMenu === `/profile/${item.path}`}"
+          @click="selectMenu(item)"
         >
-          <!-- {{item.icon}} -->
           <Icon class=" icon" :type="item.iconType" />
           <span>{{ item.text }}</span>
         </li>
@@ -22,7 +21,6 @@ export default {
   name: 'ProfileMenu',
   data() {
     return {
-      isActive: 0,
       menu: [
         {
           icon: '',
@@ -83,10 +81,19 @@ export default {
       ]
     }
   },
+  computed: {
+    // 返回当前路径，使当前选中的菜单高亮
+    activeMenu() {
+      const route = this.$route
+      const { meta, path } = route
+      if (meta.activeMenu) {
+        return meta.activeMenu
+      }
+      return path
+    }
+  },
   methods: {
-    selectMenu(index, item) {
-      console.log(index)
-      this.isActive = index
+    selectMenu(item) {
       this.$router.push(`/profile/${item.path}`)
     }
   }
@@ -112,7 +119,6 @@ export default {
     margin-top: 0px;
     padding: 0;
     height: 100%;
-
   }
 
   .menu-bar ul li {

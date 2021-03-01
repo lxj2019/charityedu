@@ -10,7 +10,7 @@ export function getWorkInfo(params) {
 }
 
 // 获得未审核作品信息
-export function getUnreviewedWorkInfo(params) {
+export function getUnCheckWorkInfo(params) {
   return request({
     url: '/works/manager/init',
     method: 'get',

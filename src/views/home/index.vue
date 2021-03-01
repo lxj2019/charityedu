@@ -60,7 +60,7 @@ export default {
     }
   },
   created() {
-    // this.autoLogin()+
+    this.autoLogin()
   },
   mounted() {
 
