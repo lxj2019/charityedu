@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="loop-container">
     <Button
       icon="upload"
       @click="imagecropperShow=true"
@@ -9,9 +9,6 @@
     <Table
       :columns="columns12"
       :data="imgList"
-      size="small"
-      border
-      width="800"
       :loading="loading"
       show-context-menu
       class="table"
@@ -21,8 +18,8 @@
         <strong>{{ row.name }}</strong>
       </template>
       <template slot="action" slot-scope="{ row, index }">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="show(row)">预览</Button>
-        <Button type="error" size="small" @click="remove(row,index)">删除</Button>
+        <Button class="table-btn" type="primary" size="small" @click="show(row)">预览</Button>
+        <Button class="table-btn" type="error" size="small" @click="remove(row,index)">删除</Button>
       </template>
       <template slot="contextMenu">
         <DropdownItem @click.native="show(row)">编辑</DropdownItem>
@@ -43,9 +40,17 @@
       @on-ok="uploadLoop"
       @on-cancel="cancel"
     >
-      <upload-image @updateImg="updateImg" />
-      跳转地址：
-      <Input v-model="jumpUrl" type="text" />
+      <Form ref="form" class="form" :rules="ruleValidate" :label-width="100">
+        <FormItem label="图片:">
+          <image-cropper :fixed-width="350" :fixed-number="[20,10]" @on-change="getImg" />
+        </FormItem>
+        <FormItem label="跳转地址:" prop="bookName">
+          <Input v-model="jumpUrl" placeholder="请输入书名" />
+        </FormItem>
+      </Form>
+
+      <!-- <upload-image @updateImg="updateImg" /> -->
+
     </Modal>
     <!-- 预览轮播图 -->
     <Modal
@@ -53,7 +58,7 @@
       class="previewBox"
       title="预览"
       @on-cancel="cancel"
-    >
+    >loop-c
       <img class="img" :src="previewImg.url" :alt="previewImg.alt">
     </Modal>
   </div>
@@ -61,10 +66,12 @@
 </template>
 <script>
 // import request from "@/utils/request";
-import UploadImage from '@/components/common/upload/UploadImage'
+// import UploadImage from '@/components/common/upload/UploadImage'
 import { loopManager, loopDelete, loopUpdate, loopUpload } from '@/api/loop.js'
+import imageCropper from '@/components/common/upload/imageCropper'
+
 export default {
-  components: { UploadImage },
+  components: { imageCropper },
   data() {
     return {
       file: null,
@@ -117,10 +124,12 @@ export default {
     this.getLoopList()
   },
   methods: {
+    getImg(data) {
+      this.file = new window.File([data], `${new Date().getTime()}.png`, { type: data.type })
+      // this.$set(this.bookForm, 'img', file)
+    },
     updateImg(value) {
-      console.log(value)
       this.file = value
-      console.log(this.file)
     },
     selectImg() {
       this.imgList.forEach(item => {
@@ -213,8 +222,9 @@ export default {
 
 </script>
 <style scoped>
-.box{
+.loop-container{
     padding: 20px;
+    /* width: 100% */
 }
 .table{
     margin:10px 0;
@@ -225,5 +235,7 @@ export default {
 .img{
     width: 450px;
 }
-
+.table-btn {
+  margin-right: 10px;
+}
 </style>

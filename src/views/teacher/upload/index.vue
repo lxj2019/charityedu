@@ -1,9 +1,6 @@
 <template>
   <!--  教师上传视频模块-->
   <div class="upload-container">
-    <filter-menu>
-      <span slot="first">上传视频</span>
-    </filter-menu>
     <div class="upload-box">
       <Spin v-if="loading" fix>
         <Icon type="ios-loading" size="18" class="demo-spin-icon-load" />
@@ -12,16 +9,11 @@
       <h2>文件上传</h2>
       <upload-file upload-url="upload" @updateServerId="updateServerId" />
       <div class="inline" />
+
       <h2>基本信息</h2>
       <!--    作品封面设置模块-->
       <div>
         <h3>作品封面设置  <span>  （格式jpeg、png，文件大小≤5MB，建议尺寸≥1146*717，最低尺寸≥960*600）</span></h3>
-        <!-- <div class="face-box" @click="cropperVisible = true">
-          <img v-if="imgUrl" :src="imgUrl" :style="{width:imgWidth+'px',height: imgHeight+'px'}" title="点击更换图片">
-          <div v-else class="face-empty" :style="{width:imgWidth+'px',height: imgHeight+'px'}" title="未选中图片">
-            <Icon class="icon" :size="50" type="ios-add" />
-          </div>
-        </div> -->
         <image-cropper :fixed-width="270" :fixed-number="[16,9]" @on-change="getImg" />
         <!-- <upload-image :visible.sync="cropperVisible" @updateImg="updateImg" /> -->
       </div>
@@ -29,13 +21,30 @@
       <Cascader
         v-model="value"
         :data="options"
+        :change-on-select="true"
         :load-data="loadData"
         style="width: 500px"
       />
-      <!-- <DropdownShow ></DropdownShow> -->
+      <!-- <el-select
+        v-model="value"
+        class="cmb-select"
+        v-bind="{ clearable: true, multiple: true }"
+        placeholder="请选择知识点类型"
+        @change="search"
+      >
+        <cmb-tree-option
+          :options="content.options"
+          v-bind="(content.tree || {}).props"
+          :show-checkbox="content.props && content.props.multiple"
+          check-strictly
+          highlight-current
+          check-on-click-node
+          v-on="(content.tree || {}).listeners"
+        />
+      </el-select> -->
       <h2>作品标题</h2>
 
-      <Input v-model="workTitle" style="width: 250px" min="5" max="20" placeholder="请输入标题" />
+      <Input v-model="workTitle" style="width: 250px" min="1" max="20" placeholder="请输入标题" />
 
       <h2>作品简介</h2>
       <Input v-model="introduction" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..." />
@@ -44,39 +53,68 @@
   </div>
 </template>
 <script>
-import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
+import { getWorkInfo } from '@/api/work'
 import UploadFile from '@/components/common/upload/UploadFile'
-// import UploadImage from '@/components/common/upload/UploadImage'
+import { getChildList, getRootList } from '@/api/knowledge/manage'
 import imageCropper from '@/components/common/upload/imageCropper'
 import { uploadWork } from '@/api/upload'
-import { getChildList, getRootList } from '@/api/knowledge/manage'
-// import tree from './tree.js'
+
 export default {
-  name: 'UploadWorks',
+  name: 'TeacherUpload',
   components: {
-    FilterMenu, UploadFile, imageCropper
+    UploadFile, imageCropper
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (to.query.id && to.query.type === 'edit') {
+        vm.workId = to.query.id
+        vm.operation = 'edit'
+        vm.getWorkInfo(to.query.id)
+      } else {
+        vm.operation = 'add'
+      }
+    })
   },
   data() {
     return {
+      operation: 'add',
       value: [],
       cropperVisible: false,
       options: [],
+      // 作品信息
+      workId: '',
       serverId: '',
       workTitle: '',
       introduction: '',
       knowledgeId: 111,
+      worksImg: null,
       loading: false,
+
       // 封面变量
       imgWidth: 270,
       imgHeight: 150,
-      imgUrl: '',
-      worksImg: null
+      imgUrl: ''
     }
   },
   created() {
     this.getRootList()
   },
   methods: {
+    /** 获取作品信息 */
+    getWorkInfo(worksid, callback) {
+      getWorkInfo({ worksid }).then(res => {
+        this.work = res.data.data
+        this.worksCount = this.work.worksHeat
+        this.workTitle = this.work.worksTitle
+        this.imgUrl = this.work.teacherImgLink
+        this.introduction = this.work.worksIntroduction
+
+        if (typeof callback === 'function') {
+          callback()
+        }
+      })
+    },
+    /** 遍历知识点 */
     bl(list) {
       list.forEach(item => {
         item.label = item.knowledgeName
@@ -86,6 +124,7 @@ export default {
         }
       })
     },
+    /** 加载知识点 */
     loadData(item, callback) {
       item.loading = true
       getChildList({
@@ -98,6 +137,7 @@ export default {
         callback()
       })
     },
+    /** 获取知识点类型 */
     getRootList() {
       getRootList().then(res => {
         const list = res.data.data.books
@@ -108,13 +148,13 @@ export default {
           item.value = item.knowledgeId
           return item
         })
-        console.log(this.options)
+        // console.log(this.options)
       })
     },
     getImg(data) {
       this.imgUrl = window.URL.createObjectURL(data)
       this.worksImg = new window.File([data], `${new Date().getTime()}.png`, { type: data.type })
-      console.log(this.worksImg, data)
+      // console.log(this.worksImg, data)
     },
     uploadFile(event) {
       const _this = this
@@ -129,12 +169,6 @@ export default {
     },
     updateServerId(value) {
       this.serverId = value
-      console.log(this.serverId)
-    },
-    updateImg(value) {
-      // console.log(value);
-      this.worksImg = value
-      console.log(this.worksImg)
     },
     up() {
       if (this.worksImg != null && this.serverId !== '' && this.value.length !== 0 && this.workTitle !== '' && this.introduction !== '') {
@@ -145,6 +179,7 @@ export default {
         formData.append('title', this.workTitle)
         formData.append('knowledgeId', this.value.pop())
         formData.append('introduction', this.introduction)
+        console.log(formData)
         uploadWork(formData)
           .then(res => {
             this.loading = false
@@ -173,12 +208,13 @@ export default {
 </script>
 
 <style scoped>
-.upload-container{
-  margin-left: 30px
+  .upload-container {
+    position: relative;
+    width: 100%;
   }
   .upload-box{
-    position: relative;
-    margin: 10px 20px;
+    /* width: 600px; */
+    margin: 0 auto;
   }
   .demo-spin-icon-load{
         animation: ani-demo-spin 1s linear infinite;

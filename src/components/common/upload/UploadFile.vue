@@ -50,7 +50,7 @@
         patch:{
           url:'/works?patch=',
           withCredentials: true
-        }
+        },
       }"
 
       :required="true"

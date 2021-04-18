@@ -1,77 +1,77 @@
 <template>
   <div class="upload-box">
     <h2>作品管理</h2>
-    <h3>视频状态：<span></span></h3>
-    <div class="inline"></div>
-    <h2 >基本信息</h2>
+    <h3>视频状态：<span /></h3>
+    <div class="inline" />
+    <h2>基本信息</h2>
     <!--    作品封面设置模块-->
     <div>
       <h3>作品封面设置  <span>  （格式jpeg、png，文件大小≤5MB，建议尺寸≥1146*717，最低尺寸≥960*600）</span></h3>
       <div class="face-box">
         <!--        shadow类标签鼠标移到封面盒子后展示-->
-        <div class="shadow"> </div>
+        <div class="shadow" />
         <!--        <span class="cancel_btn" @click="delFun()"></span>-->
-        <input id="face-input" @change="uploadFile" ref="files1" type="file" accept="image/jpeg, image/jpg, image/png">
+        <input id="face-input" ref="files1" type="file" accept="image/jpeg, image/jpg, image/png" @change="uploadFile">
         <img id="showIdFaceSrc" :src="works.img" alt="点击上传封面">
       </div>
     </div>
 
     <h3>类型</h3>
-    <DropdownShow></DropdownShow>
-    <div></div>
+    <DropdownShow />
+    <div />
 
     <h3>作品标题</h3>
 
-    <Input v-model="works.title" style="width: 250px" min="5" max="20" placeholder="请输入标题"></Input>
+    <Input v-model="works.title" style="width: 250px" min="5" max="20" placeholder="请输入标题" /></Input>
 
     <h3>作品简介</h3>
-    <Input v-model="works.textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..."></Input>
+    <Input v-model="works.textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请简短描述你的作品..." /></Input>
 
     <Button class="save">保存修改</Button>
   </div>
 
 </template>
 <script>
-  import {Upload,Icon,FormItem,Input,Button} from 'view-design'
-  import DropdownShow from '@/components/common/header/DropdownShow'
-  export default {
-    name: 'BaseInfo',
-    components: {
-      Upload, Icon,DropdownShow,FormItem,Input,Button
-    },
-    data() {
-      return {
-        works: {
-          img: 'http://img.zcool.cn/community/0385362581077efa84a0d304ffc21b2.jpg',
-          title:'',
-          summary:''
-        },
-        hh:{
-
-        },
-      }
-    },
-    methods: {
-      uploadFile(event) {
-        let _this = this;
-        if (!event || !window.FileReader) return  // 看支持不支持FileReader
-        console.log(event.target.files);
-        let reader = new FileReader()
-        reader.readAsDataURL(event.target.files[0]) // 这里是最关键的一步，转换就在这里（参数必须是blob对象）
-        reader.onloadend = function () {
-          _this.works.img = this.result
-          console.log(_this.works.img)
-        }
+import { Upload, Icon, FormItem, Input, Button } from 'view-design'
+import DropdownShow from '@/components/common/header/DropdownShow'
+export default {
+  name: 'BaseInfo',
+  components: {
+    Upload, Icon, DropdownShow, FormItem, Input, Button
+  },
+  data() {
+    return {
+      works: {
+        img: 'http://img.zcool.cn/community/0385362581077efa84a0d304ffc21b2.jpg',
+        title: '',
+        summary: ''
       },
-      // delFun() {
-      //   if (this.src1) {
-      //     this.src1 = "";
-      //     this.$refs.files.value = ""; //这里清空input的value 不然不可以选择相同的文件
-      //   }
-      // }
-    },
+      hh: {
 
+      }
+    }
+  },
+  methods: {
+    uploadFile(event) {
+      const _this = this
+      if (!event || !window.FileReader) return // 看支持不支持FileReader
+      console.log(event.target.files)
+      const reader = new FileReader()
+      reader.readAsDataURL(event.target.files[0]) // 这里是最关键的一步，转换就在这里（参数必须是blob对象）
+      reader.onloadend = function () {
+        _this.works.img = this.result
+        console.log(_this.works.img)
+      }
+    }
+    // delFun() {
+    //   if (this.src1) {
+    //     this.src1 = "";
+    //     this.$refs.files.value = ""; //这里清空input的value 不然不可以选择相同的文件
+    //   }
+    // }
   }
+
+}
 </script>
 
 <style scoped>

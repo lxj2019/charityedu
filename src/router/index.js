@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Layout from '@/views/admin'
+import Teacher from '@/views/teacher'
 
 Vue.use(VueRouter)
 export const manageRoutes = [
@@ -45,11 +46,13 @@ export const manageRoutes = [
     component: Layout,
     redirect: 'noRedirect',
     name: '作品管理',
+    alwaysShow: true,
     meta: { title: '作品管理', icon: 'el-icon-reading' },
     children: [
       {
         path: 'check/:id',
         name: '作品审核',
+        hidden: true,
         component: () => import('@/views/admin/views/work/check'),
         meta: { title: '作品审核', icon: 'el-icon-document-checked' }
       },
@@ -58,6 +61,27 @@ export const manageRoutes = [
         name: '作品管理',
         component: () => import('@/views/admin/views/work/manage'),
         meta: { title: '作品管理', icon: 'el-icon-reading' }
+      }
+    ]
+  },
+  {
+    path: '/manage/knowledge',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: '知识点管理',
+    meta: { title: '知识点管理', icon: 'el-icon-reading' },
+    children: [
+      {
+        path: 'manage',
+        name: '知识点管理',
+        component: () => import('@/views/admin/views/knowledge/manage'),
+        meta: { title: '知识点管理', icon: 'el-icon-reading' }
+      },
+      {
+        path: 'book',
+        name: '添加课本',
+        component: () => import('@/views/admin/views/knowledge/book'),
+        meta: { title: '添加课本', icon: 'el-icon-reading' }
       }
     ]
   },
@@ -73,6 +97,35 @@ export const manageRoutes = [
         name: '轮播图管理',
         component: () => import('@/views/admin/views/loop'),
         meta: { title: '轮播图管理', icon: 'el-icon-picture-outline' }
+      }
+    ]
+  }
+]
+export const teacherRoutes = [
+  {
+    path: '/teacher',
+    name: '后台首页',
+    component: Teacher,
+    redirect: '/teacher/works-manager',
+    children: [
+      {
+        path: 'works-manager',
+        name: '作品管理',
+        component: () => import('@/views/teacher/works-manager'),
+        meta: { title: '后台首页', icon: 'dashboard' }
+      },
+
+      {
+        path: 'upload',
+        name: '作品投稿',
+        component: () => import('@/views/teacher/upload'),
+        meta: { title: '后台首页', icon: 'dashboard' }
+      },
+      {
+        path: 'comment',
+        name: '评论管理',
+        component: () => import('@/views/admin/views/dashboard'),
+        meta: { title: '后台首页', icon: 'dashboard' }
       }
     ]
   }
@@ -251,7 +304,7 @@ const routes = [{
 ]
 
 const router = new VueRouter({
-  routes: [...manageRoutes, ...routes],
+  routes: [...manageRoutes, ...routes, ...teacherRoutes],
   linkActiveClass: 'active',
   mode: 'history'
 })

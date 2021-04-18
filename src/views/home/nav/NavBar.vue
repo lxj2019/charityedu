@@ -55,7 +55,7 @@ export default {
           applaudnum: '100',
           username: '阿晨',
           src: '113',
-          userimg: 'http://loaclhost:8080/charityedu/source/1.jpg',
+          userimg: 'clearfix//loaclhost:8080/charityedu/source/1.jpg',
           videoimg: 'http://loaclhost:8080/charityedu/source/1.jpg',
           title: '二次函数'
         },

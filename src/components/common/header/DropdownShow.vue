@@ -1,24 +1,5 @@
 <template>
   <div>
-    <!-- <Dropdown placement="bottom-start">
-      <DropdownItem>
-        {{schoolGrade}}
-        <Icon type="ios-arrow-down"></Icon>
-      </DropdownItem>
-      <DropdownMenu slot="list" v-for="(item,index) in list" :key="index">
-        <Dropdown x-placement="right">
-          <DropdownItem>
-            {{item.name}}
-            <Icon type="ios-arrow-forward"></Icon>
-          </DropdownItem>
-          <DropdownMenu slot="list" v-for="(grade,index) in item.sort" :key="index">
-            <DropdownItem @click.native="select(grade)">
-              {{grade}}
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      </DropdownMenu>
-    </Dropdown> -->
     <Dropdown placement="bottom-start">
       <DropdownItem>
         {{ schoolGrade }}
@@ -64,16 +45,9 @@ export default {
       grade: []
     }
   },
-  mounted() {
 
-  },
   created() {
-    getGrade().then(res => {
-      console.log(res.data.data.grade)
-      this.grade = res.data.data.grade
-    }).catch(err => {
-      console.log(err)
-    })
+    this.getGrade()
   },
   methods: {
     select(name) {
@@ -81,6 +55,13 @@ export default {
     },
     initData() {
 
+    },
+    getGrade() {
+      getGrade().then(res => {
+        this.grade = res.data.data.grade
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }

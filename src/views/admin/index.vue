@@ -1,6 +1,6 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&true" class="drawer-bg" @click="handleClickOutside" />
+    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
@@ -48,6 +48,7 @@ export default {
   },
   methods: {
     handleClickOutside() {
+      console.log('jj')
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
     toggleSideBar() {
@@ -87,7 +88,7 @@ export default {
     top: 55px;
     right: 0;
     z-index: 9;
-    width: calc(100% - #{$sideBarWidth});
+    // width: calc(100% - #{$sideBarWidth});
     transition: width 0.28s;
   }
 

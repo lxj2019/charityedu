@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <top-nav class="header" />
     <div class="main">
       <router-view />
@@ -29,10 +29,8 @@ export default {
  .header {
    position: sticky;
  }
-    /* a{
-      color: #666;
-    } */
-  /*.v-application ul, .v-application ol {*/
-  /*  padding-left: 0px!important;*/
-  /*}*/
+ .main {
+   height: 100%;
+ }
+
 </style>

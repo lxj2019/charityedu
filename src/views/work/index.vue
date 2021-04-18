@@ -36,13 +36,16 @@
             :class="{active:work.collect}"
             type="md-heart"
             @click="collectWork(work.worksId)"
-          />{{ worksCount.applaudNum }}</span>
+          />
+          {{ worksCount.collectNum }}</span>
         <span class="icon-box">
           <Icon
             class="icon"
+            :class="{active:work.collect}"
             type="md-star"
-          />
-          {{ worksCount.applaudNum }}</span>
+            title="点击收藏"
+            @click="collectWork(work.worksId)"
+          />{{ worksCount.collectNum }}</span>
       </div>
       <!--    视频简介-->
       <div class="summary">
@@ -148,7 +151,7 @@ export default {
     collectWork(worksId) {
       collectWork({ worksId }).then(res => {
         this.getWorkInfo(this.work.worksId)
-        this.$Message.success('添加收藏成功')
+        this.$Message.success(res.data.message)
       })
     },
     // 点赞
@@ -266,7 +269,6 @@ export default {
 }
 .icon:hover{
   color: #00A1d6;
-
 }
   .active{
     color: #00A1d6;

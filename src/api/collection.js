@@ -3,7 +3,7 @@ import request from '@/utils/request.js'
 // 课程添加收藏
 export function collectWork(params) {
   return request({
-    url: '/collection/add',
+    url: '/collection/collect',
     method: 'get',
     params
   })

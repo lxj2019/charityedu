@@ -28,7 +28,7 @@
         >
           <div slot="bottom-left" class="teacher">
             <Avatar :src="item.worksImg" shape="circle" size="small" />
-            <span :title="item.worksTitle">{{ item.worksTitle }}</span>
+            <span :title="item.worksTitle">{{ item.teacherName }}</span>
           </div>
           <!--      右下角底部：“审核状态”-->
           <div slot="bottom-right">

@@ -70,7 +70,7 @@
 <script>
 import WorkCommon from '@/components/common/works/WorkCommon'
 import FilterMenu from '@/components/common/FilterMenu/FilterMenu'
-import { myWorksList, deleteMyWork } from '@/api/myWork'
+import { myWorksList, deleteMyWork } from '@/api/teacher/worksManage'
 // import workList from '@/works.js'
 export default {
   name: 'MyClass',

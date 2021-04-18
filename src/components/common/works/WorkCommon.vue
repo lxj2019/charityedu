@@ -9,9 +9,11 @@
       </div>
       <div class="card-info">
         <h2 class="title" :title="title" @click="clickTitle">{{ title }}</h2>
+        <div class="bottom-left"><slot name="bottom-left" /></div>
+        <div class="bottom">
+          <div class="bottom-right"><slot name="bottom-right" /></div>
+        </div>
         <slot />
-        <slot class="bottom-left"><slot name="bottom-left" /></slot>
-        <div class="bottom-right"><slot name="bottom-right" /></div>
         <div class="top-left"><slot name="top-left" /></div>
       </div>
     </div>
@@ -71,7 +73,7 @@ export default {
     transition: 0.3s;
     font-size: 12px;
     z-index: 1;
-    border-radius: 5px;
+    border-radius: 5px 5px 0 0;
     transition:all ease-in 0.2s;
     /* box-shadow: 0 6px 10px 0 rgba(95,101,105,.15);  */
   }
@@ -79,7 +81,7 @@ export default {
     position: relative;
     width: 100%;
     height: 96px;
-    border-radius: 5px;
+    border-radius: 5px 5px 0 0;
     /* transition: all 1s cubic-bezier(0, 0.5, 0.5, 1) 0s; */
     background: no-repeat center/100%;
     /* background-size: cover */
@@ -153,6 +155,9 @@ export default {
     color: #333;
     font-weight: 500;
     font-family: PingFangSC-Medium, PingFangSC;
+  }
+  .bottom {
+    height: 25px;
   }
   .bottom-left{
     position: absolute;

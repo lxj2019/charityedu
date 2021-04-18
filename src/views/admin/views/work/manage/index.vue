@@ -14,17 +14,16 @@
       />
     </filter-menu>
     <div class="works-container">
-      <div class="icon-box">
+      <div class="info">
         <!-- <Icon type="md-checkmark-circle-outline" />：审核通过
         <Icon type="ios-checkmark-titlecircle-outline" />：审核通过 -->
-        <span class="title">审核状态：</span>
-        <Icon class="icon" size="25" type="ios-checkmark-circle-outline" /><Tag type="border" color="default">审核通过</Tag>、
-        <Icon class="icon" size="25" type="ios-close-circle-outline" /><Tag type="border" color="default">未通过</Tag>、
-        <Icon class="icon" size="25" type="ios-create-outline" /><Tag type="border" color="default">未审核</Tag>、
-        <Icon class="icon" size="25" type="md-sad" /><Tag type="border" color="default">作品失效</Tag>、
-        <Icon class="icon" size="25" type="md-warning" /><Tag type="border" color="default">不明错误</Tag>
+        <span class="state">审核状态：</span>
+        <span v-for="(item,key,index) in stateOptions" :key="index" class="item">
+          <Icon :style="{color:item.color}" size="25" :type="item.icon" />{{ key }}
+          <!-- <Tag type="border" color="default">{{ key }}</Tag> -->
+        </span>
       </div>
-      <div v-if="workList.length!=0" class="works-wrapper">
+      <div v-if="workList.length!=0" class="works-wrapper clearfix">
         <work-common
           v-for="(item,index) in workList"
           :key="index"
@@ -43,7 +42,7 @@
           <!--      右下角底部：“审核状态”-->
           <!--      右下角底部：“下拉菜单”-->
           <el-dropdown slot="bottom-right" placement="top" class="more">
-            <Icon :type="stateOptions[item.checkState] || 'md-warning'" size="25" style="color:#aaa" :title="item.checkState" />
+            <Icon class="icon" :type="stateOptions[item.checkState].icon || 'md-warning'" size="25" :style="{color:stateOptions[item.checkState].color}" :title="item.checkState" />
             <el-dropdown-menu slot="dropdown" class="dropdown-menu">
               <el-dropdown-item @click.native="deleteWork(item.worksId)"><Icon type="ios-trash-outline" />删除</el-dropdown-item>
               <el-dropdown-item divided>投诉</el-dropdown-item>
@@ -68,7 +67,6 @@
         <Icon type="ios-book-outline" />
         <span>暂无作品！</span>
       </div>
-
     </div>
     <Page
       :total="workTotals"
@@ -99,10 +97,26 @@ export default {
       workList: workList,
       listShow: [],
       stateOptions: {
-        作品失效: 'md-sad',
-        审核通过: 'ios-checkmark-circle-outline',
-        未通过: 'ios-close-circle-outline',
-        未审核: 'ios-create-outline'
+        作品失效: {
+          icon: 'md-sad',
+          color: 'red'
+        },
+        审核通过: {
+          icon: 'ios-checkmark-circle-outline',
+          color: 'blue'
+        },
+        未通过: {
+          icon: 'ios-close-circle-outline',
+          color: 'red'
+        },
+        未审核: {
+          icon: 'ios-create-outline',
+          color: 'red'
+        },
+        不明错误: {
+          icon: 'md-warning',
+          color: 'red'
+        }
       }
     }
   },
@@ -200,7 +214,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
   .collectBox{
     width:100%;
     height: 100%;
@@ -216,20 +231,20 @@ export default {
     right: 10px;
     top:50%;
   }
-  .icon {
-    font-weight: normal;
-    color:rgb(209, 23, 23);
-
-  }
-  .icon-box {
-    padding: 0 0 10px 20px;
-  }
-  .icon-box .title {
-    color: rgb(0, 0, 0);
-    font-size:13px
-  }
-  .icon-box Tag {
-    vertical-align: top;
+  .info {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    background-color: #ffffff;
+    margin-top: 10px;
+    font-size: 15px;
+    .item:not(:last-child){
+      margin-right: 15px;
+    }
+    .icon {
+      display: inline;
+    }
   }
  .works-wrapper {
     width: 100%;
@@ -252,9 +267,9 @@ export default {
     color:#999
   }
   .teacher {
-    height: 30px;
+    height: 25px;
     overflow: hidden;
-    line-height: 30px;
+    line-height: 20px;
     text-overflow:ellipsis;
     white-space: nowrap;
   }

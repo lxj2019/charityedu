@@ -1,28 +1,27 @@
 <template>
   <div class="top-nav">
-    <div class="w">
-      <div class="logo"><h1>惠师惠学</h1></div>
+    <div class="w navbar">
+      <h1 class="logo">惠师惠学</h1>
       <router-link to="/home">首页</router-link>
       <!--       已登陆状态才会显示退出登陆和注销两个选项-->
-      <Dropdown v-if="token" class="profile">
-        <a>
+      <div class="profile">
+        <Dropdown v-if="token">
           <!-- <img :src="avatar" alt="头像"> -->
           <Avatar :src="avatar" />
           <span> {{ name }}</span>
-        </a>
-        <DropdownMenu slot="list">
-          <DropdownItem>
-            <router-link to="/Profile" title="个人信息">
-              个人信息
-            </router-link></DropdownItem>
-          <DropdownItem> <a @click="$router.push('/manage')">管理员入口</a></DropdownItem>
-          <DropdownItem> <a @click="logout()">退出登陆</a></DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-      <!--      未登陆就显示 登陆按钮-->
-      <span v-if="!token" class="profile">
-        <Button type="primary" size="small" to="/login">登陆</Button>
-      </span>
+          <DropdownMenu slot="list" @on-click="$router.push('/Profile')">
+            <DropdownItem @click.native="$router.push('/Profile')">个人信息</DropdownItem>
+            <DropdownItem @click.native="$router.push('/manage')">管理员入口</DropdownItem>
+            <DropdownItem @click.native="$router.push('/teacher')">教师入口</DropdownItem>
+            <DropdownItem @click.native="logout()"> 退出登陆</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        <!--      未登陆就显示 登陆按钮-->
+        <span v-else>
+          <Button type="primary" size="small" to="/login">登陆</Button>
+        </span>
+      </div>
+
       <div class="drop">
         <dropdown-show />
       </div>
@@ -75,10 +74,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .top-nav {
-    position:relative;
-    top: 0;
+    display: absolute;
     width: 100%;
     height: 60px;
     line-height: 60px;
@@ -88,38 +86,37 @@ export default {
     color: #666666 ;
     background-color: #fff;
   }
-
-  .logo{
-    float: left;
-    height: 60px;
-    margin-right:20px;
-  }
-  .logo h1{
-    margin: 0;
-  }
-    .drop{
-    margin-right: 200px;
-    float: right;
-    z-index: 9;
-  }
-   .search{
-    float: right;
-    margin-top: 13px;
-
-    display: inline-block;
-  }
-  .profile{
-    float: right;
-  }
-  .profile img{
-    width: 32px;
-    border-radius: 16px;
-    vertical-align: middle;
-    cursor: pointer;
-  }
-  .profile a{
-    padding:0 10px;
-    font-size: 12px;
+  .navbar {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    .logo {
+      width:100px;
+      display: inline-block;
+      margin-right: 20px;
+      text-shadow: 5px 5px 5px skyblue;
+      font-size: 24px;
+      font-style: oblique;
+      font-weight: normal;
+      cursor: pointer;
+      &:hover {
+        transform: rotateY(360deg);
+        -webkit-transform:rotateY(360deg); /* Safari and Chrome */
+        transition:  2s linear;
+      }
+    }
+    .profile {
+      position: absolute;
+      display: inline-block;
+      right: 10px;
+      width: 100px;
+    }
+    .drop {
+      display: inline-block;
+    }
+    .search{
+      display: inline-block;
+    }
   }
 
 </style>

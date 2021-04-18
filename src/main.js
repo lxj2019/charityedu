@@ -10,7 +10,8 @@ import 'video.js/dist/video-js.css'
 import 'view-design/dist/styles/iview.css'
 import '@/styles/index.scss' // global css
 
-import { Input, Menu, Submenu, MenuItem, Cascader, DropdownItem, DropdownMenu, Dropdown, scrollbar } from 'element-ui'
+import '@/icons' // icon
+import { Input, Menu, Submenu, MenuItem, Cascader, DropdownItem, DropdownMenu, Dropdown, scrollbar, Tree, Select } from 'element-ui'
 
 // 解决路由重复问题
 // import Router from 'vue-router'
@@ -29,6 +30,8 @@ Vue.use(DropdownItem)
 Vue.use(DropdownMenu)
 Vue.use(Dropdown)
 Vue.use(scrollbar)
+Vue.use(Tree)
+Vue.use(Select)
 
 // import { Message } from 'view-design'
 // Vue.prototype.$Message = Message
